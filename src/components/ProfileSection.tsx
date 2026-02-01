@@ -1,0 +1,103 @@
+import React from 'react';
+import {
+    User,
+    Package,
+    MapPin,
+    CreditCard,
+    Settings,
+    LogOut,
+    ChevronRight,
+    ShieldCheck
+} from 'lucide-react';
+import { userData } from '../data/User';
+
+const ProfileSection = () => {
+    const menuItems = [
+        { icon: Package, label: 'My Bookings', desc: 'View and manage your services' },
+        { icon: MapPin, label: 'Saved Addresses', desc: 'Manage your service locations' },
+        { icon: CreditCard, label: 'UC Plus Membership', desc: 'Active until Dec 2026' },
+        { icon: Settings, label: 'Settings', desc: 'Privacy and account settings' },
+    ];
+
+    return (
+        <section className="bg-gray-50 min-h-screen py-12 px-6 mt-10">
+            <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+                {/* Left Sidebar: User Summary */}
+                <div className="lg:col-span-4 space-y-6">
+                    <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 flex flex-col items-center text-center">
+                        <div className="relative mb-4">
+                            <img
+                                src={userData.avatar}
+                                className="w-24 h-24 rounded-full border-4 border-blue-50 object-cover"
+                                alt="Profile"
+                            />
+                            <div className="absolute bottom-0 right-0 bg-green-500 border-4 border-white w-6 h-6 rounded-full" />
+                        </div>
+                        <h2 className="text-2xl font-bold text-gray-900">{userData.name}</h2>
+                        <p className="text-gray-500 font-medium text-sm mb-6">{userData.phone}</p>
+
+                        <div className="w-full pt-6 border-t border-gray-100 grid grid-cols-2 gap-4">
+                            <div className="text-center">
+                                <p className="text-xl font-bold text-gray-900">{userData.stats.totalBookings}</p>
+                                <p className="text-[10px] uppercase font-black text-gray-400 tracking-widest">Bookings</p>
+                            </div>
+                            <div className="text-center border-l border-gray-100">
+                                <p className="text-xl font-bold text-gray-900">{userData.stats.savedAddresses}</p>
+                                <p className="text-[10px] uppercase font-black text-gray-400 tracking-widest">Saved Info</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button className="w-full bg-white text-red-500 font-bold py-4 rounded-2xl shadow-sm border border-red-50 hover:bg-red-50 transition-all flex items-center justify-center gap-2">
+                        <LogOut className="w-5 h-5" /> Logout
+                    </button>
+                </div>
+
+                {/* Right Section: Navigation Menu */}
+                <div className="lg:col-span-8 space-y-4">
+                    <div className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
+                        <div className="p-6 border-b border-gray-50">
+                            <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                                <ShieldCheck className="text-blue-600 w-5 h-5" /> Account Overview
+                            </h3>
+                        </div>
+
+                        <div className="divide-y divide-gray-50">
+                            {menuItems.map((item, index) => (
+                                <div
+                                    key={index}
+                                    className="p-6 flex items-center justify-between hover:bg-gray-50 cursor-pointer transition-all group"
+                                >
+                                    <div className="flex items-center gap-5">
+                                        <div className="p-3 bg-gray-100 rounded-2xl group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                            <item.icon className="w-6 h-6" />
+                                        </div>
+                                        <div>
+                                            <h4 className="font-bold text-gray-900">{item.label}</h4>
+                                            <p className="text-sm text-gray-500 font-medium">{item.desc}</p>
+                                        </div>
+                                    </div>
+                                    <ChevronRight className="text-gray-300 group-hover:text-blue-600 group-hover:translate-x-1 transition-all" />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Promotional Banner inside Profile */}
+                    <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-8 rounded-[2.5rem] text-white flex justify-between items-center relative overflow-hidden">
+                        <div className="z-10">
+                            <p className="text-xs font-black uppercase tracking-widest mb-2 opacity-80">Plus Membership</p>
+                            <h4 className="text-xl font-bold mb-4">Save ₹200 on every booking</h4>
+                            <button className="bg-white text-blue-600 px-6 py-2 rounded-xl font-bold text-sm">Renew Now</button>
+                        </div>
+                        <Package className="w-32 h-32 absolute -right-4 -bottom-4 opacity-20 rotate-12" />
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    );
+};
+
+export default ProfileSection;

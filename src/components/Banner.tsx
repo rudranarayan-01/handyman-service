@@ -7,7 +7,7 @@ const Banner = () => {
                 title="Interior Design"
                 subtitle="Transform your space with our expert interior design services, blending functionality and aesthetics to create your dream environment."
                 btnText="Know more"
-                image="/images/interrior-design.jpg"
+                image="/images/InterriorDesign/interrior-design.jpg"
                 bgColor="bg-[#f8f3f0]" // Light cream from reference
                 btnBg="bg-[#5c4335]"   // Dark brown button
                 textColor="text-black"

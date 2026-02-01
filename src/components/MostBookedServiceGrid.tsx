@@ -1,6 +1,5 @@
-import React from 'react';
 import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
-import { applianceServices } from '@/data/Service';
+
 import {
     Carousel,
     CarouselContent,
@@ -8,6 +7,7 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from "@/components/ui/carousel";
+import { FrequentBookedService } from '@/data/FrequentBookedService';
 
 const MostBookedServiceGrid = () => {
     return (
@@ -32,7 +32,7 @@ const MostBookedServiceGrid = () => {
                     className="w-full"
                 >
                     <CarouselContent className="-ml-4">
-                        {applianceServices.map((service: any) => (
+                        {FrequentBookedService.map((service: any) => (
                             <CarouselItem
                                 key={service.id}
                                 className="pl-4 basis-[45%] md:basis-[30%] lg:basis-[22%]"

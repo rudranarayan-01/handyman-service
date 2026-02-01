@@ -7,32 +7,32 @@ export interface Category {
 export const categories: Category[] = [
     { 
         name: "Painting Services", 
-        image: "/images/painting-services.jpg", 
+        image: "/images/Painting/painting-services.jpg", 
         color: "bg-blue-50" 
     },
     { 
         name: "Cleaning & Pest Control", 
-        image: "/images/cleaning.jpg", 
+        image: "/images/Cleaning/cleaning.jpg", 
         color: "bg-yellow-50" 
     },
     { 
         name: "Plumbing Services", 
-        image: "/images/Plumbing.jpg", 
+        image: "/images/Plumbing/Plumbing.jpg", 
         color: "bg-purple-50" 
     },
     { 
         name: "Repairing and Maintenance", 
-        image: "/images/ac-repair.jpg", 
+        image: "/images/Repairing/ac-repair.jpg", 
         color: "bg-cyan-50" 
     },
     { 
         name: "Women's Saloon", 
-        image: "/images/makeup.jpg", 
+        image: "/images/Parlour/makeup.jpg", 
         color: "bg-green-50" 
     },
     { 
         name: "Ayurvedic Massage", 
-        image: "/images/home-massage-service.jpg", 
+        image: "/images/Parlour/home-massage-service.jpg", 
         color: "bg-rose-50" 
     },
 ];

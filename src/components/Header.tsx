@@ -97,7 +97,7 @@ const Header = () => {
                             <DropdownMenuGroup>
                                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                                 <DropdownMenuItem><a href="/profile">Profile</a></DropdownMenuItem>
-                                <DropdownMenuItem><a href="/billing">Billing</a></DropdownMenuItem>
+                                <DropdownMenuItem><a href="/order-history">Orders</a></DropdownMenuItem>
                                 <DropdownMenuItem className="text-red-600 font-bold"><a href="/logout">Logout</a></DropdownMenuItem>
                             </DropdownMenuGroup>
                         </DropdownMenuContent>

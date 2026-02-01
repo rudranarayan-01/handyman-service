@@ -5,7 +5,7 @@ export const offers = [
         btnText: "Explore",
         bgColor: "bg-[#d4d2cc]", // Light greyish tone
         textColor: "text-gray-900",
-        image: "/images/interior.jpg",
+        image: "/images/InterriorDesign/interior.jpg",
     },
     {
         title: "Get instant Medical Checkup at Home",
@@ -13,7 +13,7 @@ export const offers = [
         btnText: "Book now",
         bgColor: "bg-[#EA9F9F]", // Black tone
         textColor: "text-white",
-        image: "/images/medical-checkup.jpg",
+        image: "/images/MedicalServices/medical-checkup.jpg",
     },
     {
         title: "Wash & Shine Your Car within Minutes",
@@ -21,7 +21,7 @@ export const offers = [
         btnText: "Book now",
         bgColor: "bg-[#757575]", // Light greyish tone
         textColor: "text-gray-900",
-        image: "/images/car-washing.jpg",
+        image: "/images/Cleaning/car-washing.jpg",
     },
     {
         title: "Get Instant Electrical Repairs",
@@ -29,7 +29,7 @@ export const offers = [
         btnText: "Book now",
         bgColor: "bg-[#9EBEEA]",
         textColor: "text-white",
-        image: "/images/electrician.jpg",
+        image: "/images/Repairing/electrician.jpg",
     },
     {
         title: "Aquaguard Service & Repair",
@@ -37,7 +37,7 @@ export const offers = [
         btnText: "Book now",
         bgColor: "bg-[#BFD4B5]", // Olive green tone
         textColor: "text-white",
-        image: "/images/aquaguard-service.jpg",
+        image: "/images/Plumbing/aquaguard-service.jpg",
     },
     {
         title: "Parlour Services at Your Doorstep",
@@ -45,6 +45,6 @@ export const offers = [
         btnText: "Book now",
         bgColor: "bg-[#E7AF74]", // Black tone
         textColor: "text-white",
-        image: "/images/parlour.jpg",
+        image: "/images/Parlour/parlour.jpg",
     }
 ];
