@@ -35,7 +35,7 @@ const Header = () => {
                     <div className='items-center gap-6 hidden lg:flex'>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <div className="flex items-center cursor-pointer font-bold hover:text-black transition-colors">
+                                <div className="flex items-center px-2 py-2 cursor-pointer font-bold hover:text-black transition-colors">
                                     <span>Categories</span>
                                     <ChevronDown className="w-4 h-4 inline-block ml-1 text-gray-400" />
                                 </div>
