@@ -10,6 +10,7 @@ import {
     ShieldCheck
 } from 'lucide-react';
 import { userData } from '../data/User';
+import { Button } from './ui/button';
 
 const ProfileSection = () => {
     const menuItems = [
@@ -70,7 +71,7 @@ const ProfileSection = () => {
                                     className="p-6 flex items-center justify-between hover:bg-gray-50 cursor-pointer transition-all group"
                                 >
                                     <div className="flex items-center gap-5">
-                                        <div className="p-3 bg-gray-100 rounded-2xl group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                        <div className="p-3 bg-gray-100 rounded-2xl group-hover:bg-black group-hover:text-white transition-colors">
                                             <item.icon className="w-6 h-6" />
                                         </div>
                                         <div>
@@ -85,11 +86,11 @@ const ProfileSection = () => {
                     </div>
 
                     {/* Promotional Banner inside Profile */}
-                    <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-8 rounded-[2.5rem] text-white flex justify-between items-center relative overflow-hidden">
+                    <div className="bg-linear-to-br from-gray-900 to-gray-500 p-8 rounded-[2.5rem] text-white flex justify-between items-center relative overflow-hidden">
                         <div className="z-10">
-                            <p className="text-xs font-black uppercase tracking-widest mb-2 opacity-80">Plus Membership</p>
-                            <h4 className="text-xl font-bold mb-4">Save ₹200 on every booking</h4>
-                            <button className="bg-white text-blue-600 px-6 py-2 rounded-xl font-bold text-sm">Renew Now</button>
+                            <p className="text-xs text-red-500 font-bold uppercase tracking-widest mb-2 opacity-80">Plus Membership</p>
+                            <h4 className="text-xl font-bold mb-4">Save 10% on every booking</h4>
+                            <Button className="bg-white  px-6 py-2 rounded-xl font-bold text-sm">Renew Now</Button>
                         </div>
                         <Package className="w-32 h-32 absolute -right-4 -bottom-4 opacity-20 rotate-12" />
                     </div>

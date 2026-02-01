@@ -3,6 +3,7 @@ import Home from './pages/Home';
 import Profile from './pages/Profile';
 import OrderHistoryPage from './pages/OrderHistoryPage';
 import SettingsPage from './components/Settings';
+import CategoriesPage from './pages/CategoriesPage';
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
       <Routes>
         {/* Aapka Home page path */}
         <Route path="/" element={<Home/>} />
+        <Route path="/categories" element={<CategoriesPage/>} />
         <Route path="/order-history" element={<OrderHistoryPage/>} />
         
         {/* Profile page path */}

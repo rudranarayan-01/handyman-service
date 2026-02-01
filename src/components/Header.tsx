@@ -42,14 +42,13 @@ const Header = () => {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
                                 <DropdownMenuGroup>
-                                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                                    <DropdownMenuItem>Profile</DropdownMenuItem>
-                                    <DropdownMenuItem>Billing</DropdownMenuItem>
-                                </DropdownMenuGroup>
-                                <DropdownMenuGroup>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem>Team</DropdownMenuItem>
-                                    <DropdownMenuItem>Subscription</DropdownMenuItem>
+                                    {/* <DropdownMenuLabel>Home Maintenance</DropdownMenuLabel> */}
+                                    <DropdownMenuItem>Home Maintenance</DropdownMenuItem>
+                                    <DropdownMenuItem>Cleaning & Pest Control</DropdownMenuItem>
+                                    <DropdownMenuItem>Appliance Repair</DropdownMenuItem>
+                                    <DropdownMenuItem>Home Renovations</DropdownMenuItem>
+                                    <DropdownMenuItem>Security & Smart Home</DropdownMenuItem>
+                                    <DropdownMenuItem>Outdoor & Lifestyle</DropdownMenuItem>
                                 </DropdownMenuGroup>
                             </DropdownMenuContent>
                         </DropdownMenu>

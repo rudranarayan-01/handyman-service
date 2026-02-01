@@ -1,5 +1,5 @@
+import { categories } from "@/data/HeroDisplayCategories";
 import { Search } from "lucide-react";
-import { categories } from '@/data/Categories';
 // import { categories } from '../data/categories';
 
 const HeroSection = () => {
