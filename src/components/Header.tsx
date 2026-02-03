@@ -78,11 +78,11 @@ const Header = () => {
 
                 {/* Right: Actions */}
                 <div className="flex items-center gap-4">
-                    <Button className="p-2.5 hover:bg-gray-100 rounded-full transition-colors border border-transparent hover:border-gray-200">
-                        <a href="/shopping-cart">
+                    <a href="/shopping-cart">
+                        <Button className="p-2.5 hover:bg-gray-100 rounded-full transition-colors border border-transparent hover:border-gray-200">
                             <ShoppingCart className="w-5 h-5 text-white" />
-                        </a>
-                    </Button>
+                        </Button>
+                    </a>
 
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>

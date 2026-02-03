@@ -5,24 +5,29 @@ import OrderHistoryPage from './pages/OrderHistoryPage';
 import SettingsPage from './components/Settings';
 import ContactPage from './pages/ContactPage';
 import CategoriesPage from './pages/ServiceHomePage';
-import AllServices from './components/AllServices';
+import ShoppingPage from './pages/ShoppingPage';
+import CheckoutPage from './pages/CheckoutPage';
+import { CartProvider } from './context/CartContext';
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        {/* Aapka Home page path */}
-        <Route path="/" element={<Home/>} />
-        <Route path="/services" element={<CategoriesPage/>} />
-        <Route path="/order-history" element={<OrderHistoryPage/>} />
-        <Route path="/categories/:categoryId" element={<AllServices />} />
-        
-        {/* Profile page path */}
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/:username/settings" element={<SettingsPage />} />
-        <Route path="/contact" element={<ContactPage />} />
-      </Routes>
-    </Router>
+    <CartProvider>
+      <Router>
+        <Routes>
+          {/* Aapka Home page path */}
+          <Route path="/" element={<Home />} />
+          <Route path="/services" element={<CategoriesPage />} />
+          <Route path="/order-history" element={<OrderHistoryPage />} />
+          <Route path="/categories/:categoryId" element={<ShoppingPage />} />
+
+          {/* Profile page path */}
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/:username/settings" element={<SettingsPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/shopping-cart" element={<CheckoutPage />} />
+        </Routes>
+      </Router>
+    </CartProvider>
   );
 }
 
