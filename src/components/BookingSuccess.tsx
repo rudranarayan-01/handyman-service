@@ -50,9 +50,7 @@ const BookingSuccess = () => {
                             Back to Home
                         </Button>
                     </Link>
-                    <button className="flex items-center gap-2 mx-auto text-sm font-black text-gray-400 hover:text-blue-600 transition-colors py-2">
-                        TRACK BOOKING <ArrowRight className="w-4 h-4" />
-                    </button>
+                    
                 </div>
             </div>
         </div>

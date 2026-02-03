@@ -8,6 +8,7 @@ import CategoriesPage from './pages/ServiceHomePage';
 import ShoppingPage from './pages/ShoppingPage';
 import CheckoutPage from './pages/CheckoutPage';
 import { CartProvider } from './context/CartContext';
+import BookingSuccess from './components/BookingSuccess';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="/:username/settings" element={<SettingsPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/shopping-cart" element={<CheckoutPage />} />
+          <Route path="/booking-success" element={<BookingSuccess />} />
         </Routes>
       </Router>
     </CartProvider>
