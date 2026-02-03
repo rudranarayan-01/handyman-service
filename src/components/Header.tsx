@@ -43,12 +43,12 @@ const Header = () => {
                             <DropdownMenuContent>
                                 <DropdownMenuGroup>
                                     {/* <DropdownMenuLabel>Home Maintenance</DropdownMenuLabel> */}
-                                    <DropdownMenuItem>Home Maintenance</DropdownMenuItem>
-                                    <DropdownMenuItem>Cleaning & Pest Control</DropdownMenuItem>
-                                    <DropdownMenuItem>Appliance Repair</DropdownMenuItem>
-                                    <DropdownMenuItem>Home Renovations</DropdownMenuItem>
-                                    <DropdownMenuItem>Security & Smart Home</DropdownMenuItem>
-                                    <DropdownMenuItem>Outdoor & Lifestyle</DropdownMenuItem>
+                                    <DropdownMenuItem><a href="/categories/home-maintenance">Home Maintenance</a></DropdownMenuItem>
+                                    <DropdownMenuItem><a href="/categories/cleaning-pest-control">Cleaning & Pest Control</a></DropdownMenuItem>
+                                    <DropdownMenuItem><a href="/categories/appliance-repair">Appliance Repair</a></DropdownMenuItem>
+                                    <DropdownMenuItem><a href="/categories/home-renovations">Home Renovations</a></DropdownMenuItem>
+                                    <DropdownMenuItem><a href="/categories/security-smart-home">Security & Smart Home</a></DropdownMenuItem>
+                                    <DropdownMenuItem><a href="/categories/outdoor-lifestyle">Outdoor & Lifestyle</a></DropdownMenuItem>
                                 </DropdownMenuGroup>
                             </DropdownMenuContent>
                         </DropdownMenu>

@@ -3,8 +3,9 @@ import Home from './pages/Home';
 import Profile from './pages/Profile';
 import OrderHistoryPage from './pages/OrderHistoryPage';
 import SettingsPage from './components/Settings';
-import CategoriesPage from './pages/CategoriesPage';
 import ContactPage from './pages/ContactPage';
+import CategoriesPage from './pages/ServiceHomePage';
+import AllServices from './components/AllServices';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/" element={<Home/>} />
         <Route path="/services" element={<CategoriesPage/>} />
         <Route path="/order-history" element={<OrderHistoryPage/>} />
+        <Route path="/categories/:categoryId" element={<AllServices />} />
         
         {/* Profile page path */}
         <Route path="/profile" element={<Profile />} />
