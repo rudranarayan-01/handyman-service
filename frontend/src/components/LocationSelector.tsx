@@ -17,7 +17,7 @@ const LocationSelector = () => {
     
     // Step 3: Define ref as HTMLDivElement to fix 'contains' error
     const dropdownRef = useRef<HTMLDivElement>(null);
-    const GOOGLE_API_KEY = "AIzaSyBC8kMi6HizxNXkhsVXJamSN88BWkVlWvA";
+    const GOOGLE_API_KEY = import.meta.env.GOOGLE_MAP_API_KEY;
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
