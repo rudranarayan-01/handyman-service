@@ -12,7 +12,7 @@ import {
 import LocationSelector from './LocationSelector';
 import { Button } from './ui/button';
 import { Link, useNavigate } from 'react-router-dom';
-import { SignedIn, SignedOut, SignInButton, useClerk, UserButton, useUser } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, SignInButton, useClerk, useUser } from "@clerk/clerk-react";
 
 const Header = () => {
     const { cartItems } = useCart(); // Cart count ke liye
@@ -21,7 +21,7 @@ const Header = () => {
     const navigate = useNavigate();
 
     return (
-        <nav className="fixed top-0 left-0 right-0 z-50 w-full bg-white border-b border-gray-100 backdrop-blur-md bg-white/90">
+        <nav className="fixed top-0 left-0 right-0 z-50 w-full bg-white border-b border-gray-100 backdrop-blur-md">
             <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
 
                 {/* Left: Logo & Links */}
