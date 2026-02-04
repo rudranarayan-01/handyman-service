@@ -99,29 +99,29 @@ const Header = () => {
                     <SignedIn>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <button className="flex items-center gap-2 p-1 pr-3 border border-gray-100 rounded-2xl hover:bg-gray-50 transition-all outline-none">
+                                <div className="flex items-center gap-2 pr-3 border border-gray-100 rounded-2xl hover:bg-gray-100 transition-all outline-none">
                                     <img
                                         src={user?.imageUrl}
                                         alt="profile"
-                                        className="w-6 h-6 rounded-xl border border-gray-100 object-cover"
+                                        className="w-8 h-8 rounded-2xl border border-gray-100 object-cover"
                                     />
-                                    <ChevronDown className="w-4 h-4 text-gray-400" />
-                                </button>
+                                    <ChevronDown className="w-4 h-4 text-gray-600" />
+                                </div>
                             </DropdownMenuTrigger>
 
                             <DropdownMenuContent className="w-64 mt-2 rounded-[1.5rem] p-3 shadow-2xl border-gray-100" align="end">
-                                <DropdownMenuLabel className="px-3 py-4">
+                                <DropdownMenuLabel className="px-3">
                                     <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Account</p>
                                     <p className="text-sm font-black text-gray-900 truncate">{user?.fullName || user?.primaryEmailAddress?.emailAddress}</p>
                                 </DropdownMenuLabel>
 
                                 <DropdownMenuSeparator className="bg-gray-50" />
 
-                                <DropdownMenuGroup className="py-2">
+                                <DropdownMenuGroup className="">
                                     {/* Direct Redirect to /profile */}
                                     <DropdownMenuItem
                                         onClick={() => navigate('/profile')}
-                                        className="rounded-xl py-3 cursor-pointer group"
+                                        className="rounded-xl py-1 cursor-pointer group"
                                     >
                                         <UserCircle className="w-5 h-5 mr-3 text-gray-400 group-hover:text-blue-600" />
                                         <span className="font-bold text-gray-700">My Profile</span>
@@ -140,7 +140,7 @@ const Header = () => {
 
                                 <DropdownMenuItem
                                     onClick={() => signOut()}
-                                    className="rounded-xl py-3 cursor-pointer text-red-600 focus:bg-red-50 focus:text-red-600 group"
+                                    className="rounded-xl py-2 cursor-pointer text-red-600 focus:bg-red-50 focus:text-red-600 group"
                                 >
                                     <LogOut className="w-5 h-5 mr-3" />
                                     <span className="font-black uppercase text-[11px] tracking-widest">Logout</span>
