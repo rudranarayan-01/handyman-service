@@ -1,6 +1,4 @@
-import React from 'react';
 import {
-    User,
     Package,
     MapPin,
     CreditCard,
@@ -9,15 +7,24 @@ import {
     ChevronRight,
     ShieldCheck
 } from 'lucide-react';
-import { userData } from '../data/User';
+// Clerk Hooks
+import { useUser, useClerk } from "@clerk/clerk-react";
 import { Button } from './ui/button';
+import { useNavigate } from 'react-router-dom';
 
 const ProfileSection = () => {
+    const { user, isLoaded } = useUser(); // Get real Clerk user
+    const { signOut } = useClerk(); // Get Clerk sign out method
+    const navigate = useNavigate();
+
+    // Show loading state while Clerk fetches user data
+    if (!isLoaded) return <div className="min-h-screen flex items-center justify-center font-black">LOADING...</div>;
+
     const menuItems = [
-        { icon: Package, label: 'My Bookings', desc: 'View and manage your services' },
-        { icon: MapPin, label: 'Saved Addresses', desc: 'Manage your service locations' },
-        { icon: CreditCard, label: 'UC Plus Membership', desc: 'Active until Dec 2026' },
-        { icon: Settings, label: 'Settings', desc: 'Privacy and account settings' },
+        { icon: Package, label: 'My Bookings', desc: 'View and manage your services', link: '/order-history' },
+        { icon: MapPin, label: 'Saved Addresses', desc: 'Manage your service locations', link: '#' },
+        { icon: CreditCard, label: 'UC Plus Membership', desc: 'Active until Dec 2026', link: '#' },
+        { icon: Settings, label: 'Settings', desc: 'Privacy and account settings', link: '#' },
     ];
 
     return (
@@ -29,28 +36,34 @@ const ProfileSection = () => {
                     <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 flex flex-col items-center text-center">
                         <div className="relative mb-4">
                             <img
-                                src={userData.avatar}
+                                src={user?.imageUrl} // Clerk Dynamic Avatar
                                 className="w-24 h-24 rounded-full border-4 border-blue-50 object-cover"
                                 alt="Profile"
                             />
                             <div className="absolute bottom-0 right-0 bg-green-500 border-4 border-white w-6 h-6 rounded-full" />
                         </div>
-                        <h2 className="text-2xl font-bold text-gray-900">{userData.name}</h2>
-                        <p className="text-gray-500 font-medium text-sm mb-6">{userData.phone}</p>
+                        <h2 className="text-2xl font-bold text-gray-900">{user?.fullName || "User"}</h2>
+                        <p className="text-gray-500 font-medium text-sm mb-6">
+                            {user?.primaryEmailAddress?.emailAddress}
+                        </p>
 
                         <div className="w-full pt-6 border-t border-gray-100 grid grid-cols-2 gap-4">
                             <div className="text-center">
-                                <p className="text-xl font-bold text-gray-900">{userData.stats.totalBookings}</p>
+                                {/* Note: Stats will later come from your Node.js backend */}
+                                <p className="text-xl font-bold text-gray-900">12</p>
                                 <p className="text-[10px] uppercase font-black text-gray-400 tracking-widest">Bookings</p>
                             </div>
                             <div className="text-center border-l border-gray-100">
-                                <p className="text-xl font-bold text-gray-900">{userData.stats.savedAddresses}</p>
+                                <p className="text-xl font-bold text-gray-900">4</p>
                                 <p className="text-[10px] uppercase font-black text-gray-400 tracking-widest">Saved Info</p>
                             </div>
                         </div>
                     </div>
 
-                    <button className="w-full bg-white text-red-500 font-bold py-4 rounded-2xl shadow-sm border border-red-50 hover:bg-red-50 transition-all flex items-center justify-center gap-2">
+                    <button 
+                        onClick={() => signOut(() => navigate("/"))}
+                        className="w-full bg-white text-red-500 font-bold py-4 rounded-2xl shadow-sm border border-red-50 hover:bg-red-50 transition-all flex items-center justify-center gap-2"
+                    >
                         <LogOut className="w-5 h-5" /> Logout
                     </button>
                 </div>
@@ -68,6 +81,7 @@ const ProfileSection = () => {
                             {menuItems.map((item, index) => (
                                 <div
                                     key={index}
+                                    onClick={() => item.link !== '#' && navigate(item.link)}
                                     className="p-6 flex items-center justify-between hover:bg-gray-50 cursor-pointer transition-all group"
                                 >
                                     <div className="flex items-center gap-5">
@@ -85,12 +99,12 @@ const ProfileSection = () => {
                         </div>
                     </div>
 
-                    {/* Promotional Banner inside Profile */}
+                    {/* Promotional Banner */}
                     <div className="bg-linear-to-br from-gray-900 to-gray-500 p-8 rounded-[2.5rem] text-white flex justify-between items-center relative overflow-hidden">
                         <div className="z-10">
-                            <p className="text-xs text-red-500 font-bold uppercase tracking-widest mb-2 opacity-80">Plus Membership</p>
+                            <p className="text-xs text-red-400 font-bold uppercase tracking-widest mb-2 opacity-80">Plus Membership</p>
                             <h4 className="text-xl font-bold mb-4">Save 10% on every booking</h4>
-                            <Button className="bg-white  px-6 py-2 rounded-xl font-bold text-sm">Renew Now</Button>
+                            <Button className="bg-white text-gray-100 hover:bg-gray-100 px-6 py-2 rounded-xl font-bold text-sm">Renew Now</Button>
                         </div>
                         <Package className="w-32 h-32 absolute -right-4 -bottom-4 opacity-20 rotate-12" />
                     </div>
