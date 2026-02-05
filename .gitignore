@@ -23,7 +23,10 @@ dist-ssr
 *.sln
 *.sw?
 
-# Environment files
-frontend/.env
-backend/.env
-**/.env
+
+
+# Ignore environment variables
+.env
+.env.local
+node_modules/
+dist/
