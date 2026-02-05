@@ -2,11 +2,15 @@ import express, { Request, Response } from 'express';
 import cors from 'cors';
 import * as dotenv from 'dotenv';
 import { clerkMiddleware, getAuth } from '@clerk/express';
+import connectDB from './db';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Connect to Database
+connectDB();
 
 app.use(cors());
 app.use(express.json());
