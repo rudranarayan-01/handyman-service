@@ -5,6 +5,8 @@ dotenv.config();
 
 import connectDB from './db';
 import serviceRoutes from './routes/serviceRoutes'; // Import router
+import authRoutes from './routes/authRoutes';
+import orderRoutes from './routes/orderRoutes';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -16,6 +18,8 @@ app.use(express.json());
 
 // Base Prefix Setup
 app.use('/api/v1/services', serviceRoutes);
+app.use('/api/v1/auth',authRoutes)
+app.use("/api/v1/bookings",orderRoutes)
 
 app.get('/', (req, res) => {
     res.send('Handyman API V1 is live! 🚀');
