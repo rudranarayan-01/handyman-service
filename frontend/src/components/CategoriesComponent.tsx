@@ -1,20 +1,20 @@
-import{ useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '@/api/api';
 import { Search } from 'lucide-react';
 import { categoryMeta } from '@/constants/categories';
-
 
 const CategoryPage = () => {
   const navigate = useNavigate();
   const [allServices, setAllServices] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Fetch ALL services once to count them for each category
+  // Fetch data to get service counts
   useEffect(() => {
     const fetchAllData = async () => {
       try {
-        const res = await api.get('/categories');
+        // Tip: Ensure your backend route returns all services or counts
+        const res = await api.get('/services'); 
         setAllServices(res.data);
       } catch (err) {
         console.error("Error fetching services for count:", err);
@@ -59,13 +59,17 @@ const CategoryPage = () => {
           {categoriesList.map((catName) => {
             const meta = categoryMeta[catName];
             
-            // Real count from DB data
+            // 1. Create Slug: "Appliance Repair" -> "appliance-repair"
+            const catSlug = catName.toLowerCase().replace(/\s+/g, '-');
+            
+            // 2. Real count logic
             const serviceCount = allServices.filter(s => s.category === catName).length;
 
             return (
               <div 
                 key={catName}
-                onClick={() => navigate(`/categories-list?name=${encodeURIComponent(catName)}`)}
+                // FIXED: Using catSlug here
+                onClick={() => navigate(`/categories/${catSlug}`)}
                 className="group relative h-80 rounded-3xl overflow-hidden cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-500"
               >
                 {/* Background Image */}
@@ -76,7 +80,7 @@ const CategoryPage = () => {
                 />
                 
                 {/* Dark Overlay Gradient */}
-                <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent transition-opacity group-hover:opacity-90" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent transition-opacity group-hover:opacity-90" />
 
                 {/* Content */}
                 <div className="absolute inset-0 p-8 flex flex-col justify-end">

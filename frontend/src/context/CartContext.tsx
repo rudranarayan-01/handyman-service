@@ -1,42 +1,34 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
-interface CartItem {
-    id: string;
-    title: string;
-    price: number;
-    image: string;
-    quantity: number;
-}
-
-interface CartContextType {
-    cartItems: CartItem[];
-    addToCart: (item: any) => void;
-    removeFromCart: (id: string) => void;
-    totalAmount: number;
-}
-
-const CartContext = createContext<CartContextType | undefined>(undefined);
+const CartContext = createContext<any>(null);
 
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
-    const [cartItems, setCartItems] = useState<CartItem[]>([]);
+    // 1. Initial State LocalStorage se uthao taaki refresh par data na jaye
+    const [cartItems, setCartItems] = useState<any[]>(() => {
+        const savedCart = localStorage.getItem('handyman_cart');
+        return savedCart ? JSON.parse(savedCart) : [];
+    });
 
-    const addToCart = (product: any) => {
+    // 2. Jab bhi cart change ho, LocalStorage update karo
+    useEffect(() => {
+        localStorage.setItem('handyman_cart', JSON.stringify(cartItems));
+    }, [cartItems]);
+
+    const addToCart = (service: any) => {
         setCartItems((prev) => {
-            const existing = prev.find((item) => item.id === product.id);
-            if (existing) {
-                return prev.map((item) =>
-                    item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
-                );
-            }
-            return [...prev, { ...product, quantity: 1 }];
+            // Check if already exists using _id (MongoDB style)
+            const exists = prev.find(item => item._id === service._id);
+            if (exists) return prev;
+            return [...prev, service];
         });
     };
 
     const removeFromCart = (id: string) => {
-        setCartItems((prev) => prev.filter((item) => item.id !== id));
+        // FIXED: _id use kar rahe hain delete ke liye
+        setCartItems((prev) => prev.filter(item => item._id !== id));
     };
 
-    const totalAmount = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    const totalAmount = cartItems.reduce((acc, item) => acc + (item.price || 0), 0);
 
     return (
         <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, totalAmount }}>
@@ -45,8 +37,4 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     );
 };
 
-export const useCart = () => {
-    const context = useContext(CartContext);
-    if (!context) throw new Error("useCart must be used within CartProvider");
-    return context;
-};
+export const useCart = () => useContext(CartContext);

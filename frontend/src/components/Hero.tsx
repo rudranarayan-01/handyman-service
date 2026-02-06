@@ -1,5 +1,6 @@
 import { categories } from "@/data/HeroDisplayCategories";
 import { Search } from "lucide-react";
+import { Link } from "react-router-dom";
 // import { categories } from '../data/categories';
 
 const HeroSection = () => {
@@ -71,9 +72,11 @@ const HeroSection = () => {
                                 <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-1">Emergency</span>
                                 <span className="text-lg font-bold">Secure & Easy Booking </span>
                             </div>
+                            <Link to="categories">
                             <button className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-blue-500/20">
                                 Explore
                             </button>
+                            </Link>
                         </div>
                     
                 </div>

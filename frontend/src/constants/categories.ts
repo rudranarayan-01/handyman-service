@@ -1,3 +1,4 @@
+import { Search, Wind, Droplets, Zap, Paintbrush, Hammer, Sparkles, ShieldCheck, Home, TreePine } from 'lucide-react';
 export const CATEGORIES = [
     "Home Maintenance",
     "Cleaning & Pest Control",
@@ -7,12 +8,11 @@ export const CATEGORIES = [
     "Outdoor & Lifestyle"
 ];
 
-import { Search, Wind, Droplets, Zap, Paintbrush, Hammer, Sparkles, ShieldCheck, Home, TreePine } from 'lucide-react';
 export const categoryMeta: Record<string, { icon: any, image: string }> = {
-  'Home Maintenance': { icon: Sparkles, image: '/images/categories/cleaning.jpg' },
-  'Cleaning & Pest Control': { icon: Droplets, image: '/images/categories/plumbing.jpg' },
-  'Appliance Repair': { icon: Hammer, image: '/images/categories/appliance.jpg' },
-  'Home Renovations': { icon: Home, image: '/images/categories/paint.jpg' },
-  'Security & Smart Home': { icon: ShieldCheck, image: '/images/categories/outdoor.jpg' },
-  'Outdoor & Lifestyle': { icon: TreePine, image: '/images/categories/outdoor.jpg' },
+  'Home Maintenance': { icon: Sparkles, image: '/images/home-maintainance.png' },
+  'Cleaning & Pest Control': { icon: Droplets, image: '/images/Cleaning/cleaning.jpg' },
+  'Appliance Repair': { icon: Hammer, image: '/images/applience-repair-wallpaper.jpg' },
+  'Home Renovations': { icon: Home, image: '/images/home-renovation-wallpaper.jpeg' },
+  'Security & Smart Home': { icon: ShieldCheck, image: '/images/smart-home-wallpaper.jpeg' },
+  'Outdoor & Lifestyle': { icon: TreePine, image: '/images/garden-maintenance.jpg' },
 };

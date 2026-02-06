@@ -4,9 +4,9 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 import connectDB from './db';
-import serviceRoutes from './routes/categoryRoutes'; // Import router
 import authRoutes from './routes/authRoutes';
 import orderRoutes from './routes/orderRoutes';
+import serviceRoutes from './routes/serviceRoutes';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -17,9 +17,9 @@ app.use(cors());
 app.use(express.json());
 
 // Base Prefix Setup
-app.use('/api/v1/', serviceRoutes);
 app.use('/api/v1/auth',authRoutes)
 app.use("/api/v1/bookings",orderRoutes)
+app.use('/api/v1/services', serviceRoutes); // Yahan 'serviceRoutes' ek function (router) hona chahiye.
 
 app.get('/', (req, res) => {
     res.send('Handyman API V1 is live! 🚀');
