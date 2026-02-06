@@ -4,7 +4,7 @@ import { Service } from '../models/Service';
 const router = express.Router();
 
 // Get all services
-router.get('/', async (req, res) => {
+router.get('/categories', async (req, res) => {
     try {
         const services = await Service.find();
         res.json(services);

@@ -4,7 +4,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 import connectDB from './db';
-import serviceRoutes from './routes/serviceRoutes'; // Import router
+import serviceRoutes from './routes/categoryRoutes'; // Import router
 import authRoutes from './routes/authRoutes';
 import orderRoutes from './routes/orderRoutes';
 
@@ -17,7 +17,7 @@ app.use(cors());
 app.use(express.json());
 
 // Base Prefix Setup
-app.use('/api/v1/services', serviceRoutes);
+app.use('/api/v1/', serviceRoutes);
 app.use('/api/v1/auth',authRoutes)
 app.use("/api/v1/bookings",orderRoutes)
 

@@ -13,6 +13,7 @@ import LocationSelector from './LocationSelector';
 import { Button } from './ui/button';
 import { Link, useNavigate } from 'react-router-dom';
 import { SignedIn, SignedOut, SignInButton, useClerk, useUser } from "@clerk/clerk-react";
+import { CATEGORIES } from '@/constants/categories';
 
 const Header = () => {
     const { cartItems } = useCart(); // Cart count ke liye
@@ -46,12 +47,19 @@ const Header = () => {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
                                 <DropdownMenuGroup>
-                                    <DropdownMenuItem><a href="/categories/home-maintenance">Home Maintenance</a></DropdownMenuItem>
+                                    {/* <DropdownMenuItem><a href="/categories/home-maintenance">Home Maintenance</a></DropdownMenuItem>
                                     <DropdownMenuItem><a href="/categories/cleaning-pest-control">Cleaning & Pest Control</a></DropdownMenuItem>
                                     <DropdownMenuItem><a href="/categories/appliance-repair">Appliance Repair</a></DropdownMenuItem>
                                     <DropdownMenuItem><a href="/categories/home-renovations">Home Renovations</a></DropdownMenuItem>
                                     <DropdownMenuItem><a href="/categories/security-smart-home">Security & Smart Home</a></DropdownMenuItem>
-                                    <DropdownMenuItem><a href="/categories/outdoor-lifestyle">Outdoor & Lifestyle</a></DropdownMenuItem>
+                                    <DropdownMenuItem><a href="/categories/outdoor-lifestyle">Outdoor & Lifestyle</a></DropdownMenuItem> */}
+                                    {CATEGORIES.map(cat => (
+                                        <DropdownMenuItem key={cat}>
+                                            <Link to={`/categories?name=${encodeURIComponent(cat)}`}>
+                                                {cat}
+                                            </Link>
+                                        </DropdownMenuItem>
+                                    ))}
                                 </DropdownMenuGroup>
                             </DropdownMenuContent>
 

@@ -15,9 +15,8 @@ const AllServices = () => {
     const pageTitle = categoryId?.replace(/-/g, ' ');
 
     return (
-        <div className="min-h-screen bg-[#F9FBFF] pb-32 mt-15 relative">
-            {/* Sticky Header */}
-            <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 px-6 py-4">
+        <div className="min-h-screen bg-[#F9FBFF] pb-32 mt-20 ">
+            <nav className=" top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 px-6 py-4">
                 <div className="max-w-6xl mx-auto flex items-center justify-between">
                     <Link to="/" className="flex items-center gap-2 font-bold text-gray-800 hover:text-blue-600 transition-all">
                         <ChevronLeft className="w-5 h-5" />
