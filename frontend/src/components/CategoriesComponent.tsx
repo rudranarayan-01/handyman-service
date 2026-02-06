@@ -76,11 +76,12 @@ const CategoryPage = () => {
                 <img 
                   src={meta.image} 
                   alt={catName} 
+                  loading="lazy"
                   className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
                 
                 {/* Dark Overlay Gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent transition-opacity group-hover:opacity-90" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent transition-opacity group-hover:opacity-90" />
 
                 {/* Content */}
                 <div className="absolute inset-0 p-8 flex flex-col justify-end">

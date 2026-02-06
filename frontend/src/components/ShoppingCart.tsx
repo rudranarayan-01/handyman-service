@@ -5,9 +5,9 @@ import { useCart } from '@/context/CartContext';
 
 const ShoppingCart = () => {
     const { cartItems, totalAmount, removeFromCart } = useCart();
-    const navigate = useNavigate();
     const serviceFee = 49;
     const total = totalAmount + serviceFee;
+    const navigate = useNavigate();
 
     if (cartItems.length === 0) {
         return (
@@ -96,7 +96,7 @@ const ShoppingCart = () => {
                                     <span className="bg-blue-50 text-blue-600 text-[10px] px-3 py-1 rounded-full font-black uppercase">Secure</span>
                                 </div>
 
-                                <Button className="w-full bg-gray-900 text-white h-16 rounded-2xl font-black text-xs uppercase tracking-widest mt-6 hover:bg-blue-600 shadow-lg shadow-gray-200 transition-all active:scale-95">
+                                <Button onClick={() => navigate('/booking-success')} className="w-full bg-gray-900 text-white h-12 rounded-2xl font-black text-xs uppercase tracking-widest mt-6 hover:bg-blue-600 shadow-lg shadow-gray-200 transition-all active:scale-95">
                                     Place Order <CreditCard className="ml-2 w-5 h-5" />
                                 </Button>
                                 
