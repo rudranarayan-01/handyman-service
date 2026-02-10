@@ -30,15 +30,19 @@ router.post('/book', fastAuth, async (req: any, res: any) => {
     }
 });
 
-// Get User's Order History
-router.get('/my-history', requireAuth(), async (req: any, res: any) => {
+// GET: Fetch all orders for the logged-in user
+router.get('/history', fastAuth, async (req: any, res: any) => {
     try {
         const { userId } = req.auth;
-        const history = await Order.find({ userId }).sort({ createdAt: -1 });
-        res.json(history);
-    } catch (err) {
-        res.status(500).json({ error: "History fetch failed" });
+        // Fetch orders and sort by most recent first
+        const orders = await Order.find({ userId }).sort({ bookingDate: -1 });
+
+        res.status(200).json({
+            success: true,
+            orders
+        });
+    } catch (err: any) {
+        res.status(500).json({ error: "Failed to fetch orders", details: err.message });
     }
 });
-
 export default router;
