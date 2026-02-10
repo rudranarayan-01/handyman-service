@@ -16,6 +16,7 @@ const ProfileSection = () => {
     const { user, isLoaded } = useUser(); // Get real Clerk user
     const { signOut } = useClerk(); // Get Clerk sign out method
     const navigate = useNavigate();
+    console.log(user?.id)
 
     // Show loading state while Clerk fetches user data
     if (!isLoaded) return <div className="min-h-screen flex items-center justify-center font-black">LOADING...</div>;

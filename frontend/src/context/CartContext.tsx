@@ -28,10 +28,14 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         setCartItems((prev) => prev.filter(item => item._id !== id));
     };
 
+    const clearCart = () => {
+    setCartItems([]); // Reset the array to empty
+};
+
     const totalAmount = cartItems.reduce((acc, item) => acc + (item.price || 0), 0);
 
     return (
-        <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, totalAmount }}>
+        <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, clearCart, totalAmount }}>
             {children}
         </CartContext.Provider>
     );
