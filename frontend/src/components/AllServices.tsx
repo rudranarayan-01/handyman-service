@@ -6,7 +6,7 @@ import { Button } from './ui/button';
 import api from '@/api/api'; 
 
 const AllServices = () => {
-    const { categoryId } = useParams(); // URL path se slug milega: "appliance-repair"
+    const { categoryId } = useParams();
     const { addToCart, cartItems, totalAmount } = useCart();
     
     const [services, setServices] = useState<any[]>([]);
@@ -20,7 +20,6 @@ const AllServices = () => {
             if (!categoryId) return;
             setLoading(true);
             try {
-                // Backend call: /services/category/appliance-repair
                 const res = await api.get(`/services/category/${categoryId}`);
                 setServices(res.data);
             } catch (err) {

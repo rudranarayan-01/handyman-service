@@ -2,12 +2,33 @@ import { Trash2, ChevronLeft, ShieldCheck, CreditCard, ShoppingBag } from 'lucid
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { useCart } from '@/context/CartContext';
+import api from '@/api/api';
+import { toast } from 'sonner';
 
 const ShoppingCart = () => {
     const { cartItems, totalAmount, removeFromCart } = useCart();
-    const serviceFee = 49;
+    const serviceFee = 19;
     const total = totalAmount + serviceFee;
     const navigate = useNavigate();
+
+    const handlePlaceOrder = async () => {
+        console.log(cartItems, total, serviceFee)
+    try {
+        const payload = {
+            cartItems: cartItems, 
+            totalAmount: total
+        };
+        const response = await api.post('/orders/book', payload);
+
+        if (response.data.success) {
+            console.log("Booking succes")
+            navigate('/booking-success');
+        }
+    } catch (err) {
+        console.error("Order error", err);
+        toast.error("Order not placed");
+    }
+};
 
     if (cartItems.length === 0) {
         return (
@@ -96,7 +117,7 @@ const ShoppingCart = () => {
                                     <span className="bg-blue-50 text-blue-600 text-[10px] px-3 py-1 rounded-full font-black uppercase">Secure</span>
                                 </div>
 
-                                <Button onClick={() => navigate('/booking-success')} className="w-full bg-gray-900 text-white h-12 rounded-2xl font-black text-xs uppercase tracking-widest mt-6 hover:bg-blue-600 shadow-lg shadow-gray-200 transition-all active:scale-95">
+                                <Button onClick={handlePlaceOrder} className="w-full bg-gray-900 text-white h-12 rounded-2xl font-black text-xs uppercase tracking-widest mt-6 hover:bg-blue-600 shadow-lg shadow-gray-200 transition-all active:scale-95">
                                     Place Order <CreditCard className="ml-2 w-5 h-5" />
                                 </Button>
                                 

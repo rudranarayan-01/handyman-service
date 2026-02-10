@@ -9,9 +9,12 @@ import ShoppingPage from './pages/ShoppingPage';
 import CheckoutPage from './pages/CheckoutPage';
 import { CartProvider } from './context/CartContext';
 import BookingSuccess from './components/BookingSuccess';
+import { Toaster } from 'sonner';
 
 function App() {
   return (
+    <>
+    <Toaster position="top-right" />
     <CartProvider>
       <Router>
         <Routes>
@@ -30,6 +33,7 @@ function App() {
         </Routes>
       </Router>
     </CartProvider>
+    </>
   );
 }
 

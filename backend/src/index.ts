@@ -18,8 +18,8 @@ app.use(express.json());
 
 // Base Prefix Setup
 app.use('/api/v1/auth',authRoutes)
-app.use("/api/v1/bookings",orderRoutes)
-app.use('/api/v1/services', serviceRoutes); // Yahan 'serviceRoutes' ek function (router) hona chahiye.
+app.use("/api/v1/orders",orderRoutes)
+app.use('/api/v1/services', serviceRoutes);
 
 app.get('/', (req, res) => {
     res.send('Handyman API V1 is live! 🚀');
