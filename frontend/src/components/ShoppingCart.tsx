@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { useCart } from '@/context/CartContext';
 import api from '@/api/api';
 import { toast } from 'sonner';
-import { useAuth } from '@clerk/clerk-react';
+import { useAuth, useUser } from '@clerk/clerk-react';
 import { useState } from 'react';
+import BackNavigation from './BackNavigation';
 
 const ShoppingCart = () => {
     const { cartItems, totalAmount, removeFromCart, clearCart } = useCart();
@@ -14,6 +15,7 @@ const ShoppingCart = () => {
     const navigate = useNavigate();
     const { getToken } = useAuth();
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const {user} = useUser()
 
     const handlePlaceOrder = async () => {
         if (isSubmitting) return;
@@ -24,7 +26,8 @@ const ShoppingCart = () => {
             
             const payload = {
                 cartItems: cartItems,
-                totalAmount: totalAmount + 19 // Total + Service Fee
+                totalAmount: totalAmount + 19, // Total + Service Fee
+                userEmail: user?.primaryEmailAddress?.emailAddress
             };
 
             const response = await api.post('/orders/book', payload, {
@@ -64,10 +67,7 @@ const ShoppingCart = () => {
         <div className="min-h-screen bg-[#F8FAFC] pb-20 mt-20">
             <div className="bg-white border-b border-gray-100 sticky top-0 z-50">
                 <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
-                    <Link to="/categories" className="flex items-center gap-2 font-bold text-gray-800 hover:text-blue-600 transition-all">
-                        <ChevronLeft className="w-5 h-5" />
-                        <span className="hidden sm:inline">Back to Categories</span>
-                    </Link>
+                    <BackNavigation/>
                     <span className="text-lg font-black uppercase tracking-tighter">Checkout</span>
                     <span className="bg-blue-600 text-white text-[10px] px-2 py-1 rounded-full font-bold">
                         {cartItems.length} {cartItems.length > 1 ? 'ITEMS' : 'ITEM'}

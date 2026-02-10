@@ -10,6 +10,7 @@ import CheckoutPage from './pages/CheckoutPage';
 import { CartProvider } from './context/CartContext';
 import BookingSuccess from './components/BookingSuccess';
 import { Toaster } from 'sonner';
+import OrderDetailsPage from './pages/OrderDetailsPage';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/order-history" element={<OrderHistoryPage />} />
+          <Route path="/order-history/:id" element={<OrderDetailsPage />} />
           <Route path="/categories/:categoryId" element={<ShoppingPage />} />
 
           {/* Profile page path */}

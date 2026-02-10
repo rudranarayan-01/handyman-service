@@ -2,6 +2,7 @@ import express from 'express';
 import { Order } from '../models/Orders';
 import { requireAuth } from '@clerk/express';
 import { fastAuth } from '../middleware/auth';
+import { sendOrderEmail } from '../lib/mail';
 
 const router = express.Router();
 
@@ -9,7 +10,7 @@ const router = express.Router();
 router.post('/book', fastAuth, async (req: any, res: any) => {
     try {
         const { userId } = req.auth;
-        const { cartItems, totalAmount } = req.body;
+        const { cartItems, totalAmount, userEmail } = req.body;
 
         if (!cartItems?.length) return res.status(400).json({ error: "Cart is empty" });
 
@@ -24,6 +25,8 @@ router.post('/book', fastAuth, async (req: any, res: any) => {
             status: 'pending'
         });
 
+        sendOrderEmail(userEmail, newOrder)
+
         res.status(201).json({ success: true, orderId: newOrder._id });
     } catch (err: any) {
         res.status(500).json({ error: "Booking failed", details: err.message });
@@ -37,6 +40,7 @@ router.get('/history', fastAuth, async (req: any, res: any) => {
         // Fetch orders and sort by most recent first
         const orders = await Order.find({ userId }).sort({ bookingDate: -1 });
 
+
         res.status(200).json({
             success: true,
             orders
@@ -45,4 +49,17 @@ router.get('/history', fastAuth, async (req: any, res: any) => {
         res.status(500).json({ error: "Failed to fetch orders", details: err.message });
     }
 });
+
+
+// A specific  Order details
+router.get('/:id', requireAuth(), async (req: any, res: any) => {
+    try {
+        const order = await Order.findById(req.params.id);
+        if (!order) return res.status(404).json({ error: "Order not found" });
+        res.json(order);
+    } catch (err) {
+        res.status(500).json({ error: "Failed to fetch order details" });
+    }
+});
+
 export default router;

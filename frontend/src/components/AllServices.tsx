@@ -4,6 +4,7 @@ import { Star, Plus, ChevronLeft, ShieldCheck, ShoppingBag, Loader2 } from 'luci
 import { useCart } from '@/context/CartContext';
 import { Button } from './ui/button';
 import api from '@/api/api'; 
+import BackNavigation from './BackNavigation';
 
 const AllServices = () => {
     const { categoryId } = useParams();
@@ -12,7 +13,6 @@ const AllServices = () => {
     const [services, setServices] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
-    // Slug ko Title Case mein badalne ke liye (UI display ke liye)
     const pageTitle = categoryId?.replace(/-/g, ' ');
 
     useEffect(() => {
@@ -35,14 +35,7 @@ const AllServices = () => {
     return (
         <div className="min-h-screen bg-[#F9FBFF] pb-32 mt-20">
             {/* Navigation Bar */}
-            <nav className="top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 px-6 py-4">
-                <div className="max-w-6xl mx-auto flex items-center justify-between">
-                    <Link to="/categories" className="flex items-center gap-2 font-bold text-gray-800 hover:text-blue-600 transition-all">
-                        <ChevronLeft className="w-5 h-5" />
-                        <span className="hidden sm:inline">Back to Categories</span>
-                    </Link>
-                </div>
-            </nav>
+            <BackNavigation/>
 
             <main className="max-w-6xl mx-auto px-6 pt-5">
                 <div className="mb-8">
