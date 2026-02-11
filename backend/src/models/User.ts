@@ -18,7 +18,11 @@ const userSchema = new mongoose.Schema({
     firstName: { type: String },
     lastName: { type: String },
     photo: { type: String },
-    role: { type: String, enum: ['user', 'admin', 'manager'], default: 'user' },
+    role: { 
+    type: String, 
+    enum: ['admin', 'manager', 'user'], 
+    default: 'user' 
+  },
     addresses: [addressSchema],
     orders: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }],
 }, { timestamps: true });

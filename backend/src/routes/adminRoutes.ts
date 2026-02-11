@@ -1,17 +1,18 @@
 import express from 'express';
+// IMPORTANT: Use curly braces here!
+import { fastAuth, isAdmin } from '../middleware/auth'; 
 import { User } from '../models/User';
-import { fastAuth, isAdmin } from '../middleware/auth';
 
 const router = express.Router();
 
-// GET all users - Protected: Only Admin/Manager can call this
-router.get('/users', fastAuth, isAdmin, async (req, res) => {
+// This is likely your Line 8
+router.get('/users', fastAuth, isAdmin, async (req: any, res: any) => {
     try {
-        // Fetch users and sort by newest first
         const users = await User.find({}).sort({ createdAt: -1 });
         res.status(200).json(users);
+        console.log("User fetched")
     } catch (err) {
-        res.status(500).json({ error: "Failed to fetch user directory" });
+        res.status(500).json({ error: "Database error" });
     }
 });
 

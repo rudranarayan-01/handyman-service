@@ -11,6 +11,7 @@ import serviceRoutes from './routes/serviceRoutes';
 import userRoutes from "./routes/userRoutes"
 import addressRoutes from "./routes/addressRoutes"
 import adminRoutes from "./routes/adminRoutes"
+import { clerkMiddleware } from '@clerk/express';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -19,6 +20,7 @@ connectDB();
 
 app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 app.use(express.json());
+app.use(clerkMiddleware());
 
 // Base Prefix Setup
 app.use('/api/v1/auth',authRoutes)

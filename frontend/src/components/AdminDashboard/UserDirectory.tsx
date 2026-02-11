@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useAuth } from '@clerk/clerk-react';
 import { Users, ShieldAlert, Trash2, Mail } from 'lucide-react';
 import api from '@/api/api';
@@ -13,9 +12,11 @@ const UserDirectory = () => {
     const fetchUsers = async () => {
       try {
         const token = await getToken();
+        // console.log(token)
         const response = await api.get('/admin/users', {
           headers: { Authorization: `Bearer ${token}` }
         });
+        console.log("User fetched")
         setUsers(response.data);
       } catch (error) {
         console.error("Error fetching users:", error);
