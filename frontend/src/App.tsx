@@ -21,7 +21,7 @@ function App() {
   useUserSync()
   return (
     <>
-    <Toaster position="top-right" />
+    <Toaster position="top-right" richColors/>
     <CartProvider>
       <Router>
         <Routes>
