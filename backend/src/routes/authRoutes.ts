@@ -5,28 +5,28 @@ import { requireAuth } from '@clerk/express';
 const router = express.Router();
 
 
-router.post('/sync-user', requireAuth(), async (req: any, res: any) => {
+router.post('/sync-user', async (req, res) => {
     try {
-        const { userId } = req.auth;
-        const { email, firstName, lastName, photo } = req.body;
+        const { clerkId, email, firstName, lastName, photo } = req.body;
 
-        // Check karo user pehle se hai ya nahi
-        let user = await User.findOne({ clerkId: userId });
+        if (!clerkId) return res.status(400).json({ error: "Missing Clerk ID" });
 
-        if (!user) {
-            user = await User.create({
-                clerkId: userId,
-                email,
-                firstName,
-                lastName,
-                photo
-            });
-            return res.status(201).json({ message: "User synced successfully", user });
-        }
+        // upsert: true ka matlab hai - agar user nahi mila toh bana do, mil gaya toh update karo
+        const user = await User.findOneAndUpdate(
+            { clerkId: clerkId }, // Clerk ID se search karo
+            { 
+                email, 
+                firstName, 
+                lastName, 
+                photo 
+            }, 
+            { new: true, upsert: true }
+        ).populate('orders');
 
-        res.status(200).json({ message: "User already exists", user });
+        res.status(200).json({ success: true, user });
     } catch (err) {
-        res.status(500).json({ error: "Sync failed" });
+        console.error("Sync Error:", err);
+        res.status(500).json({ error: "Database sync failed" });
     }
 });
 

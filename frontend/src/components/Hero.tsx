@@ -14,7 +14,7 @@ const HeroSection = () => {
                 {/* Left Content: Text & Search */}
                 <div className="flex flex-col space-y-8">
                     <div className="space-y-4">
-                        <h1 className="text-5xl lg:text-7xl font-black text-gray-900 leading-[1.1] tracking-tighter uppercase">
+                        <h1 className="text-3xl lg:text-6xl font-black text-gray-900 leading-[1.1] tracking-tighter uppercase">
                             Services at Your <br />
                             <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 to-cyan-500">
                                 Doorstep, Instantly

@@ -11,8 +11,11 @@ import BookingSuccess from './components/BookingSuccess';
 import { Toaster } from 'sonner';
 import OrderDetailsPage from './pages/OrderDetailsPage';
 import SettingPage from './pages/SettingPage';
+import { useUserSync } from './hooks/useUserSync';
+import AddressPage from './pages/AddressPage';
 
 function App() {
+  useUserSync()
   return (
     <>
     <Toaster position="top-right" />
@@ -25,12 +28,13 @@ function App() {
           <Route path="/order-history" element={<OrderHistoryPage />} />
           <Route path="/order-history/:id" element={<OrderDetailsPage />} />
           <Route path="/categories/:categoryId" element={<ShoppingPage />} />
+          <Route path="/booking-success" element={<BookingSuccess />} />
 
           <Route path="/profile" element={<Profile />} />
+          <Route path="/edit-address" element={<AddressPage />} />
           <Route path="/settings" element={<SettingPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/shopping-cart" element={<CheckoutPage />} />
-          <Route path="/booking-success" element={<BookingSuccess />} />
         </Routes>
       </Router>
     </CartProvider>
