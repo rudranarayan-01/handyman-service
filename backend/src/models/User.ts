@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema({
     photo: { type: String },
     role: { type: String, enum: ['user', 'admin'], default: 'user' },
     addresses: [addressSchema],
-    orders: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }]
+    orders: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }],
 }, { timestamps: true });
 
 export const User = mongoose.model('User', userSchema);

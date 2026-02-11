@@ -13,6 +13,8 @@ import OrderDetailsPage from './pages/OrderDetailsPage';
 import SettingPage from './pages/SettingPage';
 import { useUserSync } from './hooks/useUserSync';
 import AddressPage from './pages/AddressPage';
+import PrivaryPage from './pages/PrivaryPage';
+import BlogPage from './pages/BlogPage';
 
 function App() {
   useUserSync()
@@ -31,8 +33,11 @@ function App() {
           <Route path="/booking-success" element={<BookingSuccess />} />
 
           <Route path="/profile" element={<Profile />} />
+          <Route path='/blogs' element={<BlogPage/> } />
+          <Route path="/profile-settings" element={<Profile />} />
           <Route path="/edit-address" element={<AddressPage />} />
           <Route path="/settings" element={<SettingPage />} />
+          <Route path="/privacy" element={<PrivaryPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/shopping-cart" element={<CheckoutPage />} />
         </Routes>

@@ -1,37 +1,40 @@
 import React from 'react';
-import { 
-  User, ShieldCheck, Bell, CreditCard, 
-  Trash2, ChevronRight, Fingerprint, 
-  EyeOff, Smartphone, LogOut 
+import {
+    User, ShieldCheck, Bell, CreditCard,
+    Trash2, ChevronRight, Fingerprint,
+    EyeOff, Smartphone, LogOut
 } from 'lucide-react';
 import { useUser, useClerk } from '@clerk/clerk-react';
-import BackNavigation from './BackNavigation';
+import { Link } from 'react-router-dom';
 
 const Settings = () => {
     const { user } = useUser();
     const { signOut } = useClerk();
 
-    const SettingItem = ({ icon: Icon, title, desc, color = "blue" }: any) => (
-        <div className="group flex items-center justify-between p-4 bg-white border border-gray-100 rounded-[2rem] hover:shadow-xl hover:shadow-gray-200/40 transition-all cursor-pointer">
-            <div className="flex items-center gap-5">
-                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center bg-${color}-50 text-${color}-600 group-hover:scale-110 transition-transform`}>
-                    <Icon size={22} />
+    const SettingItem = ({ icon: Icon, title, desc, color = "blue", url }: any) => (
+        <Link to={url}>
+
+            <div className="group flex items-center justify-between p-4 bg-white border border-gray-100 rounded-[2rem] hover:shadow-xl hover:shadow-gray-200/40 transition-all cursor-pointer">
+                <div className="flex items-center gap-5">
+                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center bg-${color}-50 text-${color}-600 group-hover:scale-110 transition-transform`}>
+                        <Icon size={22} />
+                    </div>
+                    <div>
+                        <h3 className="font-black text-gray-900 uppercase text-sm tracking-tight">{title}</h3>
+                        <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-0.5">{desc}</p>
+                    </div>
                 </div>
-                <div>
-                    <h3 className="font-black text-gray-900 uppercase text-sm tracking-tight">{title}</h3>
-                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-0.5">{desc}</p>
+                <div className="bg-gray-50 p-2 rounded-xl group-hover:bg-gray-900 group-hover:text-white transition-colors">
+                    <ChevronRight size={18} />
                 </div>
             </div>
-            <div className="bg-gray-50 p-2 rounded-xl group-hover:bg-gray-900 group-hover:text-white transition-colors">
-                <ChevronRight size={18} />
-            </div>
-        </div>
+        </Link>
     );
 
     return (
         <div className="min-h-screen bg-[#FDFDFD] pb-20 mt-20">
             {/* <BackNavigation /> */}
-            
+
             <main className="max-w-4xl mx-auto px-6 pt-4">
                 {/* Header Section */}
                 <div className="mb-12 space-y-2">
@@ -44,17 +47,17 @@ const Settings = () => {
                 </div>
 
                 <div className="grid grid-cols-1 gap-10">
-                    
+
                     {/* Profile Quick Look */}
                     <div className="bg-gray-900 rounded-full p-3 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl shadow-gray-200">
                         <div className="flex items-center gap-6">
                             <div className="relative">
-                                <img 
-                                    src={user?.imageUrl} 
-                                    className="w-20 h-20 rounded-full object-cover border-2 border-blue-500 p-1" 
-                                    alt="profile" 
+                                <img
+                                    src={user?.imageUrl}
+                                    className="w-20 h-20 rounded-full object-cover border-2 border-blue-500 p-1"
+                                    alt="profile"
                                 />
-                                
+
                             </div>
                             <div>
                                 <h2 className="text-xl font-black uppercase italic tracking-tight">{user?.fullName}</h2>
@@ -70,29 +73,33 @@ const Settings = () => {
                     <section className="space-y-4">
                         <h2 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.4em] ml-4">Core Settings</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <SettingItem 
-                                icon={ShieldCheck} 
-                                title="Privacy" 
+                            <SettingItem
+                                icon={ShieldCheck}
+                                title="Privacy"
                                 desc="Data sharing & visibility"
                                 color="blue"
+                                url="/privacy"
                             />
-                            <SettingItem 
-                                icon={Smartphone} 
-                                title="Devices" 
+                            <SettingItem
+                                icon={Smartphone}
+                                title="Devices"
                                 desc="Logged in sessions"
                                 color="purple"
+                                url="/active-sessions"
                             />
-                            <SettingItem 
-                                icon={Bell} 
-                                title="Alerts" 
+                            <SettingItem
+                                icon={Bell}
+                                title="Alerts"
                                 desc="Order & security updates"
                                 color="orange"
+                                url="/notification"
                             />
-                            <SettingItem 
-                                icon={CreditCard} 
-                                title="Payments" 
+                            <SettingItem
+                                icon={CreditCard}
+                                title="Payments"
                                 desc="Cards & Transaction history"
                                 color="emerald"
+                                url="/payments-options"
                             />
                         </div>
                     </section>
@@ -114,7 +121,7 @@ const Settings = () => {
                                     </div>
                                     <input type="checkbox" className="toggle-checkbox" />
                                 </div>
-                                
+
                                 <div className="h-px bg-dashed bg-gray-100" />
 
                                 <div className="flex items-center justify-between group">
@@ -135,13 +142,13 @@ const Settings = () => {
 
                     {/* Danger Zone */}
                     <div className="pt-10 flex flex-col md:flex-row items-center justify-between gap-6 border-t border-gray-100">
-                        <button 
+                        <button
                             onClick={() => signOut()}
                             className="flex items-center gap-2 text-gray-100 font-black uppercase text-xs tracking-[0.2em] hover:text-blue-600 transition-colors"
                         >
                             <LogOut size={18} /> Logout
                         </button>
-                        
+
                         <button className="flex items-center gap-3 bg-red-50 text-red-500 px-8 py-4 rounded-[1.5rem] font-black uppercase text-xs tracking-[0.2em] hover:bg-red-500 hover:text-white transition-all">
                             <Trash2 size={18} /> Delete Account
                         </button>

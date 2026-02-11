@@ -14,4 +14,19 @@ router.get('/get-user/:clerkId', async (req, res) => {
         res.status(500).json(err);
     }
 });
+
+router.put('/update-privacy', async (req, res) => {
+    try {
+        const { clerkId, privacySettings } = req.body;
+        const updatedUser = await User.findOneAndUpdate(
+            { clerkId },
+            { $set: { privacySettings } },
+            { new: true }
+        );
+        res.status(200).json({ success: true, user: updatedUser });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err});
+    }
+});
+
 export default router
