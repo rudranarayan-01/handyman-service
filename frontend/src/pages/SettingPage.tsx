@@ -1,12 +1,12 @@
 import Footer from "@/components/Footer"
 import Header from "@/components/Header"
-import SettingsPage from "@/components/Settings"
+import Settings from "@/components/Settings"
 
 const SettingPage = () => {
   return (
     <div>
         <Header/>
-        <SettingsPage/>
+        <Settings/>
         <Footer/>
     </div>
   )

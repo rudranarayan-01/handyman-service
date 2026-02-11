@@ -1,120 +1,155 @@
 import React from 'react';
-import { useParams, Link } from 'react-router-dom';
-import {
-    User,
-    Bell,
-    ShieldCheck,
-    Globe,
-    ChevronRight,
-    ArrowLeft,
-    Smartphone,
-    Lock,
-    LogOut,
-    ChevronLeft
+import { 
+  User, ShieldCheck, Bell, CreditCard, 
+  Trash2, ChevronRight, Fingerprint, 
+  EyeOff, Smartphone, LogOut 
 } from 'lucide-react';
-import { Button } from './ui/button';
+import { useUser, useClerk } from '@clerk/clerk-react';
+import BackNavigation from './BackNavigation';
 
-const SettingsPage = () => {
-    const { username } = useParams();
+const Settings = () => {
+    const { user } = useUser();
+    const { signOut } = useClerk();
 
-    const sections = [
-        {
-            title: "Account Information",
-            items: [
-                { id: 'profile', label: 'Personal Details', icon: User, desc: 'Edit name and profile picture', color: 'text-gray-700' },
-                { id: 'phone', label: 'Phone Number', icon: Smartphone, desc: '+91 98765 43210', color: 'text-gray-700' },
-            ]
-        },
-        {
-            title: "Security & Preferences",
-            items: [
-                { id: 'security', label: 'Password & Security', icon: Lock, desc: 'Manage your login credentials', color: 'text-gray-700' },
-                { id: 'notifications', label: 'Notifications', icon: Bell, desc: 'Control alerts and messages', color: 'text-gray-700' },
-                { id: 'language', label: 'App Language', icon: Globe, desc: 'English (India)', color: 'text-gray-700' },
-            ]
-        }
-    ];
+    const SettingItem = ({ icon: Icon, title, desc, color = "blue" }: any) => (
+        <div className="group flex items-center justify-between p-4 bg-white border border-gray-100 rounded-[2rem] hover:shadow-xl hover:shadow-gray-200/40 transition-all cursor-pointer">
+            <div className="flex items-center gap-5">
+                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center bg-${color}-50 text-${color}-600 group-hover:scale-110 transition-transform`}>
+                    <Icon size={22} />
+                </div>
+                <div>
+                    <h3 className="font-black text-gray-900 uppercase text-sm tracking-tight">{title}</h3>
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-0.5">{desc}</p>
+                </div>
+            </div>
+            <div className="bg-gray-50 p-2 rounded-xl group-hover:bg-gray-900 group-hover:text-white transition-colors">
+                <ChevronRight size={18} />
+            </div>
+        </div>
+    );
 
     return (
-        <div className="min-h-screen bg-[#FDFDFD] text-[#1A1A1A] font-sans">
-            {/* Navbar */}
-            <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
-                <div className="max-w-xl mx-auto px-6 h-16 flex items-center justify-between">
-                    <Link to={`/${username}`} className="flex items-center gap-1 text-gray-500 hover:text-black transition-all">
-                        <ChevronLeft className="w-5 h-5" />
-                        <span className="font-semibold text-sm">Back</span>
-                    </Link>
-                    <h1 className="text-sm font-black uppercase tracking-widest text-gray-400">Settings</h1>
-                    <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-[10px] font-bold">
-                        {username?.charAt(0).toUpperCase()}
-                    </div>
+        <div className="min-h-screen bg-[#FDFDFD] pb-20 mt-20">
+            {/* <BackNavigation /> */}
+            
+            <main className="max-w-4xl mx-auto px-6 pt-4">
+                {/* Header Section */}
+                <div className="mb-12 space-y-2">
+                    <span className="text-2xl font-black text-gray-900 tracking-tighter uppercase">
+                        Account <span className="text-blue-600">Command</span>
+                    </span>
+                    <p className="text-xs font-black text-gray-400 uppercase tracking-[0.3em]">
+                        Manage your digital presence & security
+                    </p>
                 </div>
-            </nav>
 
-            <main className="max-w-xl mx-auto px-6 py-10">
-                {/* Profile Header */}
-                <header className="mb-12">
-                    <h2 className="text-4xl font-black tracking-tight mb-2">Settings</h2>
-                    <p className="text-gray-500 font-medium">Manage your account preferences for <span className="text-black font-bold">@{username}</span></p>
-                </header>
-
-                {/* Dynamic Sections */}
-                <div className="space-y-12">
-                    {sections.map((section, idx) => (
-                        <div key={idx} className="space-y-4">
-                            <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 px-1">
-                                {section.title}
-                            </h3>
-
-                            <div className="bg-white rounded-[1.5rem] border border-gray-100 gap-1.5 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] overflow-hidden">
-                                {section.items.map((item, i) => (
-                                    <button
-                                        key={item.id}
-                                        className={`w-full flex items-center justify-between p-5 hover:bg-gray-50 transition-colors ${i !== section.items.length - 1 ? 'border-b border-gray-50' : ''}`}
-                                    >
-                                        <div className="flex items-center gap-4 text-left">
-                                            <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-600">
-                                                <item.icon className="w-5 h-5 stroke-[2px]" />
-                                            </div>
-                                            <div>
-                                                <h4 className="font-bold text-[15px] text-gray-100 leading-none mb-1">{item.label}</h4>
-                                                <p className="text-xs text-gray-500 font-medium">{item.desc}</p>
-                                            </div>
-                                        </div>
-                                        <ChevronRight className="w-4 h-4 text-gray-300" />
-                                    </button>
-                                ))}
+                <div className="grid grid-cols-1 gap-10">
+                    
+                    {/* Profile Quick Look */}
+                    <div className="bg-gray-900 rounded-full p-3 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl shadow-gray-200">
+                        <div className="flex items-center gap-6">
+                            <div className="relative">
+                                <img 
+                                    src={user?.imageUrl} 
+                                    className="w-20 h-20 rounded-full object-cover border-2 border-blue-500 p-1" 
+                                    alt="profile" 
+                                />
+                                
+                            </div>
+                            <div>
+                                <h2 className="text-xl font-black uppercase italic tracking-tight">{user?.fullName}</h2>
+                                <p className="text-blue-400 font-bold text-xs uppercase tracking-widest">{user?.primaryEmailAddress?.emailAddress}</p>
                             </div>
                         </div>
-                    ))}
-                </div>
-
-                {/* Premium Badge Card */}
-                <div className="mt-12 p-6 rounded-[2rem] bg-linear-to-br from-gray-900 to-gray-500 text-white relative overflow-hidden shadow-xl">
-                    <div className="relative z-10">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-red-500">Plus Membership</span>
-                        <h3 className="text-lg font-bold mt-1">Unlock priority support</h3>
-                        <p className="text-gray-400 text-xs mt-1 mb-4">Get 24/7 access to our expert team.</p>
-                        <Button className="bg-white text-white px-4 py-2 rounded-lg font-black text-[10px] uppercase tracking-wider hover:bg-gray-200 transition-colors">
-                            Upgrade Now
-                        </Button>
+                        <button className="bg-white/10 hover:bg-white/20 backdrop-blur-md px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all">
+                            Edit Identity
+                        </button>
                     </div>
-                    <ShieldCheck className="absolute -right-4 -bottom-4 w-32 h-32 text-white/5 rotate-12" />
-                </div>
 
-                {/* Logout Button */}
-                <div className="mt-16">
-                    <button className="w-full py-4 rounded-2xl border border-red-100 bg-red-50/30 text-red-600 font-bold text-sm flex items-center justify-center gap-2 hover:bg-red-50 transition-all">
-                        <LogOut className="w-4 h-4" />
-                        Logout
-                    </button>
-                    <p className="text-center text-[10px] text-gray-300 font-black uppercase tracking-widest mt-8">
-                        Version 1.0.4 (2026)
-                    </p>
+                    {/* General Settings */}
+                    <section className="space-y-4">
+                        <h2 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.4em] ml-4">Core Settings</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <SettingItem 
+                                icon={ShieldCheck} 
+                                title="Privacy" 
+                                desc="Data sharing & visibility"
+                                color="blue"
+                            />
+                            <SettingItem 
+                                icon={Smartphone} 
+                                title="Devices" 
+                                desc="Logged in sessions"
+                                color="purple"
+                            />
+                            <SettingItem 
+                                icon={Bell} 
+                                title="Alerts" 
+                                desc="Order & security updates"
+                                color="orange"
+                            />
+                            <SettingItem 
+                                icon={CreditCard} 
+                                title="Payments" 
+                                desc="Cards & Transaction history"
+                                color="emerald"
+                            />
+                        </div>
+                    </section>
+
+                    {/* Advanced / Privacy */}
+                    <section className="space-y-4">
+                        <h2 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.4em] ml-4">Privacy Control</h2>
+                        <div className="bg-white border border-gray-100 rounded-[3rem] overflow-hidden">
+                            <div className="p-8 space-y-8">
+                                <div className="flex items-center justify-between group">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-900 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                                            <EyeOff size={18} />
+                                        </div>
+                                        <div>
+                                            <p className="font-black text-gray-900 text-sm uppercase">Incognito Mode</p>
+                                            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Hide my activity from partners</p>
+                                        </div>
+                                    </div>
+                                    <input type="checkbox" className="toggle-checkbox" />
+                                </div>
+                                
+                                <div className="h-px bg-dashed bg-gray-100" />
+
+                                <div className="flex items-center justify-between group">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-900 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                                            <ShieldCheck size={18} />
+                                        </div>
+                                        <div>
+                                            <p className="font-black text-gray-900 text-sm uppercase">Two-Factor Auth</p>
+                                            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Secure your account access</p>
+                                        </div>
+                                    </div>
+                                    <span className="text-[10px] font-black bg-emerald-100 text-emerald-600 px-3 py-1 rounded-lg uppercase">Enabled</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Danger Zone */}
+                    <div className="pt-10 flex flex-col md:flex-row items-center justify-between gap-6 border-t border-gray-100">
+                        <button 
+                            onClick={() => signOut()}
+                            className="flex items-center gap-2 text-gray-100 font-black uppercase text-xs tracking-[0.2em] hover:text-blue-600 transition-colors"
+                        >
+                            <LogOut size={18} /> Logout
+                        </button>
+                        
+                        <button className="flex items-center gap-3 bg-red-50 text-red-500 px-8 py-4 rounded-[1.5rem] font-black uppercase text-xs tracking-[0.2em] hover:bg-red-500 hover:text-white transition-all">
+                            <Trash2 size={18} /> Delete Account
+                        </button>
+                    </div>
                 </div>
             </main>
         </div>
     );
 };
 
-export default SettingsPage;
+export default Settings;

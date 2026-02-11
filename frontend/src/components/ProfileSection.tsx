@@ -23,9 +23,9 @@ const ProfileSection = () => {
 
     const menuItems = [
         { icon: Package, label: 'My Bookings', desc: 'View and manage your services', link: '/order-history' },
-        { icon: MapPin, label: 'Saved Addresses', desc: 'Manage your service locations', link: '#' },
+        { icon: MapPin, label: 'Saved Addresses', desc: 'Manage your service locations', link: '/edit-address' },
         { icon: CreditCard, label: 'UC Plus Membership', desc: 'Active until Dec 2026', link: '#' },
-        { icon: Settings, label: 'Settings', desc: 'Privacy and account settings', link: '#' },
+        { icon: Settings, label: 'Settings', desc: 'Privacy and account settings', link: '/settings' },
     ];
 
     return (

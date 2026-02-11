@@ -47,12 +47,7 @@ const Header = () => {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
                                 <DropdownMenuGroup>
-                                    {/* <DropdownMenuItem><a href="/categories/home-maintenance">Home Maintenance</a></DropdownMenuItem>
-                                    <DropdownMenuItem><a href="/categories/cleaning-pest-control">Cleaning & Pest Control</a></DropdownMenuItem>
-                                    <DropdownMenuItem><a href="/categories/appliance-repair">Appliance Repair</a></DropdownMenuItem>
-                                    <DropdownMenuItem><a href="/categories/home-renovations">Home Renovations</a></DropdownMenuItem>
-                                    <DropdownMenuItem><a href="/categories/security-smart-home">Security & Smart Home</a></DropdownMenuItem>
-                                    <DropdownMenuItem><a href="/categories/outdoor-lifestyle">Outdoor & Lifestyle</a></DropdownMenuItem> */}
+                                
                                     {CATEGORIES.map(cat => (
                                         <DropdownMenuItem key={cat}>
                                             <Link
@@ -114,7 +109,7 @@ const Header = () => {
                                     <img
                                         src={user?.imageUrl}
                                         alt="profile"
-                                        className="w-8 h-8 rounded-2xl border border-gray-100 object-cover"
+                                        className="w-10 h-10 rounded-full border border-gray-100 object-cover"
                                     />
                                     <ChevronDown className="w-4 h-4 text-gray-600" />
                                 </div>
