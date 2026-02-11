@@ -15,6 +15,7 @@ import { useUserSync } from './hooks/useUserSync';
 import AddressPage from './pages/AddressPage';
 import PrivaryPage from './pages/PrivaryPage';
 import BlogPage from './pages/BlogPage';
+import AdminPannel from './pages/AdminPannel';
 
 function App() {
   useUserSync()
@@ -26,6 +27,7 @@ function App() {
         <Routes>
           {/* Aapka Home page path */}
           <Route path="/" element={<Home />} />
+          <Route path="/admin" element={<AdminPannel />} />
           <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/order-history" element={<OrderHistoryPage />} />
           <Route path="/order-history/:id" element={<OrderDetailsPage />} />
