@@ -10,6 +10,7 @@ import orderRoutes from './routes/orderRoutes';
 import serviceRoutes from './routes/serviceRoutes';
 import userRoutes from "./routes/userRoutes"
 import addressRoutes from "./routes/addressRoutes"
+import adminRoutes from "./routes/adminRoutes"
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -23,8 +24,9 @@ app.use(express.json());
 app.use('/api/v1/auth',authRoutes)
 app.use("/api/v1/orders",orderRoutes)
 app.use('/api/v1/services', serviceRoutes);
-app.use('/api/v1/user/', userRoutes)
-app.use('/api/v1/address/', addressRoutes)
+app.use('/api/v1/user', userRoutes)
+app.use('/api/v1/address', addressRoutes)
+app.use("/api/v1/admin", adminRoutes)
 
 app.get('/', (req, res) => {
     res.send('Handyman API V1 is live! 🚀');

@@ -1,24 +1,24 @@
 import express from 'express';
 import { User } from '../models/User';
-import { requireAuth } from '@clerk/express';
+import { fastAuth, isAdmin } from '../middleware/auth'; // Path to your middleware
 
 const router = express.Router();
 
-
+// 1. User Sync Route (Syncs Clerk data + Roles to MongoDB)
 router.post('/sync-user', async (req, res) => {
     try {
-        const { clerkId, email, firstName, lastName, photo } = req.body;
+        const { clerkId, email, firstName, lastName, photo, role } = req.body;
 
         if (!clerkId) return res.status(400).json({ error: "Missing Clerk ID" });
 
-        // upsert: true ka matlab hai - agar user nahi mila toh bana do, mil gaya toh update karo
         const user = await User.findOneAndUpdate(
-            { clerkId: clerkId }, // Clerk ID se search karo
+            { clerkId: clerkId },
             { 
                 email, 
                 firstName, 
                 lastName, 
-                photo 
+                photo,
+                role: role || 'user' // Storing the role in your DB
             }, 
             { new: true, upsert: true }
         ).populate('orders');
@@ -29,5 +29,7 @@ router.post('/sync-user', async (req, res) => {
         res.status(500).json({ error: "Database sync failed" });
     }
 });
+
+
 
 export default router;

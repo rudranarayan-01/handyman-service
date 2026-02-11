@@ -1,93 +1,95 @@
 import React, { useState } from 'react';
-import { 
-  LayoutDashboard, Settings, Users, Package, Calendar, LogOut, 
-  Search, Bell, TrendingUp, PackageCheck, IndianRupee, 
-  ArrowUpRight, ArrowDownRight, CheckCircle2 
+import {
+    LayoutDashboard, Settings, Users, Package, Calendar, LogOut,
+    Search, Bell, TrendingUp, PackageCheck, IndianRupee,
+    ArrowUpRight, ArrowDownRight, CheckCircle2
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export const AdminDashboard = () => {
-  const [activeTab, setActiveTab] = useState('dashboard');
+    const [activeTab, setActiveTab] = useState('dashboard');
 
-  return (
-    <div className="min-h-screen bg-[#F4F7FE] flex font-sans antialiased text-slate-900">
-      {/* --- Sidebar --- */}
-      <aside className="w-72 bg-slate-900 flex flex-col p-6 fixed h-full shadow-2xl">
-        <div className="flex items-center gap-4 mb-12 px-2">
-          <div className="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/40">
-            <Package className="text-white" size={24} />
-          </div>
-          <span className="font-black text-2xl text-white tracking-tight">Handyman Admin</span>
+    return (
+        <div className="min-h-screen bg-[#F4F7FE] flex font-sans antialiased text-slate-900">
+            {/* --- Sidebar --- */}
+            <aside className="w-72 bg-slate-900 flex flex-col p-6 fixed h-full shadow-2xl">
+                <div className="flex items-center gap-4 mb-12 px-2">
+                    <div className="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/40">
+                        <Package className="text-white" size={24} />
+                    </div>
+                    <span className="font-black text-2xl text-white tracking-tight">Handyman Admin</span>
+                </div>
+
+                <nav className="flex-1 space-y-2">
+                    <SidebarItem id="dashboard" label="Dashboard" icon={<LayoutDashboard size={20} />} activeTab={activeTab} setActiveTab={setActiveTab} />
+                    <SidebarItem id="services" label="Manage Services" url="all-services" icon={<Package size={20} />} activeTab={activeTab} setActiveTab={setActiveTab} />
+                    <SidebarItem id="orders" label="All Orders" url="" icon={<Calendar size={20} />} activeTab={activeTab} setActiveTab={setActiveTab} />
+                    <SidebarItem id="users" label="User Directory" url="admin?/users" icon={<Users size={20} />} activeTab={activeTab} setActiveTab={setActiveTab} />
+                    <SidebarItem id="settings" label="App Settings" url="/" icon={<Settings size={20} />} activeTab={activeTab} setActiveTab={setActiveTab} />
+                </nav>
+
+                <button className="flex items-center gap-4 p-4 text-slate-400 hover:text-rose-400 transition-all font-bold mt-auto group">
+                    <div className="p-2 rounded-lg group-hover:bg-rose-500/10 transition-all"><LogOut size={20} /></div>
+                    Sign Out
+                </button>
+            </aside>
+
+            {/* --- Main Content --- */}
+            <main className="ml-72 flex-1 flex flex-col">
+                {/* Header */}
+                <header className="px-10 py-6 flex justify-between items-center bg-transparent">
+                    <div className="relative w-full max-w-md">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                        <input
+                            type="text"
+                            placeholder="Search analytics, orders..."
+                            className="w-full bg-white/80 backdrop-blur-md pl-12 pr-4 py-3 rounded-2xl border-none shadow-sm focus:ring-2 focus:ring-indigo-500 transition-all text-sm font-medium"
+                        />
+                    </div>
+                    <div className="flex items-center gap-6">
+                        <button className="p-3 bg-white rounded-2xl text-slate-500 shadow-sm hover:shadow-md transition-all relative">
+                            <Bell size={20} />
+                            <span className="absolute top-3 right-3 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></span>
+                        </button>
+                        <div className="flex items-center gap-3 bg-white p-1.5 pr-4 rounded-2xl shadow-sm border border-slate-100">
+                            <div className="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold shadow-indigo-200 shadow-lg">A</div>
+                            <span className="text-sm font-bold text-slate-700">Admin</span>
+                        </div>
+                    </div>
+                </header>
+
+                {/* Content Area */}
+                <div className="px-10 pb-10 flex-1">
+                    {activeTab === 'dashboard' && <DashboardStats />}
+                    {/* Other tabs follow the same pattern */}
+                </div>
+            </main>
         </div>
-
-        <nav className="flex-1 space-y-2">
-          <SidebarItem id="dashboard" label="Dashboard" icon={<LayoutDashboard size={20}/>} activeTab={activeTab} setActiveTab={setActiveTab} />
-          <SidebarItem id="services" label="Manage Services" icon={<Package size={20}/>} activeTab={activeTab} setActiveTab={setActiveTab} />
-          <SidebarItem id="orders" label="All Orders" icon={<Calendar size={20}/>} activeTab={activeTab} setActiveTab={setActiveTab} />
-          <SidebarItem id="users" label="User Directory" icon={<Users size={20}/>} activeTab={activeTab} setActiveTab={setActiveTab} />
-          <SidebarItem id="settings" label="App Settings" icon={<Settings size={20}/>} activeTab={activeTab} setActiveTab={setActiveTab} />
-        </nav>
-
-        <button className="flex items-center gap-4 p-4 text-slate-400 hover:text-rose-400 transition-all font-bold mt-auto group">
-          <div className="p-2 rounded-lg group-hover:bg-rose-500/10 transition-all"><LogOut size={20}/></div>
-          Sign Out
-        </button>
-      </aside>
-
-      {/* --- Main Content --- */}
-      <main className="ml-72 flex-1 flex flex-col">
-        {/* Header */}
-        <header className="px-10 py-6 flex justify-between items-center bg-transparent">
-          <div className="relative w-full max-w-md">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-            <input 
-                type="text" 
-                placeholder="Search analytics, orders..." 
-                className="w-full bg-white/80 backdrop-blur-md pl-12 pr-4 py-3 rounded-2xl border-none shadow-sm focus:ring-2 focus:ring-indigo-500 transition-all text-sm font-medium" 
-            />
-          </div>
-          <div className="flex items-center gap-6">
-            <button className="p-3 bg-white rounded-2xl text-slate-500 shadow-sm hover:shadow-md transition-all relative">
-              <Bell size={20} />
-              <span className="absolute top-3 right-3 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></span>
-            </button>
-            <div className="flex items-center gap-3 bg-white p-1.5 pr-4 rounded-2xl shadow-sm border border-slate-100">
-                <div className="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold shadow-indigo-200 shadow-lg">A</div>
-                <span className="text-sm font-bold text-slate-700">Admin</span>
-            </div>
-          </div>
-        </header>
-
-        {/* Content Area */}
-        <div className="px-10 pb-10 flex-1">
-          {activeTab === 'dashboard' && <DashboardStats />}
-          {/* Other tabs follow the same pattern */}
-        </div>
-      </main>
-    </div>
-  );
+    );
 };
 
 // --- Sub-Components ---
 
-const SidebarItem = ({ id, label, icon, activeTab, setActiveTab }: any) => (
-    <button 
-        onClick={() => setActiveTab(id)}
-        className={`w-full flex items-center gap-4 p-4 rounded-2xl transition-all duration-300 font-bold text-sm ${
-            activeTab === id 
-            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' 
-            : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
-        }`}
-    >
-        {icon} {label}
-    </button>
+const SidebarItem = ({ id, label, icon, activeTab, setActiveTab, url }: any) => (
+    <Link to={url}>
+        <button
+            onClick={() => setActiveTab(id)}
+            className={`w-full flex items-center gap-4 p-4 rounded-2xl transition-all duration-300 font-bold text-sm ${activeTab === id
+                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30'
+                    : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                }`}
+        >
+            {icon} {label}
+        </button>
+    </Link>
 );
 
 const DashboardStats = () => {
     const stats = [
-        { label: 'Total Revenue', value: '₹2,45,000', growth: '+12.5%', isPos: true, icon: <IndianRupee size={22}/>, color: 'emerald' },
-        { label: 'Active Orders', value: '142', growth: '+8.2%', isPos: true, icon: <PackageCheck size={22}/>, color: 'indigo' },
-        { label: 'New Customers', value: '1,205', growth: '-2.4%', isPos: false, icon: <Users size={22}/>, color: 'blue' },
-        { label: 'Growth Rate', value: '18.4%', growth: '+4.1%', isPos: true, icon: <TrendingUp size={22}/>, color: 'purple' },
+        { label: 'Total Revenue', value: '₹2,45,000', growth: '+12.5%', isPos: true, icon: <IndianRupee size={22} />, color: 'emerald' },
+        { label: 'Active Orders', value: '142', growth: '+8.2%', isPos: true, icon: <PackageCheck size={22} />, color: 'indigo' },
+        { label: 'New Customers', value: '1,205', growth: '-2.4%', isPos: false, icon: <Users size={22} />, color: 'blue' },
+        { label: 'Growth Rate', value: '18.4%', growth: '+4.1%', isPos: true, icon: <TrendingUp size={22} />, color: 'purple' },
     ];
 
     return (
@@ -99,7 +101,7 @@ const DashboardStats = () => {
                         <div className="flex justify-between items-start mb-6">
                             <div className={`p-4 bg-${s.color}-50 text-${s.color}-600 rounded-2xl`}>{s.icon}</div>
                             <span className={`flex items-center gap-1 text-[11px] font-black ${s.isPos ? 'text-emerald-500' : 'text-rose-500'} bg-slate-50 px-2 py-1 rounded-lg`}>
-                                {s.growth} {s.isPos ? <ArrowUpRight size={14}/> : <ArrowDownRight size={14}/>}
+                                {s.growth} {s.isPos ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
                             </span>
                         </div>
                         <div>
@@ -132,7 +134,7 @@ const DashboardStats = () => {
                                 </div>
                                 <div className="text-right">
                                     <span className="block font-black text-slate-900 text-lg">₹2,999</span>
-                                    <span className="flex items-center gap-1 text-[10px] font-black text-emerald-500 uppercase tracking-widest"><CheckCircle2 size={12}/> Paid</span>
+                                    <span className="flex items-center gap-1 text-[10px] font-black text-emerald-500 uppercase tracking-widest"><CheckCircle2 size={12} /> Paid</span>
                                 </div>
                             </div>
                         ))}
@@ -147,7 +149,7 @@ const DashboardStats = () => {
                         </div>
                         <h3 className="text-3xl font-black mb-4 tracking-tighter">Growth Insight</h3>
                         <p className="text-indigo-100 font-medium text-lg leading-relaxed mb-10">
-                            Demand for <span className="text-white font-bold underline underline-offset-4 text-xl">AC Servicing</span> has increased by **40%**. 
+                            Demand for <span className="text-white font-bold underline underline-offset-4 text-xl">AC Servicing</span> has increased by **40%**.
                         </p>
                         <button className="mt-auto w-full bg-white text-indigo-600 py-5 rounded-[1.5rem] font-black text-lg hover:shadow-xl hover:scale-[1.02] transition-all active:scale-95 shadow-lg">
                             Create Offer
