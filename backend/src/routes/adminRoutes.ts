@@ -19,40 +19,40 @@ router.get('/users', fastAuth, isAdmin, async (req: any, res: any) => {
 });
 
 // Modify role
-// router.patch('/users/:clerkId/role', fastAuth, isAdmin, async (req, res) => {
-//     try {
-//         const { clerkId } = req.params;
-//         const { newRole } = req.body;
+router.patch('/users/:clerkId/role', fastAuth, isAdmin, async (req, res) => {
+    try {
+        const { clerkId } = req.params;
+        const { newRole } = req.body;
 
-//         const allowedRoles = ['admin', 'manager', 'user'];
-//         if (!allowedRoles.includes(newRole)) {
-//             return res.status(400).json({ error: "Invalid role type" });
-//         }
+        const allowedRoles = ['admin', 'manager', 'user'];
+        if (!allowedRoles.includes(newRole)) {
+            return res.status(400).json({ error: "Invalid role type" });
+        }
 
-//         // 1. Update Clerk Metadata (Important for JWT/Auth)
-//         await clerkClient.users.updateUserMetadata(clerkId, {
-//             publicMetadata: {
-//                 role: newRole
-//             }
-//         });
+        // 1. Update Clerk Metadata (Important for JWT/Auth)
+        await clerkClient.users.updateUserMetadata(clerkId, {
+            publicMetadata: {
+                role: newRole
+            }
+        });
 
-//         // 2. Update MongoDB (Important for User Directory/Frontend)
-//         const updatedUser = await User.findOneAndUpdate(
-//             { clerkId },
-//             { role: newRole },
-//             { new: true }
-//         );
+        // 2. Update MongoDB (Important for User Directory/Frontend)
+        const updatedUser = await User.findOneAndUpdate(
+            { clerkId },
+            { role: newRole },
+            { new: true }
+        );
 
-//         res.status(200).json({ 
-//             success: true, 
-//             message: `Role updated to ${newRole}`,
-//             user: updatedUser 
-//         });
-//     } catch (err: any) {
-//         console.error("Role Update Error:", err);
-//         res.status(500).json({ error: "Failed to update role" });
-//     }
-// });
+        res.status(200).json({ 
+            success: true, 
+            message: `Role updated to ${newRole}`,
+            user: updatedUser 
+        });
+    } catch (err: any) {
+        console.error("Role Update Error:", err);
+        res.status(500).json({ error: "Failed to update role" });
+    }
+});
 
 // DELETE User Route
 router.delete('/users/:clerkId', fastAuth, isAdmin, async (req, res) => {
