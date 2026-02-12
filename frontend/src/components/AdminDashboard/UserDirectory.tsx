@@ -82,7 +82,7 @@ const UserDirectory = () => {
   if (loading) return <div className="p-20 text-center animate-pulse font-bold text-slate-400">Loading Directory...</div>;
 
   return (
-    <div className="p-4 max-w-7xl mx-auto animate-in fade-in duration-700">
+    <div className="p-4 max-w-7xl mx-auto animate-in fade-in duration-200">
       <div className="flex justify-between items-center mb-10">
         <h2 className="text-3xl font-black text-slate-900">User Directory</h2>
         <div className="bg-white px-5 py-2 rounded-2xl border border-slate-100 flex items-center gap-2 shadow-sm">

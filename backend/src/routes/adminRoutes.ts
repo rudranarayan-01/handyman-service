@@ -3,6 +3,8 @@ import express from 'express';
 import { fastAuth, isAdmin } from '../middleware/auth'; 
 import { User } from '../models/User';
 import { createClerkClient } from '@clerk/backend';
+import { Order } from '../models/Orders';
+import { Service } from '../models/Service';
 const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
 
 const router = express.Router();
@@ -73,6 +75,68 @@ router.delete('/users/:clerkId', fastAuth, isAdmin, async (req, res) => {
     } catch (err: any) {
         console.error("Delete Error:", err);
         res.status(500).json({ error: "Failed to delete user", details: err.message });
+    }
+});
+
+
+// Order Management 
+// GET all orders with User details (Using Aggregate for String IDs)
+router.get('/orders', fastAuth, isAdmin, async (req, res) => {
+    try {
+        const orders = await Order.aggregate([
+            { $sort: { createdAt: -1 } }, // Newest first
+            {
+                $lookup: {
+                    from: 'users',           // Aapka Users collection ka naam (usually lowercase plural)
+                    localField: 'userId',     // Order schema mein jo Clerk ID hai
+                    foreignField: 'clerkId',  // User schema mein jo Clerk ID hai
+                    as: 'userDetails'         // Naya array field jisme user ka data aayega
+                }
+            },
+            { $unwind: '$userDetails' } // Array ko object mein convert karne ke liye
+        ]);
+
+        res.status(200).json(orders);
+    } catch (err: any) {
+        console.error("Fetch Orders Error:", err);
+        res.status(500).json({ error: "Failed to fetch orders" });
+    }
+});
+
+
+
+// 1. ADD NEW SERVICE
+router.post('/services', fastAuth, isAdmin, async (req, res) => {
+    try {
+        const newService = new Service(req.body);
+        await newService.save();
+        res.status(201).json(newService);
+    } catch (err: any) {
+        res.status(500).json({ error: "Failed to add service" });
+    }
+});
+
+// 2. UPDATE SERVICE
+router.patch('/services/:id', fastAuth, isAdmin, async (req, res) => {
+    try {
+        const updatedService = await Service.findByIdAndUpdate(
+            req.params.id, 
+            req.body, 
+            { new: true }
+        );
+        res.status(200).json(updatedService);
+    } catch (err: any) {
+        res.status(500).json({ error: "Update failed" });
+    }
+});
+
+// 3. DELETE SERVICE
+router.delete('/services/:id', fastAuth, isAdmin, async (req, res) => {
+    try {
+        await Service.findByIdAndDelete(req.params.id);
+        res.status(200).json({ message: "Service deleted" });
+    } catch (err: any) {
+        res.status(500).json({ error: "Delete failed" });
     }
 });
 

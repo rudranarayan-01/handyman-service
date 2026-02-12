@@ -7,6 +7,8 @@ import {
 import SidebarItem from './SideBar';
 import UserDirectory from './UserDirectory';
 import DashboardStats from './DashboardStats';
+import AdminOrders from './AdminOrders';
+import ManageServices from './ManageService';
 
 export const AdminDashboard = () => {
     const [activeTab, setActiveTab] = useState('dashboard');
@@ -63,8 +65,9 @@ export const AdminDashboard = () => {
                 {/* Content Area */}
                 <div className="px-10 pb-10 flex-1">
                     {activeTab === 'dashboard' && <DashboardStats />}
-                    {activeTab === 'services' && <DashboardStats />}
+                    {activeTab === 'services' && <ManageServices />}
                     {activeTab === 'users' && <UserDirectory />}
+                    {activeTab === 'orders' && <AdminOrders />}
                     {/* Other tabs follow the same pattern */}
                 </div>
             </main>
