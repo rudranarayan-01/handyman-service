@@ -6,29 +6,59 @@ import { sendOrderEmail } from '../lib/mail';
 
 const router = express.Router();
 
+export const generateOrderId = () => {
+    return `ORD-${Math.random().toString(36).toUpperCase().substring(2, 9)}`;
+};
+
 // Place a new order
 router.post('/book', fastAuth, async (req: any, res: any) => {
     try {
-        const { userId } = req.auth;
-        const { cartItems, totalAmount, userEmail } = req.body;
+        const { userId } = req.auth; // Clerk ID from middleware
+        const { cartItems, totalAmount, userEmail, userName, address, phone } = req.body;
 
-        if (!cartItems?.length) return res.status(400).json({ error: "Cart is empty" });
+        if (!cartItems?.length) {
+            return res.status(400).json({ error: "Cart is empty" });
+        }
 
+        // 1. Generate a human-readable Order ID
+        const customOrderId = generateOrderId();
+
+        // 2. Create the order with snapshots
         const newOrder = await Order.create({
+            orderId: customOrderId,
             userId,
+            customerDetails: {
+                name: userName || 'Customer', // Frontend se pass karein ya Clerk se nikalein
+                email: userEmail,
+                phone: phone, 
+                address: address
+            },
             items: cartItems.map((item: any) => ({
                 serviceId: item._id,
                 name: item.name,
-                price: item.price
+                price: item.price,
+                image: item.image // Scalability: snapshot the image URL
             })),
             totalAmount,
-            status: 'pending'
+            status: 'pending',
+            bookingDate: new Date(),
+            serviceFee: 19 // Default value as per schema
         });
 
-        sendOrderEmail(userEmail, newOrder)
+        // 3. Email trigger (Non-blocking)
+        // Background run
+        sendOrderEmail(userEmail, newOrder).catch(err => console.log("Email Error:", err));
 
-        res.status(201).json({ success: true, orderId: newOrder._id });
+        // 4. Send back the Custom Order ID for tracking
+        res.status(201).json({ 
+            success: true, 
+            message: "Order placed successfully",
+            orderId: newOrder.orderId, // Human readable
+            dbId: newOrder._id,         // Technical ID
+        });
+
     } catch (err: any) {
+        console.error("Booking Error:", err);
         res.status(500).json({ error: "Booking failed", details: err.message });
     }
 });

@@ -32,6 +32,7 @@ const AddressPage = () => {
         try {
             const res = await api.get(`/user/get-user/${user?.id}`);
             setAddresses(res.data.user.addresses || []);
+            console.log("User address fetched")
         } catch (err) {
             console.error(err);
             setAddresses([])
