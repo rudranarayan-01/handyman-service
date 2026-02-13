@@ -121,7 +121,33 @@ router.get('/orders/:orderId', fastAuth, isAdmin, async (req: any, res: any) => 
     }
 });
 
+router.delete('/orders/:orderId', async (req, res) => {
+    try {
+        const { orderId } = req.params;
 
+        if (!orderId) {
+            return res.status(400).json({ message: "Invalid orderID" });
+        }
+
+        // findByIdAndDelete ki jagah ye use karein:
+        const deletedOrder = await Order.findOneAndDelete({ orderId: orderId });
+
+        if (!deletedOrder) {
+            return res.status(404).json({ message: "Order not found in DB" });
+        }
+
+        // Response ko hamesha .json() ke saath close karein
+        return res.status(200).json({ 
+            success: true, 
+            message: "Order deleted successfully" 
+        });
+
+    } catch (error) {
+        console.error("Backend Error:", error);
+        // JSON response bhejenge toh frontend ka toast message error dikhayega
+        res.status(500).json({ error: "Internal server error", details: error });
+    }
+});
 
 // SERVICE ROUTES 
 

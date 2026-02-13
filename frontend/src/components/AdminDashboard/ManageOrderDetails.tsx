@@ -6,7 +6,8 @@ import {
     Calendar, CheckCircle, Clock, AlertCircle,
     Truck, XCircle, Mail, MapPin,
     Map,
-    Phone
+    Phone,
+    Trash2
 } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/api/api';
@@ -58,7 +59,7 @@ const ManageOrderDetails = () => {
             setOrder(response.data);
         } catch (error: any) {
             toast.error("Order not found or access denied");
-            navigate('/admin/orders');
+            navigate('/admin');
         } finally {
             setLoading(false);
         }
@@ -83,6 +84,41 @@ const ManageOrderDetails = () => {
         });
         setUpdating(false);
     };
+
+    const handleDeleteOrder = () => {
+    // 1. Pehle hum sirf ek confirmation toast dikhayenge
+    toast("Delete Order?", {
+        description: "This action cannot be undone and will remove the order from the database.",
+        action: {
+            label: "Yes, Delete",
+            onClick: () => executeDelete(), // Agar user click karega tabhi delete hoga
+        },
+        cancel: {
+            label: "No",
+            onClick: () => toast.dismiss(),
+        },
+        // Styling for danger
+        className: "bg-white border-red-100",
+    });
+};
+
+const executeDelete = async () => {
+    setUpdating(true);
+    const deletePromise = async () => {
+        const token = await getToken();
+        await api.delete(`/admin/orders/${orderId}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        navigate('/admin');
+    };
+
+    toast.promise(deletePromise(), {
+        loading: 'Deleting order...',
+        success: 'Order Deleted!',
+        error: 'Unable to delete order',
+    });
+    setUpdating(false);
+};
 
     if (loading) return (
         <div className="h-screen flex flex-col items-center justify-center gap-4 bg-slate-50/50">
@@ -135,6 +171,13 @@ const ManageOrderDetails = () => {
                             </button>
                         ))}
                     </div>
+                    <button
+                        disabled={updating}
+                        onClick={handleDeleteOrder} // Ab ye toast wala function call karega
+                        className="h-10 px-4 flex items-center gap-2 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white transition-all border border-rose-100 font-black text-[10px]"
+                    >
+                        <Trash2 size={16} /> Delete
+                    </button>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -276,16 +319,6 @@ const ManageOrderDetails = () => {
                                     </div>
                                 </div>
                             </div>
-                        </div>
-
-                        {/* Note Box */}
-                        <div className="bg-indigo-600 rounded-[2.5rem] p-8 text-white">
-                            <h3 className="text-[10px] font-black uppercase tracking-widest text-indigo-200 mb-4 flex items-center gap-2">
-                                <AlertCircle size={14} /> Admin Note
-                            </h3>
-                            <p className="text-sm font-medium leading-relaxed opacity-90">
-                                Ensure service verification before marking as "Completed". Customer email notification will be triggered on every status change.
-                            </p>
                         </div>
                     </div>
                 </div>
