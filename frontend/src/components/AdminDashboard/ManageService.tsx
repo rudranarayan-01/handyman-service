@@ -21,7 +21,7 @@ const ManageServices = () => {
 
     const fetchServices = async () => {
         try {
-            const response = await api.get('/admin/services'); // Public or Admin route
+            const response = await api.get('/admin/services');
             setServices(response.data);
         } catch (error) {
             toast.error("Failed to load services");
