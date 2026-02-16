@@ -69,56 +69,65 @@ const ManageOrderDetails = () => {
 
     const handleStatusUpdate = async (newStatus: string) => {
         setUpdating(true);
-        const action = async () => {
+        const updateAction = async () => {
             const token = await getToken();
-            await api.patch(`/admin/orders/${orderId}`, { status: newStatus }, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            await api.patch(`/admin/orders/${orderId}`,
+                { status: newStatus },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            // State update in UI
             setOrder(prev => prev ? { ...prev, status: newStatus as any } : null);
         };
 
-        toast.promise(action(), {
+        toast.promise(updateAction(), {
             loading: `Updating status to ${newStatus}...`,
             success: `Order is now ${newStatus}`,
-            error: "Failed to update status"
+            error: (err) => err.response?.data?.message || "Failed to update status",
         });
-        setUpdating(false);
+
+        try {
+            await updateAction;
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setUpdating(false);
+        }
     };
 
     const handleDeleteOrder = () => {
-    // 1. Pehle hum sirf ek confirmation toast dikhayenge
-    toast("Delete Order?", {
-        description: "This action cannot be undone and will remove the order from the database.",
-        action: {
-            label: "Yes, Delete",
-            onClick: () => executeDelete(), // Agar user click karega tabhi delete hoga
-        },
-        cancel: {
-            label: "No",
-            onClick: () => toast.dismiss(),
-        },
-        // Styling for danger
-        className: "bg-white border-red-100",
-    });
-};
-
-const executeDelete = async () => {
-    setUpdating(true);
-    const deletePromise = async () => {
-        const token = await getToken();
-        await api.delete(`/admin/orders/${orderId}`, {
-            headers: { Authorization: `Bearer ${token}` }
+        // 1. Pehle hum sirf ek confirmation toast dikhayenge
+        toast("Delete Order?", {
+            description: "This action cannot be undone and will remove the order from the database.",
+            action: {
+                label: "Yes, Delete",
+                onClick: () => executeDelete(), // Agar user click karega tabhi delete hoga
+            },
+            cancel: {
+                label: "No",
+                onClick: () => toast.dismiss(),
+            },
+            // Styling for danger
+            className: "bg-white border-red-100",
         });
-        navigate('/admin');
     };
 
-    toast.promise(deletePromise(), {
-        loading: 'Deleting order...',
-        success: 'Order Deleted!',
-        error: 'Unable to delete order',
-    });
-    setUpdating(false);
-};
+    const executeDelete = async () => {
+        setUpdating(true);
+        const deletePromise = async () => {
+            const token = await getToken();
+            await api.delete(`/admin/orders/${orderId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            navigate('/admin');
+        };
+
+        toast.promise(deletePromise(), {
+            loading: 'Deleting order...',
+            success: 'Order Deleted!',
+            error: 'Unable to delete order',
+        });
+        setUpdating(false);
+    };
 
     if (loading) return (
         <div className="h-screen flex flex-col items-center justify-center gap-4 bg-slate-50/50">

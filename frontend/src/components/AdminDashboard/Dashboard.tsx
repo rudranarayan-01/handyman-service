@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import {
     LayoutDashboard, Settings, Users, Package, Calendar, LogOut,
     Search, Bell, TrendingUp, PackageCheck, IndianRupee,
-    ArrowUpRight, ArrowDownRight, CheckCircle2
+    ArrowUpRight, ArrowDownRight, CheckCircle2,
+    UserRoundCheck
 } from 'lucide-react';
 import SidebarItem from './SideBar';
 import UserDirectory from './UserDirectory';
 import DashboardStats from './DashboardStats';
 import AdminOrders from './AdminOrders';
 import ManageServices from './ManageService';
+import PartnerManagement from './PartnerManagement';
 
 export const AdminDashboard = () => {
     const [activeTab, setActiveTab] = useState('dashboard');
@@ -29,6 +31,7 @@ export const AdminDashboard = () => {
                     <SidebarItem id="services" label="Manage Services" url="" icon={<Package size={20} />} activeTab={activeTab} setActiveTab={setActiveTab} />
                     <SidebarItem id="orders" label="All Orders" url="" icon={<Calendar size={20} />} activeTab={activeTab} setActiveTab={setActiveTab} />
                     <SidebarItem id="users" label="User Directory" url="" icon={<Users size={20} />} activeTab={activeTab} setActiveTab={setActiveTab} />
+                    <SidebarItem id="partners" label="Partners" url="" icon={<UserRoundCheck size={20} />} activeTab={activeTab} setActiveTab={setActiveTab} />
                     <SidebarItem id="settings" label="App Settings" url="" icon={<Settings size={20} />} activeTab={activeTab} setActiveTab={setActiveTab} />
                 </div>
 
@@ -68,7 +71,7 @@ export const AdminDashboard = () => {
                     {activeTab === 'services' && <ManageServices />}
                     {activeTab === 'users' && <UserDirectory />}
                     {activeTab === 'orders' && <AdminOrders />}
-                    {/* Other tabs follow the same pattern */}
+                    {activeTab === 'partners' && <PartnerManagement />}
                 </div>
             </main>
         </div>

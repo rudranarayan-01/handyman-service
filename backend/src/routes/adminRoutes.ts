@@ -1,10 +1,11 @@
 import express from 'express';
 // IMPORTANT: Use curly braces here!
-import { fastAuth, isAdmin } from '../middleware/auth'; 
+import { fastAuth, isAdmin } from '../middleware/auth';
 import { User } from '../models/User';
 import { createClerkClient } from '@clerk/backend';
 import { Order } from '../models/Orders';
 import { Service } from '../models/Service';
+import { Partner } from '../models/Partners';
 const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
 
 const router = express.Router();
@@ -45,10 +46,10 @@ router.patch('/users/:clerkId/role', fastAuth, isAdmin, async (req, res) => {
             { new: true }
         );
 
-        res.status(200).json({ 
-            success: true, 
+        res.status(200).json({
+            success: true,
             message: `Role updated to ${newRole}`,
-            user: updatedUser 
+            user: updatedUser
         });
     } catch (err: any) {
         console.error("Role Update Error:", err);
@@ -83,16 +84,16 @@ router.delete('/users/:clerkId', fastAuth, isAdmin, async (req, res) => {
 router.get('/orders', fastAuth, isAdmin, async (req, res) => {
     try {
         const orders = await Order.aggregate([
-            { $sort: { createdAt: -1 } }, 
+            { $sort: { createdAt: -1 } },
             {
                 $lookup: {
-                    from: 'users',           
-                    localField: 'userId',     
-                    foreignField: 'clerkId',  
-                    as: 'userDetails'        
+                    from: 'users',
+                    localField: 'userId',
+                    foreignField: 'clerkId',
+                    as: 'userDetails'
                 }
             },
-            { $unwind: '$userDetails' } 
+            { $unwind: '$userDetails' }
         ]);
 
         res.status(200).json(orders);
@@ -121,6 +122,40 @@ router.get('/orders/:orderId', fastAuth, isAdmin, async (req: any, res: any) => 
     }
 });
 
+// Route for updating order status
+router.patch('/orders/:orderId', async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        const { status } = req.body;
+
+        // Valid statuses check (Safety first!)
+        const validStatuses = ['pending', 'confirmed', 'completed', 'cancelled'];
+        if (!validStatuses.includes(status)) {
+            return res.status(400).json({ message: "Bhai, ye status invalid hai!" });
+        }
+
+        const updatedOrder = await Order.findOneAndUpdate(
+            { orderId: orderId }, // Search by custom ID
+            { $set: { status: status } }, // Update only status
+            { new: true } // Will return new updated record
+        );
+
+        if (!updatedOrder) {
+            return res.status(404).json({ message: "Order database mein nahi mila" });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: `Status updated to ${status}`,
+            order: updatedOrder
+        });
+
+    } catch (error) {
+        console.error("Status Update Error:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+
 router.delete('/orders/:orderId', async (req, res) => {
     try {
         const { orderId } = req.params;
@@ -132,9 +167,9 @@ router.delete('/orders/:orderId', async (req, res) => {
         if (!deletedOrder) {
             return res.status(404).json({ message: "Order not found in DB" });
         }
-        return res.status(200).json({ 
-            success: true, 
-            message: "Order deleted successfully" 
+        return res.status(200).json({
+            success: true,
+            message: "Order deleted successfully"
         });
 
     } catch (error) {
@@ -168,9 +203,9 @@ router.post('/services', fastAuth, isAdmin, async (req, res) => {
 router.patch('/services/:id', fastAuth, isAdmin, async (req, res) => {
     try {
         const updatedService = await Service.findByIdAndUpdate(
-            req.params.id, 
-            req.body, 
-            { new: true } 
+            req.params.id,
+            req.body,
+            { new: true }
         );
         res.status(200).json(updatedService);
     } catch (err) {
@@ -188,4 +223,85 @@ router.delete('/services/:id', fastAuth, isAdmin, async (req, res) => {
     }
 });
 
-export default router;
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+// 1. GET PARTNERS (With Search & Filter)
+router.get('/partners', async (req, res) => {
+    try {
+        const search = req.query.search ? String(req.query.search) : "";
+        let query = {};
+
+        if (search) {
+            const searchRegex = new RegExp(search, 'i');
+
+            query = {
+                $or: [
+                    { name: { $regex: searchRegex } },
+                    { email: { $regex: searchRegex } },
+                    { serviceAreas: { $regex: searchRegex } }, 
+                    { specializations: { $regex: searchRegex } }
+                ]
+            };
+        }
+
+        // Check if data exists at all (Debug step)
+        const partners = await Partner.find(query).sort({ createdAt: -1 });
+        
+        // Bhai, agar empty array aa raha hai toh search logic loose karo 
+        // ya check karo DB mein 'serviceAreas' field ka naam exact yahi hai na?
+        res.json(partners);
+    } catch (error) {
+        console.error("Search Error:", error);
+        res.status(500).json({ error: "Database fetch fail ho gaya bhai" });
+    }
+});
+
+// 2. ADD PARTNER
+router.post('/partners', async (req, res) => {
+    try {
+        const newPartner = new Partner(req.body);
+        await newPartner.save();
+        res.status(201).json({ success: true, partner: newPartner });
+    } catch (error) {
+        res.status(400).json({ message: error });
+    }
+});
+
+// 3. GET ALL SERVICE NAMES (For the Dropdown)
+router.get('/service-list', async (req, res) => {
+    try {
+        const services = await Service.find({}, 'name'); // Sirf names chahiye
+        res.json(services.map(s => s.name));
+    } catch (error) {
+        res.status(500).json({ error: error });
+    }
+});
+
+// DELETE PARTNER
+router.delete('/partners/:id', async (req, res) => {
+    try {
+        await Partner.findByIdAndDelete(req.params.id);
+        res.json({ success: true, message: "Partner deleted" });
+    } catch (error) {
+        res.status(500).json({ error: error });
+    }
+});
+
+// UPDATE PARTNER (PATCH)
+router.patch('/partners/:id', async (req, res) => {
+    try {
+        const updatedPartner = await Partner.findByIdAndUpdate(
+            req.params.id, 
+            req.body, 
+            { new: true }
+        );
+        res.json(updatedPartner);
+    } catch (error) {
+        res.status(400).json({ error: error });
+    }
+});
+
+
+module.exports = router;
