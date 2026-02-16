@@ -122,23 +122,61 @@ router.get('/orders/:orderId', fastAuth, isAdmin, async (req: any, res: any) => 
     }
 });
 
-// Route for updating order status
+// Get Eligible partner for service
+router.get('/partners/eligible', async (req, res) => {
+    try {
+        const fullAddress = req.query.area ? String(req.query.area) : "";
+        const serviceName = req.query.service ? String(req.query.service) : "";
+
+        if (!fullAddress || !serviceName) {
+            return res.status(400).json({ message: "Area and Service are required." });
+        }
+
+        const partners = await Partner.find({
+            specializations: { $in: [new RegExp(serviceName, 'i')] }
+        }).select('name phone email serviceAreas');
+
+        const filteredPartners = partners.filter(partner => {
+            return partner.serviceAreas.some(area => 
+                fullAddress.toLowerCase().includes(area.toLowerCase())
+            );
+        });
+
+        res.status(200).json(filteredPartners);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Partners fetch karne mein dikat hui" });
+    }
+});
+
+// update Order
 router.patch('/orders/:orderId', async (req, res) => {
     try {
         const { orderId } = req.params;
-        const { status } = req.body;
+        const { status, partnerId } = req.body; 
 
-        // Valid statuses check (Safety first!)
         const validStatuses = ['pending', 'confirmed', 'completed', 'cancelled'];
         if (!validStatuses.includes(status)) {
             return res.status(400).json({ message: "Bhai, ye status invalid hai!" });
         }
 
+        // --- FIX START ---
+        // Humne yahan 'any' type de diya taaki hum dynamic properties add kar sakein
+        let updateData: any = { status: status };
+        
+        if (status === 'confirmed') {
+            if (!partnerId) {
+                return res.status(400).json({ message: "Confirm karne ke liye partner assign karna zaruri hai!" });
+            }
+            updateData.assignedPartner = partnerId; // Ab yahan error nahi aayega
+        }
+        // --- FIX END ---
+
         const updatedOrder = await Order.findOneAndUpdate(
-            { orderId: orderId }, // Search by custom ID
-            { $set: { status: status } }, // Update only status
-            { new: true } // Will return new updated record
-        );
+            { orderId: orderId },
+            { $set: updateData },
+            { new: true }
+        ).populate('assignedPartner'); 
 
         if (!updatedOrder) {
             return res.status(404).json({ message: "Order database mein nahi mila" });
@@ -146,7 +184,7 @@ router.patch('/orders/:orderId', async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: `Status updated to ${status}`,
+            message: status === 'confirmed' ? "Order assigned and confirmed!" : `Status updated to ${status}`,
             order: updatedOrder
         });
 
@@ -212,6 +250,8 @@ router.patch('/services/:id', fastAuth, isAdmin, async (req, res) => {
         res.status(500).json({ error: "Update failed" });
     }
 });
+
+
 
 // DELETE Service
 router.delete('/services/:id', fastAuth, isAdmin, async (req, res) => {
