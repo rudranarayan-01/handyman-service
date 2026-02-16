@@ -117,7 +117,7 @@ const ManageServices = () => {
                         Live Inventory: {services.length} active items
                     </div>
                 </div>
-                <button onClick={() => handleOpenModal()} className="group bg-slate-900 text-white pl-6 pr-8 py-4 rounded-2xl font-bold flex items-center gap-3 hover:bg-indigo-600 transition-all duration-300 shadow-xl shadow-slate-200">
+                <button onClick={() => handleOpenModal()} className="group bg-slate-900 text-white pl-6 pr-8 py-4 rounded-2xl font-bold flex items-center gap-3 hover:bg-indigo-200 transition-all duration-300 shadow-xl shadow-slate-200">
                     <Plus className="group-hover:rotate-90 transition-transform duration-300" size={22} />
                     New Entry
                 </button>
@@ -220,7 +220,7 @@ const ManageServices = () => {
                                                     <option value="">Select Existing...</option>
                                                     {dynamicCategories.map(c => <option key={c} value={c}>{c}</option>)}
                                                 </select>
-                                                <button type="button" onClick={() => setIsNewCategory(true)} className="p-5 bg-indigo-50 text-indigo-600 rounded-2xl font-bold hover:bg-indigo-100 transition-colors">
+                                                <button type="button" onClick={() => setIsNewCategory(true)} className="p-5 bg-indigo-50 text-indigo-100 rounded-2xl font-bold hover:bg-indigo-100 transition-colors">
                                                     New
                                                 </button>
                                             </div>

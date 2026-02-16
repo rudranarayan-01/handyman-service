@@ -13,6 +13,23 @@ router.get('/allService', async (req, res) => {
     }
 });
 
+router.get('/category-stats', async (req, res) => {
+  try {
+    const stats = await Service.aggregate([
+      {
+        $group: {
+          _id: "$category", // Category field ke basis par group karega
+          count: { $sum: 1 }, // Har category mein kitne items hain count karega
+          categoryImage: { $first: "$image" }
+        }
+      }
+    ]);
+    res.json(stats);
+  } catch (err) {
+    res.status(500).json({ error: err });
+  }
+});
+
 // Get services by category
 router.get('/category/:catName', async (req, res) => {
     try {
