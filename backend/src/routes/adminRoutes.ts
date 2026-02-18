@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Router } from 'express';
 // IMPORTANT: Use curly braces here!
 import { fastAuth, isAdmin } from '../middleware/auth';
 import { User } from '../models/User';
@@ -343,5 +343,4 @@ router.patch('/partners/:id', async (req, res) => {
     }
 });
 
-
-module.exports = router;
+export default Router

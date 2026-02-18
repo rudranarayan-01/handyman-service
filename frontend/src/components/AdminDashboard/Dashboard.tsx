@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import {
     LayoutDashboard, Settings, Users, Package, Calendar, LogOut,
-    Search, Bell, TrendingUp, PackageCheck, IndianRupee,
-    ArrowUpRight, ArrowDownRight, CheckCircle2,
-    UserRoundCheck
+    Search, Bell, UserRoundCheck
 } from 'lucide-react';
 import SidebarItem from './SideBar';
 import UserDirectory from './UserDirectory';
@@ -11,70 +9,104 @@ import DashboardStats from './DashboardStats';
 import AdminOrders from './AdminOrders';
 import ManageServices from './ManageService';
 import PartnerManagement from './PartnerManagement';
+import AdminSettings from './AdminSettings';
+import { useUser, UserButton, useClerk } from '@clerk/clerk-react';
 
 export const AdminDashboard = () => {
     const [activeTab, setActiveTab] = useState('dashboard');
+    const { user, isLoaded } = useUser();
+    const { signOut } = useClerk(); // Signout function from Clerk
+
+    if (!isLoaded) return null; // Prevent flicker while Clerk loads
 
     return (
         <div className="min-h-screen bg-[#F4F7FE] flex font-sans antialiased text-slate-900">
             {/* --- Sidebar --- */}
-            <aside className="w-72 bg-slate-900 flex flex-col p-6 fixed h-full shadow-2xl">
-                <div className="flex items-center gap-4 mb-12 px-2">
+            <aside className="w-72 bg-slate-900 flex flex-col p-6 fixed h-full shadow-2xl z-50">
+                {/* Logo Section */}
+                <div className="flex items-center gap-4 mb-10 px-2">
                     <div className="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/40">
                         <Package className="text-white" size={24} />
                     </div>
-                    <span className="font-black text-2xl text-white tracking-tight">Handyman Admin</span>
+                    <span className="font-black text-2xl text-white tracking-tight leading-none">
+                        Handyman <br /><span className="text-indigo-400 text-xs uppercase tracking-[0.2em]">Admin Panel</span>
+                    </span>
                 </div>
 
-                <div className="flex-col gap-2">
+                {/* Navigation Items - Gap added here */}
+                <nav className="flex flex-col gap-3 flex-1">
                     <SidebarItem id="dashboard" label="Dashboard" icon={<LayoutDashboard size={20} />} activeTab={activeTab} setActiveTab={setActiveTab} />
-                    <SidebarItem id="services" label="Manage Services" url="" icon={<Package size={20} />} activeTab={activeTab} setActiveTab={setActiveTab} />
-                    <SidebarItem id="orders" label="All Orders" url="" icon={<Calendar size={20} />} activeTab={activeTab} setActiveTab={setActiveTab} />
-                    <SidebarItem id="users" label="User Directory" url="" icon={<Users size={20} />} activeTab={activeTab} setActiveTab={setActiveTab} />
-                    <SidebarItem id="partners" label="Partners" url="" icon={<UserRoundCheck size={20} />} activeTab={activeTab} setActiveTab={setActiveTab} />
-                    <SidebarItem id="settings" label="App Settings" url="" icon={<Settings size={20} />} activeTab={activeTab} setActiveTab={setActiveTab} />
-                </div>
+                    <SidebarItem id="services" label="Manage Services" icon={<Package size={20} />} activeTab={activeTab} setActiveTab={setActiveTab} />
+                    <SidebarItem id="orders" label="All Orders" icon={<Calendar size={20} />} activeTab={activeTab} setActiveTab={setActiveTab} />
+                    <SidebarItem id="users" label="User Directory" icon={<Users size={20} />} activeTab={activeTab} setActiveTab={setActiveTab} />
+                    <SidebarItem id="partners" label="Partners" icon={<UserRoundCheck size={20} />} activeTab={activeTab} setActiveTab={setActiveTab} />
+                    <SidebarItem id="settings" label="App Settings" icon={<Settings size={20} />} activeTab={activeTab} setActiveTab={setActiveTab} />
+                </nav>
 
-                <button className="flex items-center gap-4 p-4 text-slate-400 hover:text-rose-400 transition-all font-bold mt-auto group">
-                    <div className="p-2 rounded-lg group-hover:bg-rose-500/10 transition-all"><LogOut size={20} /></div>
+                {/* Sign Out Button - Integrated with Clerk */}
+                <button 
+                    onClick={() => signOut()}
+                    className="flex items-center gap-4 p-4 text-slate-400 hover:text-rose-400 transition-all font-bold mt-auto group rounded-2xl hover:bg-rose-500/5"
+                >
+                    <div className="p-2 rounded-lg group-hover:bg-rose-500/10 transition-all">
+                        <LogOut size={20} />
+                    </div>
                     Sign Out
                 </button>
             </aside>
 
             {/* --- Main Content --- */}
-            <main className="ml-72 flex-1 flex flex-col">
+            <main className="ml-72 flex-1 flex flex-col min-w-0">
                 {/* Header */}
-                <header className="px-10 py-6 flex justify-between items-center bg-transparent">
+                <header className="px-10 py-6 flex justify-between items-center bg-[#F4F7FE]/80 backdrop-blur-md sticky top-0 z-40">
                     <div className="relative w-full max-w-md">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                        <input
-                            type="text"
-                            placeholder="Search analytics, orders..."
-                            className="w-full bg-white/80 backdrop-blur-md pl-12 pr-4 py-3 rounded-2xl border-none shadow-sm focus:ring-2 focus:ring-indigo-500 transition-all text-sm font-medium"
-                        />
+                       <h1>Welcome Admin</h1>
                     </div>
-                    <div className="flex items-center gap-6">
-                        <button className="p-3 bg-white rounded-2xl text-slate-500 shadow-sm hover:shadow-md transition-all relative">
+
+                    <div className="flex items-center gap-4">
+                        {/* Notifications */}
+                        <button className="p-3 bg-white rounded-2xl text-slate-500 shadow-sm hover:shadow-md transition-all relative border border-slate-100">
                             <Bell size={20} />
                             <span className="absolute top-3 right-3 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></span>
                         </button>
+
+                        <div className="h-8 w-[1px] bg-slate-200 mx-2"></div>
+
+                        {/* User Profile - Fully Working with Clerk */}
                         <div className="flex items-center gap-3 bg-white p-1.5 pr-4 rounded-2xl shadow-sm border border-slate-100">
-                            <div className="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold shadow-indigo-200 shadow-lg">A</div>
-                            <span className="text-sm font-bold text-slate-700">Admin</span>
+                            <UserButton 
+                                afterSignOutUrl="/" 
+                                appearance={{
+                                    elements: {
+                                        avatarBox: "w-9 h-9 rounded-xl shadow-lg shadow-indigo-100"
+                                    }
+                                }}
+                            />
+                            <div className="flex flex-col">
+                                <span className="text-xs font-black text-slate-800 leading-none">
+                                    {user?.fullName || "Admin User"}
+                                </span>
+                                <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-wider mt-1">
+                                    Super Admin
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </header>
 
                 {/* Content Area */}
-                <div className="px-10 pb-10 flex-1">
-                    {activeTab === 'dashboard' && <DashboardStats />}
-                    {activeTab === 'services' && <ManageServices />}
-                    {activeTab === 'users' && <UserDirectory />}
-                    {activeTab === 'orders' && <AdminOrders />}
-                    {activeTab === 'partners' && <PartnerManagement />}
+                <div className="px-10 pb-10 flex-1 overflow-y-auto">
+                    {/* Render with Animation for smooth transitions */}
+                    <div className="animate-in fade-in slide-in-from-bottom-3 duration-500">
+                        {activeTab === 'dashboard' && <DashboardStats />}
+                        {activeTab === 'services' && <ManageServices />}
+                        {activeTab === 'users' && <UserDirectory />}
+                        {activeTab === 'orders' && <AdminOrders />}
+                        {activeTab === 'partners' && <PartnerManagement />}
+                        {activeTab === 'settings' && <AdminSettings />}
+                    </div>
                 </div>
             </main>
         </div>
     );
 };
-
