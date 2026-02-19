@@ -380,9 +380,8 @@ router.get('/orders-recent',fastAuth, isAdmin, async (req, res) => {
 // GET: Dashboard Stats (Revenue, Customers, etc.)
 router.get('/dashboard-stats',fastAuth, isAdmin,async (req, res) => {
     try {
-        // 1. Pehle check karein DB mein total kitne orders hain (Bina filter ke)
         const allOrders = await Order.find({});
-        console.log("Total Orders in DB:", allOrders.length);
+        // console.log("Total Orders in DB:", allOrders.length);
 
         if (allOrders.length === 0) {
             return res.status(200).json({
@@ -390,15 +389,13 @@ router.get('/dashboard-stats',fastAuth, isAdmin,async (req, res) => {
             });
         }
 
-        // 2. Manual Calculation (Agar Aggregation fail ho raha ho)
+        // 2. Manual Calculation 
         let revenue = 0;
         let active = 0;
         const customerIds = new Set();
 
         allOrders.forEach(order => {
-            // Revenue: Sabhi confirmed orders ka total
             if (order.status?.toLowerCase() === 'confirmed' || order.status?.toLowerCase() === 'completed') {
-                // parseFloat isliye taaki agar string ho toh bhi number ban jaye
                 revenue += parseFloat(order.totalAmount?.toString() || "0");
             }
 
@@ -413,8 +410,8 @@ router.get('/dashboard-stats',fastAuth, isAdmin,async (req, res) => {
             }
         });
 
-        console.log("Calculated Revenue:", revenue);
-        console.log("Calculated Active:", active);
+        // console.log("Calculated Revenue:", revenue);
+        // console.log("Calculated Active:", active);
 
         res.status(200).json({
             revenue: revenue,
