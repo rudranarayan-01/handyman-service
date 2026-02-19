@@ -345,18 +345,17 @@ router.patch('/partners/:id', async (req, res) => {
 ///////// DASHBOARD ////////////////
 router.get('/orders-recent',fastAuth, isAdmin, async (req, res) => {
     try {
-        console.log("Recent Orders")
+        // console.log("Recent Orders")
         const recentOrders = await Order.aggregate([
             { $sort: { createdAt: -1 } },
-            
             { $limit: 5 },
             
             // 3. Join with Users collection
             {
                 $lookup: {
-                    from: 'users',           // Aapka users collection name
-                    localField: 'userId',    // Order model field
-                    foreignField: 'clerkId', // User model field (Clerk ID)
+                    from: 'users',           
+                    localField: 'userId',    
+                    foreignField: 'clerkId', 
                     as: 'userDetails'
                 }
             },
