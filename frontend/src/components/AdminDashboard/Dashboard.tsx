@@ -22,14 +22,14 @@ export const AdminDashboard = () => {
     return (
         <div className="min-h-screen bg-[#F4F7FE] flex font-sans antialiased text-slate-900">
             {/* --- Sidebar --- */}
-            <aside className="w-72 bg-slate-900 flex flex-col p-6 fixed h-full shadow-2xl z-50">
+            <aside className="w-72 bg-slate-200 flex flex-col p-6 fixed h-full shadow-2xl z-50">
                 {/* Logo Section */}
                 <div className="flex items-center gap-4 mb-10 px-2">
                     <div className="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/40">
                         <Package className="text-white" size={24} />
                     </div>
-                    <span className="font-black text-2xl text-white tracking-tight leading-none">
-                        Handyman <br /><span className="text-indigo-400 text-xs uppercase tracking-[0.2em]">Admin Panel</span>
+                    <span className="font-black text-2xl text-black tracking-tight leading-none">
+                        Handyman <br /><span className="text-indigo-900 text-xs uppercase tracking-[0.2em]">Admin Panel</span>
                     </span>
                 </div>
 
