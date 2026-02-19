@@ -136,6 +136,7 @@ router.get('/partners/eligible', async (req, res) => {
             specializations: { $in: [new RegExp(serviceName, 'i')] }
         }).select('name phone email serviceAreas');
 
+        // 2. Filter partners whose service area is a substring of the customer's full address
         const filteredPartners = partners.filter(partner => {
             return partner.serviceAreas.some(area => 
                 fullAddress.toLowerCase().includes(area.toLowerCase())
@@ -157,20 +158,17 @@ router.patch('/orders/:orderId', async (req, res) => {
 
         const validStatuses = ['pending', 'confirmed', 'completed', 'cancelled'];
         if (!validStatuses.includes(status)) {
-            return res.status(400).json({ message: "Bhai, ye status invalid hai!" });
+            return res.status(400).json({ message: "Invalid status !" });
         }
 
-        // --- FIX START ---
-        // Humne yahan 'any' type de diya taaki hum dynamic properties add kar sakein
         let updateData: any = { status: status };
         
         if (status === 'confirmed') {
             if (!partnerId) {
-                return res.status(400).json({ message: "Confirm karne ke liye partner assign karna zaruri hai!" });
+                return res.status(400).json({ message: "Asign a partner to confirm this" });
             }
             updateData.assignedPartner = partnerId; // Ab yahan error nahi aayega
         }
-        // --- FIX END ---
 
         const updatedOrder = await Order.findOneAndUpdate(
             { orderId: orderId },
@@ -194,7 +192,7 @@ router.patch('/orders/:orderId', async (req, res) => {
     }
 });
 
-router.delete('/orders/:orderId', async (req, res) => {
+router.delete('/orders/:orderId', fastAuth, isAdmin, async (req, res) => {
     try {
         const { orderId } = req.params;
 
@@ -217,7 +215,7 @@ router.delete('/orders/:orderId', async (req, res) => {
 });
 
 // SERVICE ROUTES 
-router.get('/services', fastAuth, isAdmin, async (req, res) => {
+router.get('/services', fastAuth, async (req, res) => {
     try {
         const services = await Service.find({}).sort({ createdAt: -1 });
         res.status(200).json(services);
@@ -286,11 +284,8 @@ router.get('/partners', async (req, res) => {
             };
         }
 
-        // Check if data exists at all (Debug step)
         const partners = await Partner.find(query).sort({ createdAt: -1 });
         
-        // Bhai, agar empty array aa raha hai toh search logic loose karo 
-        // ya check karo DB mein 'serviceAreas' field ka naam exact yahi hai na?
         res.json(partners);
     } catch (error) {
         console.error("Search Error:", error);
@@ -343,4 +338,97 @@ router.patch('/partners/:id', async (req, res) => {
     }
 });
 
-export default Router
+
+
+
+
+///////// DASHBOARD ////////////////
+router.get('/orders-recent',fastAuth, isAdmin, async (req, res) => {
+    try {
+        console.log("Recent Orders")
+        const recentOrders = await Order.aggregate([
+            { $sort: { createdAt: -1 } },
+            
+            { $limit: 5 },
+            
+            // 3. Join with Users collection
+            {
+                $lookup: {
+                    from: 'users',           // Aapka users collection name
+                    localField: 'userId',    // Order model field
+                    foreignField: 'clerkId', // User model field (Clerk ID)
+                    as: 'userDetails'
+                }
+            },
+            
+            // 4. Flatten the array and keep orders even if user is missing
+            { 
+                $unwind: {
+                    path: '$userDetails',
+                    preserveNullAndEmptyArrays: true 
+                }
+            }
+        ]);
+
+        res.status(200).json(recentOrders);
+    } catch (err: any) {
+        console.error("Dashboard Orders Error:", err);
+        res.status(500).json([]); // Fallback to empty array
+    }
+});
+
+// GET: Dashboard Stats (Revenue, Customers, etc.)
+router.get('/dashboard-stats',fastAuth, isAdmin,async (req, res) => {
+    try {
+        // 1. Pehle check karein DB mein total kitne orders hain (Bina filter ke)
+        const allOrders = await Order.find({});
+        console.log("Total Orders in DB:", allOrders.length);
+
+        if (allOrders.length === 0) {
+            return res.status(200).json({
+                revenue: 0, activeOrders: 0, totalCustomers: 0, growthRate: "0%"
+            });
+        }
+
+        // 2. Manual Calculation (Agar Aggregation fail ho raha ho)
+        let revenue = 0;
+        let active = 0;
+        const customerIds = new Set();
+
+        allOrders.forEach(order => {
+            // Revenue: Sabhi confirmed orders ka total
+            if (order.status?.toLowerCase() === 'confirmed' || order.status?.toLowerCase() === 'completed') {
+                // parseFloat isliye taaki agar string ho toh bhi number ban jaye
+                revenue += parseFloat(order.totalAmount?.toString() || "0");
+            }
+
+            // Active: Pending ya Processing
+            if (['pending', 'processing'].includes(order.status?.toLowerCase())) {
+                active++;
+            }
+
+            // Customers
+            if (order.userId) {
+                customerIds.add(order.userId.toString());
+            }
+        });
+
+        console.log("Calculated Revenue:", revenue);
+        console.log("Calculated Active:", active);
+
+        res.status(200).json({
+            revenue: revenue,
+            activeOrders: active,
+            totalCustomers: customerIds.size,
+            growthRate: "18.4%"
+        });
+
+    } catch (err: any) {
+        console.error("Stats Error:", err);
+        res.status(500).json({ error: "Stats failed", details: err.message });
+    }
+});
+
+
+
+export default router

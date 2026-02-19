@@ -44,7 +44,7 @@ export const AdminDashboard = () => {
                 </nav>
 
                 {/* Sign Out Button - Integrated with Clerk */}
-                <button 
+                <button
                     onClick={() => signOut()}
                     className="flex items-center gap-4 p-4 text-slate-400 hover:text-rose-400 transition-all font-bold mt-auto group rounded-2xl hover:bg-rose-500/5"
                 >
@@ -60,7 +60,7 @@ export const AdminDashboard = () => {
                 {/* Header */}
                 <header className="px-10 py-6 flex justify-between items-center bg-[#F4F7FE]/80 backdrop-blur-md sticky top-0 z-40">
                     <div className="relative w-full max-w-md">
-                       <h1>Welcome Admin</h1>
+                        <h1>Welcome Admin</h1>
                     </div>
 
                     <div className="flex items-center gap-4">
@@ -74,8 +74,8 @@ export const AdminDashboard = () => {
 
                         {/* User Profile - Fully Working with Clerk */}
                         <div className="flex items-center gap-3 bg-white p-1.5 pr-4 rounded-2xl shadow-sm border border-slate-100">
-                            <UserButton 
-                                afterSignOutUrl="/" 
+                            <UserButton
+                                afterSignOutUrl="/"
                                 appearance={{
                                     elements: {
                                         avatarBox: "w-9 h-9 rounded-xl shadow-lg shadow-indigo-100"

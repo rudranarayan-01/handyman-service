@@ -30,6 +30,7 @@ app.use('/api/v1/user', userRoutes)
 app.use('/api/v1/address', addressRoutes)
 app.use("/api/v1/admin", adminRoutes)
 
+
 app.get('/', (req, res) => {
     res.send('Handyman API V1 is live! 🚀');
 });

@@ -89,7 +89,6 @@ const ManageOrderDetails = () => {
         setFetchingPartners(true);
         try {
             const token = await getToken();
-            // We pass order details to filter partners on backend
             const response = await api.get(`/admin/partners/eligible`, {
                 params: {
                     area: order.customerDetails.address, // Or specific area field
