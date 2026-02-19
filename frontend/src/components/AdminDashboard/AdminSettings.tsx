@@ -35,7 +35,7 @@ const AdminSettings = () => {
                         <h1 className="text-4xl font-black text-slate-900 tracking-tight flex items-center gap-3">
                             <Settings className="text-indigo-600" size={32} /> System Settings
                         </h1>
-                        <p className="text-slate-500 font-medium mt-1">Configure your platform's global parameters</p>
+                        <p className="text-gray-400 font-medium mt-1">Configure your platform's global parameters</p>
                     </div>
                     <button
                         onClick={handleSave}
@@ -51,16 +51,16 @@ const AdminSettings = () => {
                     {/* Sidebar Tabs */}
                     <div className="space-y-2">
                         {tabs.map((tab) => (
-                            <button
+                            <span
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
-                                className={`w-full flex items-center gap-3 px-6 py-4 rounded-2xl font-bold text-sm transition-all ${activeTab === tab.id
-                                        ? 'bg-white text-indigo-600 shadow-sm border border-slate-100'
-                                        : 'text-slate-400 hover:text-slate-600'
+                                className={`w-full flex items-center gap-3 px-6 py-4 rounded-2xl font-bold text-sm transition-all cursor-pointer ${activeTab === tab.id
+                                        ? 'bg-white text-indigo-900 shadow-sm border border-slate-200'
+                                        : 'text-slate-500 hover:text-slate-700'
                                     }`}
                             >
                                 {tab.icon} {tab.label}
-                            </button>
+                            </span>
                         ))}
                     </div>
 

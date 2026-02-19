@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom';
-import { Button } from '../ui/button';
+// import { Button } from '../ui/button';
 
 const SidebarItem = ({ id, label, icon, activeTab, setActiveTab, url }: any) => (
     <Link to={url}>

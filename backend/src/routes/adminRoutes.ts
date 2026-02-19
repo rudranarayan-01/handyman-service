@@ -15,7 +15,7 @@ router.get('/users', fastAuth, isAdmin, async (req: any, res: any) => {
     try {
         const users = await User.find({}).sort({ createdAt: -1 });
         res.status(200).json(users);
-        console.log("User fetched")
+        // console.log("User fetched")
     } catch (err) {
         res.status(500).json({ error: "Database error" });
     }
@@ -123,7 +123,7 @@ router.get('/orders/:orderId', fastAuth, isAdmin, async (req: any, res: any) => 
 });
 
 // Get Eligible partner for service
-router.get('/partners/eligible', async (req, res) => {
+router.get('/partners/eligible',fastAuth,isAdmin ,async (req, res) => {
     try {
         const fullAddress = req.query.area ? String(req.query.area) : "";
         const serviceName = req.query.service ? String(req.query.service) : "";

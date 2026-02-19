@@ -212,7 +212,7 @@ const ManageOrderDetails = () => {
                             >
                                 {updating ? "Sending Notifications..." : "Confirm & Notify Partner"}
                             </button>
-                            <p className="text-[9px] text-center text-slate-400 font-medium px-4">
+                            <p className="text-[12px] text-center text-slate-400 font-medium px-4">
                                 On confirmation, an automated SMS and Email will be dispatched to the partner with customer details.
                             </p>
                         </div>
