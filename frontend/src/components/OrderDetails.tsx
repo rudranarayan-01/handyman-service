@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
     ChevronLeft, MapPin, Calendar, CreditCard,
-    ShieldCheck, Package, Hash, Clock, ArrowRight
+    ShieldCheck, Package, Hash, Clock, ArrowRight,
+    Star
 } from 'lucide-react';
 import api from '@/api/api';
 import { useAuth } from '@clerk/clerk-react';
 import BackNavigation from './BackNavigation';
+import FeedbackSection from './FeedbackSection';
 
 const OrderDetails = () => {
     const { id } = useParams();
@@ -14,22 +16,22 @@ const OrderDetails = () => {
     const { getToken } = useAuth();
     const [order, setOrder] = useState<any>(null);
     const [loading, setLoading] = useState(true);
-
+    const fetchOrder = async () => {
+        try {
+            const token = await getToken();
+            const res = await api.get(`/orders/${id}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setOrder(res.data);
+            console.log(res.data);
+        } catch (err) {
+            console.error("Fetch Error:", err);
+        } finally {
+            setLoading(false);
+        }
+    };
     useEffect(() => {
-        const fetchOrder = async () => {
-            try {
-                const token = await getToken();
-                const res = await api.get(`/orders/${id}`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                setOrder(res.data);
-                console.log(res.data);
-            } catch (err) {
-                console.error("Fetch Error:", err);
-            } finally {
-                setLoading(false);
-            }
-        };
+
         fetchOrder();
     }, [id]);
 
@@ -80,7 +82,7 @@ const OrderDetails = () => {
                     <div className="w-full md:w-auto p-8 border-t md:border-t-0 md:border-l  flex items-center min-w-75">
                         {order?.assignedPartner ? (
                             // --- If Partner is Assigned: Show Details ---
-                            <div className="flex items-center gap-4 animate-in fade-in slide-in-from-right-4 duration-500">                               
+                            <div className="flex items-center gap-4 animate-in fade-in slide-in-from-right-4 duration-500">
                                 <div className="flex flex-col">
                                     <p className="text-[10px] font-black uppercase text-emerald-600 tracking-widest mb-0.5">Assigned Partner</p>
                                     <h4 className="font-black text-slate-800 leading-none mb-1">
@@ -235,8 +237,17 @@ const OrderDetails = () => {
                             </button>
                         </div>
                     </div>
+
                 </div>
+                {order?.status === 'completed' && (
+                    <FeedbackSection
+                        existingFeedback={order.feedback}
+                        onSuccess={fetchOrder} 
+                    />
+                )}
             </main>
+
+
         </div>
     );
 };

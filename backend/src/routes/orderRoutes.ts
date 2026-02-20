@@ -69,8 +69,6 @@ router.get('/history', fastAuth, async (req: any, res: any) => {
         const { userId } = req.auth;
         // Fetch orders and sort by most recent first
         const orders = await Order.find({ userId }).sort({ bookingDate: -1 });
-
-
         res.status(200).json({
             success: true,
             orders
@@ -95,6 +93,52 @@ router.get('/:id', requireAuth(), async (req: any, res: any) => {
     } catch (err) {
         console.error("Fetch Order Error:", err);
         res.status(500).json({ error: "Failed to fetch order details" });
+    }
+});
+
+// Route for Feedback
+router.patch("/:id/feedback", fastAuth, async (req, res) => {
+    try {
+        const { rating, comment } = req.body;
+        const { id } = req.params;
+
+        // Agar aap MongoDB ki _id use kar rahe hain:
+        const updatedOrder = await Order.findByIdAndUpdate(
+            id,
+            { 
+                feedback: { rating, comment, submittedAt: new Date() } 
+            },
+            { new: true }
+        );
+
+        if (!updatedOrder) return res.status(404).json({ message: "Order not found" });
+
+        res.status(200).json(updatedOrder);
+    } catch (error) {
+        res.status(500).json({ message: error });
+    }
+});
+
+// DELETE feedback from an order
+router.delete("/:id/feedback", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const updatedOrder = await Order.findByIdAndUpdate(
+            id,
+            { 
+                $unset: { feedback: "" } // Ye field ko document se remove kar dega
+            },
+            { new: true }
+        );
+
+        if (!updatedOrder) {
+            return res.status(404).json({ message: "Order not found" });
+        }
+
+        res.status(200).json({ message: "Feedback deleted successfully", updatedOrder });
+    } catch (error) {
+        res.status(500).json({ message: error});
     }
 });
 

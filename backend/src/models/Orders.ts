@@ -1,9 +1,9 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IOrder extends Document {
-    orderId: string;      
-    userId: string;       
-    customerDetails: {    
+    orderId: string;
+    userId: string;
+    customerDetails: {
         name: string;
         email: string;
         phone: string;
@@ -16,24 +16,29 @@ export interface IOrder extends Document {
         image: string;
     }>;
     status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
+    // --- Fixed Feedback Interface ---
+    feedback?: {
+        rating: number;
+        comment: string;
+        submittedAt: Date;
+    };
     totalAmount: number;
     bookingDate: Date;
     serviceFee: number;
-    // --- FIX: Added this field to the Interface ---
-    assignedPartner?: mongoose.Types.ObjectId | any; 
+    assignedPartner?: mongoose.Types.ObjectId | any;
 }
 
 const orderSchema = new Schema<IOrder>({
-    orderId: { 
-        type: String, 
-        unique: true, 
-        required: true, 
-        index: true 
+    orderId: {
+        type: String,
+        unique: true,
+        required: true,
+        index: true
     },
-    userId: { 
-        type: String, 
-        required: true, 
-        index: true 
+    userId: {
+        type: String,
+        required: true,
+        index: true
     },
     customerDetails: {
         name: { type: String, required: true },
@@ -47,11 +52,16 @@ const orderSchema = new Schema<IOrder>({
         price: Number,
         image: String
     }],
-    status: { 
-        type: String, 
-        enum: ['pending', 'confirmed', 'completed', 'cancelled'], 
+    status: {
+        type: String,
+        enum: ['pending', 'confirmed', 'completed', 'cancelled'],
         default: 'pending',
-        index: true 
+        index: true
+    },
+    feedback: {
+        rating: { type: Number, min: 1, max: 5 },
+        comment: { type: String },
+        submittedAt: { type: Date }
     },
     totalAmount: { type: Number, required: true },
     bookingDate: { type: Date, default: Date.now },
