@@ -22,6 +22,7 @@ const AllServices = () => {
             try {
                 const res = await api.get(`/services/category/${categoryId}`);
                 setServices(res.data);
+                // console.log(res.data)
             } catch (err) {
                 console.error("Fetch error", err);
                 setServices([]);
@@ -91,7 +92,7 @@ const AllServices = () => {
                                                     className={`rounded-2xl font-black px-8 py-6 transition-all ${
                                                         isItemInCart 
                                                         ? 'bg-emerald-500 text-white hover:bg-emerald-600' 
-                                                        : 'bg-white border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white'
+                                                        : 'bg-white border-2 border-blue-600 text-blue-100 hover:bg-blue-600 hover:text-white'
                                                     }`}
                                                 >
                                                     {isItemInCart ? "Added" : "Add"} <Plus className="ml-2 w-4 h-4" />

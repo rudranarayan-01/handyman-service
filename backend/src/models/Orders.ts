@@ -56,7 +56,6 @@ const orderSchema = new Schema<IOrder>({
     totalAmount: { type: Number, required: true },
     bookingDate: { type: Date, default: Date.now },
     serviceFee: { type: Number, default: 19 },
-    // Association with Partner Model
     assignedPartner: {
         type: Schema.Types.ObjectId,
         ref: 'Partner',

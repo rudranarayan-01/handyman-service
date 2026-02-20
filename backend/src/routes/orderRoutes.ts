@@ -84,10 +84,16 @@ router.get('/history', fastAuth, async (req: any, res: any) => {
 // A specific  Order details
 router.get('/:id', requireAuth(), async (req: any, res: any) => {
     try {
-        const order = await Order.findById(req.params.id);
-        if (!order) return res.status(404).json({ error: "Order not found" });
+        const order = await Order.findById(req.params.id)
+            .populate('assignedPartner', 'name phone'); 
+
+        if (!order) {
+            return res.status(404).json({ error: "Order not found" });
+        }
+
         res.json(order);
     } catch (err) {
+        console.error("Fetch Order Error:", err);
         res.status(500).json({ error: "Failed to fetch order details" });
     }
 });

@@ -23,6 +23,7 @@ const OrderDetails = () => {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setOrder(res.data);
+                console.log(res.data);
             } catch (err) {
                 console.error("Fetch Error:", err);
             } finally {
@@ -75,9 +76,38 @@ const OrderDetails = () => {
                             <h2 className="text-xl font-black text-gray-900 uppercase italic leading-none">{order.status}</h2>
                         </div>
                     </div>
-                    <div className="w-full md:w-auto p-8 border-t md:border-t-0 md:border-l border-gray-50 flex items-center gap-4">
-                        <span className="h-3 w-3 rounded-full bg-emerald-500 animate-pulse"></span>
-                        <p className="font-bold text-gray-600 text-sm">Our partner is being assigned</p>
+                    {/* Partner Details Section */}
+                    <div className="w-full md:w-auto p-8 border-t md:border-t-0 md:border-l  flex items-center min-w-75">
+                        {order?.assignedPartner ? (
+                            // --- If Partner is Assigned: Show Details ---
+                            <div className="flex items-center gap-4 animate-in fade-in slide-in-from-right-4 duration-500">                               
+                                <div className="flex flex-col">
+                                    <p className="text-[10px] font-black uppercase text-emerald-600 tracking-widest mb-0.5">Assigned Partner</p>
+                                    <h4 className="font-black text-slate-800 leading-none mb-1">
+                                        {order.assignedPartner.name}
+                                    </h4>
+                                    <a
+                                        href={`tel:${order.assignedPartner.phone}`}
+                                        className="flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-indigo-600 transition-colors"
+                                    >
+                                        <span className="bg-slate-100 text-gray-900 p-1 rounded-md group-hover:bg-indigo-50">📞</span>
+                                        {order.assignedPartner.phone}
+                                    </a>
+                                </div>
+                            </div>
+                        ) : (
+                            // --- If No Partner: Show Searching Status ---
+                            <div className="flex items-center gap-4">
+                                <div className="relative flex h-3 w-3">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                                </div>
+                                <div>
+                                    <p className="font-black text-slate-800 text-sm tracking-tight">Our partner is being assigned</p>
+                                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">Usually takes 2-5 mins</p>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
 

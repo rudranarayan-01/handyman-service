@@ -167,7 +167,7 @@ router.patch('/orders/:orderId', async (req, res) => {
             if (!partnerId) {
                 return res.status(400).json({ message: "Asign a partner to confirm this" });
             }
-            updateData.assignedPartner = partnerId; // Ab yahan error nahi aayega
+            updateData.assignedPartner = partnerId; 
         }
 
         const updatedOrder = await Order.findOneAndUpdate(

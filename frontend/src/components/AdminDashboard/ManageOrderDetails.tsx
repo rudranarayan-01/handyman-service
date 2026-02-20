@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@clerk/clerk-react';
 import {
-    ChevronLeft, Package, User, CreditCard,
-    Calendar, CheckCircle, Clock, AlertCircle,
-    Truck, XCircle, Mail, MapPin,
-    Map, Phone, Trash2, X, Briefcase
-} from 'lucide-react';
+    ChevronLeft, Package, User, 
+    Calendar, Clock, 
+    Mail, MapPin,
+    Phone, Trash2, X} from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/api/api';
 
