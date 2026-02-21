@@ -17,6 +17,7 @@ import PrivaryPage from './pages/PrivaryPage';
 import BlogPage from './pages/BlogPage';
 import AdminPannel from './pages/AdminPannel';
 import ManageOrderDetails from './components/AdminDashboard/ManageOrderDetails';
+import AdminProtect from './components/Routes/AdminRoute';
 
 function App() {
   useUserSync()
@@ -28,8 +29,9 @@ function App() {
         <Routes>
           {/* Aapka Home page path */}
           <Route path="/" element={<Home />} />
-          <Route path="/admin" element={<AdminPannel />} />
-          <Route path="/admin/orders/:orderId" element={<ManageOrderDetails />} />
+          <Route path="/admin" element={<AdminProtect><AdminPannel /></AdminProtect>} />
+          <Route path="/admin/orders/:orderId" element={<AdminProtect><ManageOrderDetails /></AdminProtect>} />
+          
           <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/order-history" element={<OrderHistoryPage />} />
           <Route path="/order-history/:id" element={<OrderDetailsPage />} />
