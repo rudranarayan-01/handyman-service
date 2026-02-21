@@ -122,31 +122,31 @@ router.get('/orders/:orderId', fastAuth, isAdmin, async (req: any, res: any) => 
     }
 });
 
+
+
+
 // Get Eligible partner for service
-router.get('/partners/eligible',fastAuth,isAdmin ,async (req, res) => {
+router.get('/partners/eligible', fastAuth, isAdmin, async (req, res) => {
     try {
-        const fullAddress = req.query.area ? String(req.query.area) : "";
+        const city = req.query.city ? String(req.query.city) : "";
         const serviceName = req.query.service ? String(req.query.service) : "";
 
-        if (!fullAddress || !serviceName) {
-            return res.status(400).json({ message: "Area and Service are required." });
+        if (!city || !serviceName) {
+            return res.status(400).json({ message: "City and Service are required." });
         }
-
-        const partners = await Partner.find({
-            specializations: { $in: [new RegExp(serviceName, 'i')] }
+        const eligiblePartners = await Partner.find({
+            specializations: { 
+                $in: [new RegExp(`^${serviceName}$`, 'i')] 
+            },
+            serviceAreas: { 
+                $in: [new RegExp(`^${city}$`, 'i')] 
+            }
         }).select('name phone email serviceAreas');
 
-        // 2. Filter partners whose service area is a substring of the customer's full address
-        const filteredPartners = partners.filter(partner => {
-            return partner.serviceAreas.some(area => 
-                fullAddress.toLowerCase().includes(area.toLowerCase())
-            );
-        });
-
-        res.status(200).json(filteredPartners);
+        res.status(200).json(eligiblePartners);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Partners fetch karne mein dikat hui" });
+        res.status(500).json({ message: "Error fetching partners for " + req.query.city });
     }
 });
 

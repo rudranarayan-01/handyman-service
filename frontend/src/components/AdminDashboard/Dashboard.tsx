@@ -11,6 +11,7 @@ import ManageServices from './ManageService';
 import PartnerManagement from './PartnerManagement';
 import AdminSettings from './AdminSettings';
 import { useUser, UserButton, useClerk } from '@clerk/clerk-react';
+import { Button } from '../ui/button';
 
 export const AdminDashboard = () => {
     const [activeTab, setActiveTab] = useState('dashboard');
@@ -22,13 +23,13 @@ export const AdminDashboard = () => {
     return (
         <div className="min-h-screen bg-[#F4F7FE] flex font-sans antialiased text-slate-900">
             {/* --- Sidebar --- */}
-            <aside className="w-72 bg-slate-200 flex flex-col p-6 fixed h-full shadow-2xl z-50">
+            <aside className="w-72 bg-slate-200 flex flex-col gap-2 p-6 fixed h-full shadow-2xl z-50">
                 {/* Logo Section */}
                 <div className="flex items-center gap-4 mb-10 px-2">
                     <div className="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/40">
                         <Package className="text-white" size={24} />
                     </div>
-                    <span className="font-black text-2xl text-black tracking-tight leading-none">
+                    <span className="font-black text-2xl text-black tracking-tight leading-none cursor-pointer">
                         Handyman <br /><span className="text-indigo-900 text-xs uppercase tracking-[0.2em]">Admin Panel</span>
                     </span>
                 </div>
@@ -43,10 +44,14 @@ export const AdminDashboard = () => {
                     <SidebarItem id="settings" label="App Settings" icon={<Settings size={20} />} activeTab={activeTab} setActiveTab={setActiveTab} />
                 </nav>
 
+                <Button>
+                    <a href="/">My website</a>
+                </Button>
+
                 {/* Sign Out Button - Integrated with Clerk */}
                 <button
                     onClick={() => signOut()}
-                    className="flex items-center gap-4 p-4 hover:text-red-700 text-rose-400 transition-all font-bold mt-auto group rounded-2xl hover:bg-rose-500/5"
+                    className="flex items-center gap-4 p-2 hover:text-red-700 text-rose-400 transition-all font-bold mt-auto group rounded-2xl hover:bg-rose-500/5"
                 >
                     <div className="p-2 rounded-lg group-hover:bg-rose-500/10 transition-all">
                         <LogOut size={20} />

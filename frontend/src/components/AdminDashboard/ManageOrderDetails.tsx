@@ -15,7 +15,7 @@ interface OrderItem {
         _id: string;
         image?: string;
         duration?: string;
-        category?: string; // Added to help filtering
+        category?: string;
     };
     name: string;
     price: number;
@@ -30,8 +30,9 @@ interface FullOrderData {
         name: string;
         email: string;
         address: string;
+        city?: string; // Added city field
         phone: string;
-        area?: string; // Needed for matching
+        area?: string;
     };
     items: OrderItem[];
     status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
@@ -82,26 +83,32 @@ const ManageOrderDetails = () => {
 
     useEffect(() => { fetchOrderDetails(); }, [orderId]);
 
-    // --- FETCH ELIGIBLE PARTNERS ---
-    const fetchEligiblePartners = async () => {
-        if (!order) return;
-        setFetchingPartners(true);
-        try {
-            const token = await getToken();
-            const response = await api.get(`/admin/partners/eligible`, {
-                params: {
-                    area: order.customerDetails.address, // Or specific area field
-                    service: order.items[0]?.name // Based on first item or category
-                },
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setPartners(response.data);
-        } catch (err) {
-            toast.error("Failed to load eligible partners");
-        } finally {
-            setFetchingPartners(false);
-        }
-    };
+    // --- FETCH ELIGIBLE PARTNERS (CITY BASED) ---
+  const fetchEligiblePartners = async () => {
+    if (!order) return;
+    setFetchingPartners(true);
+
+    // Extracting "Varanasi" from "Ram Nagar, Varanasi, Uttar Pradesh - 757051"
+    const addressParts = order.customerDetails.address.split(',');
+    // Usually, the city is the second part in most Indian address formats
+    const extractedCity = addressParts.length > 1 ? addressParts[1].trim() : addressParts[0].trim();
+
+    try {
+        const token = await getToken();
+        const response = await api.get(`/admin/partners/eligible`, {
+            params: {
+                city: extractedCity, // This will send "Varanasi"
+                service: order.items[0]?.name 
+            },
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        setPartners(response.data);
+    } catch (err) {
+        toast.error("Failed to load partners for " + extractedCity);
+    } finally {
+        setFetchingPartners(false);
+    }
+};
 
     const handleStatusClick = (status: string) => {
         if (status === 'confirmed') {
@@ -119,7 +126,7 @@ const ManageOrderDetails = () => {
             await api.patch(`/admin/orders/${orderId}`,
                 { 
                     status: newStatus,
-                    partnerId: partnerId // Backend logic will trigger Email/SMS here
+                    partnerId: partnerId 
                 },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -183,22 +190,22 @@ const ManageOrderDetails = () => {
                         
                         <div className="space-y-4">
                             <p className="text-xs font-bold text-slate-500 leading-relaxed italic">
-                                Matching partners found in <span className="text-indigo-600 font-black">{order.customerDetails.address?.split(',')[0]}</span> for <span className="text-indigo-600 font-black">{order.items[0]?.name}</span>.
+                                Showing all available partners in <span className="text-indigo-600 font-black">{order.customerDetails.address.split(',').slice(0,2).join(",")}</span> for <span className="text-indigo-600 font-black">{order.items[0]?.name}</span>.
                             </p>
                             
                             <div className="relative">
                                 <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Select Professional</label>
                                 {fetchingPartners ? (
-                                    <div className="w-full p-4 bg-slate-50 rounded-2xl animate-pulse text-sm font-bold text-slate-400">Searching nearby experts...</div>
+                                    <div className="w-full p-4 bg-slate-50 rounded-2xl animate-pulse text-sm font-bold text-slate-400">Scanning city for experts...</div>
                                 ) : (
                                     <select 
                                         value={selectedPartnerId}
                                         onChange={(e) => setSelectedPartnerId(e.target.value)}
                                         className="w-full mt-1.5 p-4 bg-slate-50 border border-transparent rounded-2xl outline-none focus:bg-white focus:border-indigo-600 transition-all font-bold text-sm appearance-none"
                                     >
-                                        <option value="">Choose a partner...</option>
+                                        <option value="">{partners.length > 0 ? "Choose a partner..." : "No partners found in this city"}</option>
                                         {partners.map(p => (
-                                            <option key={p._id} value={p._id}>{p.name} ({p.phone})</option>
+                                            <option key={p._id} value={p._id}>{p.name} — {p.phone}</option>
                                         ))}
                                     </select>
                                 )}
@@ -211,16 +218,12 @@ const ManageOrderDetails = () => {
                             >
                                 {updating ? "Sending Notifications..." : "Confirm & Notify Partner"}
                             </button>
-                            <p className="text-[12px] text-center text-slate-400 font-medium px-4">
-                                On confirmation, an automated SMS and Email will be dispatched to the partner with customer details.
-                            </p>
                         </div>
                     </div>
                 </div>
             )}
 
             <div className="max-w-6xl mx-auto">
-                {/* Header Section */}
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
                     <div>
                         <span onClick={() => navigate('/admin')} className="flex items-center gap-2 cursor-pointer hover:text-indigo-400 text-indigo-600 font-bold text-xs transition-colors mb-4 uppercase tracking-wider">
@@ -235,10 +238,8 @@ const ManageOrderDetails = () => {
                                 {order.status}
                             </span>
                         </div>
-                        <p className="text-slate-500 font-medium mt-1 italic">Internal Ref: {order._id}</p>
                     </div>
 
-                    {/* Status Management Bar */}
                     <div className="bg-white p-2 rounded-[1.5rem] border border-slate-100 shadow-sm flex flex-wrap gap-1">
                         {['pending', 'confirmed', 'completed', 'cancelled'].map((s) => (
                             <button
@@ -259,7 +260,7 @@ const ManageOrderDetails = () => {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Left: Items & Summary */}
+                    {/* Left: Items */}
                     <div className="lg:col-span-2 space-y-6">
                         <div className="bg-white rounded-[2.5rem] border border-slate-100 p-8 shadow-sm">
                             <h3 className="text-sm font-black text-slate-900 mb-8 flex items-center gap-2 uppercase tracking-widest">
@@ -276,8 +277,6 @@ const ManageOrderDetails = () => {
                                             <h4 className="font-black text-slate-800 text-lg truncate">{item.name}</h4>
                                             <div className="flex items-center gap-3 mt-1 text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
                                                 <span>Price: ₹{item.price}</span>
-                                                <span>•</span>
-                                                <span className="flex items-center gap-1 text-indigo-500"><Clock size={10} /> Instant Sync</span>
                                             </div>
                                         </div>
                                         <div className="text-right">
@@ -286,72 +285,35 @@ const ManageOrderDetails = () => {
                                     </div>
                                 ))}
                             </div>
-
-                            <div className="mt-10 pt-8 border-t border-dashed border-slate-100 space-y-3">
-                                <div className="flex justify-between text-slate-500 font-bold text-sm">
-                                    <span>Subtotal</span>
-                                    <span>₹{order.totalAmount - order.serviceFee}</span>
-                                </div>
-                                <div className="flex justify-between text-slate-500 font-bold text-sm">
-                                    <span>Service Fee</span>
-                                    <span>₹{order.serviceFee}</span>
-                                </div>
-                                <div className="flex justify-between items-center pt-4">
-                                    <span className="text-slate-900 font-black text-xl">Total Payable</span>
-                                    <span className="text-4xl font-black text-indigo-600 tracking-tighter">₹{order.totalAmount}</span>
-                                </div>
-                            </div>
                         </div>
                     </div>
 
-                    {/* Right: Customer & Info */}
+                    {/* Right: Info */}
                     <div className="space-y-6">
-                        <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white shadow-xl shadow-slate-200">
-                            <div className="flex items-center justify-between mb-8">
-                                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Customer</h3>
-                                <User size={16} className="text-indigo-400" />
-                            </div>
-                            <div className="space-y-1 mb-8">
-                                <p className="font-black text-2xl tracking-tight">{order.customerDetails.name}</p>
-                                <p className="text-sm text-slate-400 flex items-center gap-2"><Mail size={12} /> {order.customerDetails.email}</p>
-                            </div>
-                            <div className="pt-6 border-t border-slate-800 space-y-4">
-                                <div className="flex items-center justify-between text-xs">
-                                    <span className="font-bold text-slate-500 uppercase">Clerk ID</span>
-                                    <span className="font-mono text-indigo-300">{order.userId}</span>
-                                </div>
-                                <div className="flex items-center justify-between text-xs">
-                                    <span className="font-bold text-slate-500 uppercase">Payment</span>
-                                    <span className="bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded font-black">PAID</span>
-                                </div>
-                            </div>
+                        <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white shadow-xl">
+                            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-8">Customer</h3>
+                            <p className="font-black text-2xl tracking-tight">{order.customerDetails.name}</p>
+                            <p className="text-sm text-slate-400 mt-2 flex items-center gap-2"><Mail size={12} /> {order.customerDetails.email}</p>
                         </div>
 
                         <div className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm">
                             <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-6">Booking Context</h3>
                             <div className="space-y-6">
                                 <div className="flex gap-4">
-                                    <div className="h-8 w-8 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0"><Calendar size={16} /></div>
-                                    <div>
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Booked On</p>
-                                        <div className='flex gap-1.5'>
-                                            <p className="text-sm font-bold text-slate-800">{new Date(order.bookingDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</p>
-                                            <p className="text-[11px] font-black text-indigo-500 mt-0.5 flex items-center gap-1"><Clock size={10} /> {new Date(order.bookingDate).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="flex gap-4">
                                     <div className="h-8 w-8 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 shrink-0"><MapPin size={16} /></div>
                                     <div>
                                         <p className="text-[10px] font-black text-slate-400 uppercase">Address</p>
-                                        <p className="text-sm font-bold text-slate-800">{order.customerDetails.address || "No address"}</p>
+                                        <p className="text-sm font-bold text-slate-800">{order.customerDetails.address}</p>
+                                        {order.customerDetails.city && (
+                                            <p className="text-[10px] font-black text-indigo-500 uppercase mt-1">City: {order.customerDetails.city}</p>
+                                        )}
                                     </div>
                                 </div>
                                 <div className="flex gap-4">
-                                    <div className="h-8 w-8 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 shrink-0"><Phone size={16} /></div>
+                                    <div className="h-8 w-8 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0"><Phone size={16} /></div>
                                     <div>
                                         <p className="text-[10px] font-black text-slate-400 uppercase">Phone</p>
-                                        <p className="text-sm font-bold text-slate-800">{order.customerDetails.phone || "No phone"}</p>
+                                        <p className="text-sm font-bold text-slate-800">{order.customerDetails.phone}</p>
                                     </div>
                                 </div>
                             </div>
