@@ -221,7 +221,7 @@ const OrderDetails = () => {
                                     <h3 className="font-black text-gray-400 uppercase text-[10px] tracking-[0.2em]">Location</h3>
                                 </div>
                                 <p className="text-lg font-bold text-gray-800 leading-snug">
-                                    Bengaluru Palace, Vasanth Nagar, Bengaluru, Karnataka 560052
+                                    {order.customerDetails.address}
                                 </p>
                             </section>
 
