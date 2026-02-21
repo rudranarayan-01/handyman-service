@@ -46,7 +46,7 @@ export const AdminDashboard = () => {
                 {/* Sign Out Button - Integrated with Clerk */}
                 <button
                     onClick={() => signOut()}
-                    className="flex items-center gap-4 p-4 text-slate-400 hover:text-rose-400 transition-all font-bold mt-auto group rounded-2xl hover:bg-rose-500/5"
+                    className="flex items-center gap-4 p-4 hover:text-red-700 text-rose-400 transition-all font-bold mt-auto group rounded-2xl hover:bg-rose-500/5"
                 >
                     <div className="p-2 rounded-lg group-hover:bg-rose-500/10 transition-all">
                         <LogOut size={20} />

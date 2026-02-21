@@ -127,7 +127,7 @@ router.delete("/:id/feedback", async (req, res) => {
         const updatedOrder = await Order.findByIdAndUpdate(
             id,
             { 
-                $unset: { feedback: "" } // Ye field ko document se remove kar dega
+                $unset: { feedback: "" }
             },
             { new: true }
         );

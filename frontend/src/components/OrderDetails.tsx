@@ -106,7 +106,7 @@ const OrderDetails = () => {
                                 </div>
                                 <div>
                                     <p className="font-black text-slate-800 text-sm tracking-tight">Our partner is being assigned</p>
-                                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">Usually takes 2-5 mins</p>
+                                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">Usually takes 15-20 mins</p>
                                 </div>
                             </div>
                         )}
@@ -117,7 +117,9 @@ const OrderDetails = () => {
                     {/* Left Column: Services & Payment */}
                     <div className="lg:col-span-2 space-y-8">
                         {/* New: IMPORTANT - Scheduled Service Date Section */}
-                        <div className="bg-[#F3F4F6] rounded-[2.5rem] p-8 border border-gray-200/50 flex flex-col md:flex-row items-center justify-between gap-4 transition-all hover:shadow-md">
+
+                        {['pending', 'confirmed'].includes(order?.status || '') && (
+                            <div className="bg-[#F3F4F6] rounded-[2.5rem] p-8 border border-gray-200/50 flex flex-col md:flex-row items-center justify-between gap-4 transition-all hover:shadow-md">
                             <div className="flex items-center gap-6">
                                 {/* Icon Container with subtle glass effect */}
                                 <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm border border-gray-100">
@@ -152,6 +154,7 @@ const OrderDetails = () => {
                                 </div>
                             </div>
                         </div>
+                        ) }
 
                         {/* Items Section */}
                         <div className="bg-white rounded-[3rem] overflow-hidden border border-gray-100 shadow-sm">
@@ -239,6 +242,7 @@ const OrderDetails = () => {
                     </div>
 
                 </div>
+                
                 {order?.status === 'completed' && (
                     <FeedbackSection
                         existingFeedback={order.feedback}
