@@ -166,7 +166,7 @@ const ShoppingCart = () => {
                             ) : (
                                 <div className="text-center py-10 border-2 border-dashed border-slate-100 rounded-3xl">
                                     <p className="text-slate-400 font-bold text-sm mb-4">No addresses found</p>
-                                    <Button onClick={() => navigate("/edit-address")} variant="outline" className="rounded-xl">Create your first address</Button>
+                                    <Button onClick={() => navigate("/edit-address")} variant="outline" className="rounded-xl text-white hover:text-gray-200">Create your first address</Button>
                                 </div>
                             )}
                         </section>

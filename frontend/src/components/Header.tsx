@@ -16,8 +16,8 @@ import { SignedIn, SignedOut, SignInButton, useClerk, useUser } from "@clerk/cle
 import { CATEGORIES } from '@/constants/categories';
 
 const Header = () => {
-    const { cartItems } = useCart(); // Cart count ke liye
-    const { user } = useUser(); // Get logged-in user details
+    const { cartItems } = useCart();
+    const { user, isSignedIn } = useUser(); // Get logged-in user details
     const { signOut } = useClerk(); // Clerk signout method
     const navigate = useNavigate();
 
@@ -47,7 +47,7 @@ const Header = () => {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
                                 <DropdownMenuGroup>
-                                
+
                                     {CATEGORIES.map(cat => (
                                         <DropdownMenuItem key={cat}>
                                             <Link
@@ -82,16 +82,17 @@ const Header = () => {
 
                 {/* Right: Actions */}
                 <div className="flex items-center gap-3">
-                    {/* Cart Icon with Badge */}
-                    <Link to="/shopping-cart" className="relative p-2.5 bg-gray-900 rounded-xl transition-all mr-4 hover:bg-gray-800 group">
-                        <ShoppingCart className="w-5 h-5 text-gray-100 group-hover:text-blue-400 transition-colors" />
+                    {isSignedIn && (
+                        <Link to="/shopping-cart" className="relative p-2.5 bg-gray-900 rounded-xl transition-all mr-4 hover:bg-gray-800 group">
+                            <ShoppingCart className="w-5 h-5 text-gray-100 group-hover:text-blue-400 transition-colors" />
 
-                        {cartItems.length > 0 && (
-                            <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow-lg animate-in zoom-in duration-300">
-                                {cartItems.length}
-                            </span>
-                        )}
-                    </Link>
+                            {cartItems.length > 0 && (
+                                <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow-lg animate-in zoom-in duration-300">
+                                    {cartItems.length}
+                                </span>
+                            )}
+                        </Link>
+                    )}
                     {/* Authentication Buttons */}
                     <SignedOut>
                         <SignInButton mode="modal">
