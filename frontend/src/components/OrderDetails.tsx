@@ -61,7 +61,7 @@ const OrderDetails = () => {
                     </div>
                     <div className="flex items-center gap-3 bg-gray-50 px-6 py-3 rounded-2xl border border-gray-100">
                         <Hash className="w-4 h-4 text-gray-400" />
-                        <span className="font-black text-gray-900 text-sm">{order._id.toUpperCase()}</span>
+                        <span className="font-black text-gray-900 text-sm">{order.orderId.toUpperCase()}</span>
                     </div>
                 </div>
 
@@ -113,11 +113,11 @@ const OrderDetails = () => {
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Left Column: Services & Payment */}
-                    <div className="lg:col-span-2 space-y-8">
+                    <div className="lg:col-span-2 space-y-4">
                         {/* New: IMPORTANT - Scheduled Service Date Section */}
 
                         {['pending', 'confirmed'].includes(order?.status || '') && (
-                            <div className="bg-[#F3F4F6] rounded-[2.5rem] p-8 border border-gray-200/50 flex flex-col md:flex-row items-center justify-between gap-4 transition-all hover:shadow-md">
+                            <div className="bg-[#F3F4F6] rounded-[2.5rem] p-4 border border-gray-200/50 flex flex-col md:flex-row items-center justify-between gap-4 transition-all hover:shadow-md">
                             <div className="flex items-center gap-6">
                                 {/* Icon Container with subtle glass effect */}
                                 <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm border border-gray-100">

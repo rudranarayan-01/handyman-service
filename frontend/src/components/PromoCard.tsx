@@ -41,6 +41,7 @@ const PromoCard: React.FC<PromoCardProps> = ({
             <div className="flex-1 p-6 md:p-8 flex items-center justify-center">
                 <div className="w-full h-full rounded-[2.5rem] overflow-hidden shadow-2xl ring-8 ring-white/10">
                     <img
+                        loading='lazy'
                         src={image}
                         alt={title}
                         className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"

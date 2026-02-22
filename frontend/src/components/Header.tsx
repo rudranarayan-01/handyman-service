@@ -70,14 +70,6 @@ const Header = () => {
                 {/* Center: Search */}
                 <div className="hidden md:flex items-center gap-4 flex-1 max-w-xl mx-8">
                     <LocationSelector />
-                    <div className="flex items-center flex-1 px-4 gap-3 border border-gray-100 rounded-2xl bg-gray-50/50 focus-within:bg-white focus-within:border-blue-600 focus-within:ring-4 focus-within:ring-blue-50/50 transition-all">
-                        <Search className="w-4 h-4 text-gray-400" />
-                        <input
-                            type="text"
-                            placeholder="Search for services..."
-                            className="w-full bg-transparent border-none py-3 text-sm focus:outline-none placeholder:text-gray-400 font-medium"
-                        />
-                    </div>
                 </div>
 
                 {/* Right: Actions */}

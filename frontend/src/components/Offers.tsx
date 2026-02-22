@@ -39,6 +39,7 @@ const OfferSection = () => {
                                 {/* Right Image (Blended) */}
                                 <div className="absolute right-0 top-0 h-full w-[50%]">
                                     <img
+                                        loading='lazy'
                                         src={offer.image}
                                         alt={offer.title}
                                         className="h-full w-full object-cover"

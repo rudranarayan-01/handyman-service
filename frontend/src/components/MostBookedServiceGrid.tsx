@@ -41,6 +41,7 @@ const MostBookedServiceGrid = () => {
                                     {/* Image Container */}
                                     <div className="aspect-square w-full rounded-xl overflow-hidden mb-3 bg-gray-100">
                                         <img
+                                            loading='lazy'
                                             src={service.image}
                                             alt={service.title}
                                             className="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500"

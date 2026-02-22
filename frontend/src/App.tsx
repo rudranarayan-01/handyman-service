@@ -18,6 +18,7 @@ import BlogPage from './pages/BlogPage';
 import AdminPannel from './pages/AdminPannel';
 import ManageOrderDetails from './components/AdminDashboard/ManageOrderDetails';
 import AdminProtect from './components/Routes/AdminRoute';
+import { ProtectedRoute } from './components/Routes/protectedRoutes';
 
 // import React from 'react';
 
@@ -29,25 +30,24 @@ function App() {
     <CartProvider>
       <Router>
         <Routes>
-          {/* Aapka Home page path */}
           <Route path="/" element={<Home />} />
           <Route path="/admin" element={<AdminProtect><AdminPannel /></AdminProtect>} />
           <Route path="/admin/orders/:orderId" element={<AdminProtect><ManageOrderDetails /></AdminProtect>} />
           
           <Route path="/categories" element={<CategoriesPage />} />
-          <Route path="/order-history" element={<OrderHistoryPage />} />
-          <Route path="/order-history/:id" element={<OrderDetailsPage />} />
           <Route path="/categories/:categoryId" element={<ShoppingPage />} />
-          <Route path="/booking-success" element={<BookingSuccess />} />
-
-          <Route path="/profile" element={<Profile />} />
           <Route path='/blogs' element={<BlogPage/> } />
-          <Route path="/profile-settings" element={<Profile />} />
-          <Route path="/edit-address" element={<AddressPage />} />
-          <Route path="/settings" element={<SettingPage />} />
-          <Route path="/privacy" element={<PrivaryPage />} />
           <Route path="/contact" element={<ContactPage />} />
-          <Route path="/shopping-cart" element={<CheckoutPage />} />
+
+          <Route path="/order-history" element={<ProtectedRoute><OrderHistoryPage /></ProtectedRoute>} />
+          <Route path="/order-history/:id" element={<ProtectedRoute><OrderDetailsPage /></ProtectedRoute>} />
+          <Route path="/booking-success" element={<ProtectedRoute><BookingSuccess /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><Profile/></ProtectedRoute>} />
+          <Route path="/profile-settings" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path="/edit-address" element={<ProtectedRoute><AddressPage /></ProtectedRoute>} />
+          <Route path="/settings" element={<ProtectedRoute><SettingPage /></ProtectedRoute>} />
+          <Route path="/privacy" element={<ProtectedRoute><PrivaryPage /></ProtectedRoute>} />
+          <Route path="/shopping-cart" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
         </Routes>
       </Router>
     </CartProvider>

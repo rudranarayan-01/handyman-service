@@ -54,7 +54,7 @@ const HeroSection = () => {
                         {categories.map((cat, index) => (
                             <div key={index} className="group flex flex-col items-center cursor-pointer">
                                 <div className={`rounded-2xl w-40 h-40 mb-3 flex items-center justify-center overflow-hidden shadow-lg transition-transform transform-gpu hover:scale-105 ${cat.color}`}>
-                                    <img
+                                    <img loading="lazy"
                                         src={cat.image}
                                         alt={cat.name}
                                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
