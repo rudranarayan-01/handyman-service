@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
     LayoutDashboard, Settings, Users, Package, Calendar, LogOut,
-    Search, Bell, UserRoundCheck
+    Bell, UserRoundCheck
 } from 'lucide-react';
 import SidebarItem from './SideBar';
 import UserDirectory from './UserDirectory';

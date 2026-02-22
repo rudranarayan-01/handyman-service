@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth, useUser } from '@clerk/clerk-react';
-import { Plus, Edit3, Trash2, Clock, X, Star } from 'lucide-react';
+import { Plus, Edit3, Trash2, X, Star } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/api/api';
 

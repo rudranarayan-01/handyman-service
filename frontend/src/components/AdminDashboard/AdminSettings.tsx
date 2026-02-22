@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
     Settings, Save, Bell, Shield,
-    Store, CreditCard, Mail, Globe,
-    Eye, EyeOff, Smartphone
+    Store, CreditCard, Mail, 
+    Smartphone
 } from 'lucide-react';
 import { toast } from 'sonner';
 

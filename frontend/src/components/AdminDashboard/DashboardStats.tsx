@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/clerk-react"; // Token fetch karne ke liye
 import { 
   IndianRupee, PackageCheck, Users, TrendingUp, 
-  ArrowUpRight, ArrowDownRight, PackageOpen 
+  PackageOpen 
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import api from "@/api/api";

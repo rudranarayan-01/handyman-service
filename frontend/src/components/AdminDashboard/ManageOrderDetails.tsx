@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@clerk/clerk-react';
 import {
-    ChevronLeft, Package, User, 
-    Calendar, Clock, 
+    ChevronLeft, Package, 
+    
     Mail, MapPin,
     Phone, Trash2, X} from 'lucide-react';
 import { toast } from 'sonner';

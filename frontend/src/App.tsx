@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import Home from './pages/Home';
 import Profile from './pages/Profile';
 import OrderHistoryPage from './pages/OrderHistoryPage';
@@ -18,6 +18,8 @@ import BlogPage from './pages/BlogPage';
 import AdminPannel from './pages/AdminPannel';
 import ManageOrderDetails from './components/AdminDashboard/ManageOrderDetails';
 import AdminProtect from './components/Routes/AdminRoute';
+
+import React from 'react';
 
 function App() {
   useUserSync()
