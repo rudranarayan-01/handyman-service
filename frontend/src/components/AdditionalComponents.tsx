@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import {
-    ShieldCheck, Zap, 
-    ArrowRight, Star, 
+    ShieldCheck, Zap,
+    ArrowRight, Star,
     Smartphone, Calendar, CheckCircle2,
     Sparkles
 } from 'lucide-react';
+import { AnimatedBeam } from './ui/animated-beam';
 
 
 
@@ -125,11 +126,17 @@ const AnimatedBento: React.FC = () => {
 
 // --- 3. Process Flow Component ---
 const ProcessFlow: React.FC = () => {
+    const containerRef = useRef<HTMLDivElement>(null)
+    const ref0 = useRef<HTMLDivElement>(null)
+    const ref1 = useRef<HTMLDivElement>(null)
+    const ref2 = useRef<HTMLDivElement>(null)
+    const stepRefs = [ref0, ref1, ref2]
+
     const steps = [
         { icon: Smartphone, title: "Select Service", desc: "Choose from 50+ services", color: "text-orange-500 bg-orange-50" },
-        { icon: Calendar, title: "Pick a Slot", desc: "Schedule as per your ease", color: "text-indigo-500 bg-indigo-50" },
+        { icon: Calendar, title: "Slot reserved", desc: "Quick schedule of experts", color: "text-indigo-500 bg-indigo-50" },
         { icon: CheckCircle2, title: "Pro Arrives", desc: "Service done at your door", color: "text-emerald-500 bg-emerald-50" }
-    ];
+    ]
 
     return (
         <section className="py-24 px-6 bg-white rounded-[4rem] my-10 max-w-7xl mx-auto shadow-[0_-20px_80px_rgba(0,0,0,0.02)]">
@@ -138,25 +145,54 @@ const ProcessFlow: React.FC = () => {
                 <div className="h-1.5 w-24 bg-indigo-600 mx-auto mt-6 rounded-full"></div>
             </div>
 
-            <div className="flex flex-col md:flex-row justify-between items-start gap-12 relative">
+            <div
+                ref={containerRef}
+                className="process-flow relative flex flex-col md:flex-row justify-between items-start gap-12"
+            >
                 {steps.map((item, i) => (
                     <div key={i} className="flex-1 flex flex-col items-center text-center relative z-10 group">
-                        <div className={`${item.color} w-24 h-24 rounded-[2.5rem] flex items-center justify-center mb-8 shadow-xl shadow-slate-100 group-hover:-translate-y-2 transition-transform duration-500`}>
+                        <div
+                            ref={stepRefs[i]}
+                            className={`${item.color} w-24 h-24 rounded-[2.5rem] flex items-center justify-center mb-8 shadow-xl shadow-slate-100 group-hover:-translate-y-2 transition-transform duration-500`}
+                        >
                             <item.icon size={36} strokeWidth={2.5} />
                         </div>
                         <h4 className="text-xl font-black text-slate-900 mb-3 tracking-tight">{item.title}</h4>
                         <p className="text-slate-400 font-bold text-xs uppercase tracking-widest px-10">{item.desc}</p>
-
-                        {/* Desktop Connector Line */}
-                        {i < 2 && (
-                            <div className="hidden md:block absolute top-12 left-[70%] w-full h-[2px] bg-slate-100 -z-10 border-t-2 border-dashed border-slate-200"></div>
-                        )}
                     </div>
                 ))}
+
+                {/* Beam 1 - Orange to Indigo */}
+                <AnimatedBeam
+                    duration={3}
+                    containerRef={containerRef}
+                    fromRef={ref0}
+                    toRef={ref1}
+                    gradientStartColor="#f97316"
+                    gradientStopColor="#6366f1"
+                    pathColor="#f97316"
+                    pathOpacity={0.3}
+                    pathWidth={2}
+                />
+
+                {/* Beam 2 - Indigo to Emerald */}
+                <AnimatedBeam
+                    duration={3}
+                    containerRef={containerRef}
+                    fromRef={ref1}
+                    toRef={ref2}
+                    gradientStartColor="#6366f1"
+                    gradientStopColor="#10b981"
+                    pathColor="#6366f1"
+                    pathOpacity={0.3}
+                    pathWidth={2}
+                />
             </div>
         </section>
-    );
-};
+    )
+}
+
+
 
 // --- Combined Export ---
 const HomePageExtraComponents: React.FC = () => {
