@@ -94,7 +94,7 @@ const AreaTagInput = ({
     return (
         <div className="space-y-1.5 text-left relative" ref={dropdownRef}>
             <label className="text-[11px] font-black uppercase text-slate-400 ml-1">Service Areas</label>
-            <div className="flex flex-wrap gap-2 p-3 bg-slate-50 border border-transparent rounded-2xl min-h-[56px] focus-within:bg-white focus-within:border-indigo-500 transition-all shadow-inner">
+            <div className="flex flex-wrap gap-2 p-3 bg-slate-50 border border-transparent rounded-2xl min-h-14 focus-within:bg-white focus-within:border-indigo-500 transition-all shadow-inner">
                 {areas.map((area, idx) => (
                     <span key={`${area}-${idx}`} className="bg-slate-900 text-white px-3 py-1.5 rounded-xl text-[10px] font-black flex items-center gap-2 uppercase tracking-wider animate-in zoom-in-50">
                         {area}
@@ -102,7 +102,7 @@ const AreaTagInput = ({
                     </span>
                 ))}
                 <input
-                    className="bg-transparent outline-none text-sm p-1 flex-1 font-bold min-w-[120px]"
+                    className="bg-transparent outline-none text-sm p-1 flex-1 font-bold min-w-30"
                     placeholder="Type area..."
                     value={inputVal}
                     onChange={(e) => setInputVal(e.target.value)}
@@ -141,7 +141,7 @@ const PartnerManagement = () => {
     const { getToken } = useAuth();
     const [partners, setPartners] = useState([]);
     const [availableServices, setAvailableServices] = useState<string[]>([]);
-    const [loading, setLoading] = useState(true);
+    // const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState("");
@@ -156,7 +156,7 @@ const PartnerManagement = () => {
 
     const fetchData = useCallback(async () => {
         try {
-            setLoading(true);
+            // setLoading(true);
             const token = await getToken();
             const [pRes, sRes] = await Promise.all([
                 api.get(`/admin/partners?search=${searchQuery}`, { headers: { Authorization: `Bearer ${token}` } }),
@@ -164,7 +164,7 @@ const PartnerManagement = () => {
             ]);
             setPartners(pRes.data);
             setAvailableServices(sRes.data);
-        } catch (err) { toast.error("Sync failed"); } finally { setLoading(false); }
+        } catch (err) { toast.error("Sync failed"); } 
     }, [getToken, searchQuery]);
 
     useEffect(() => {

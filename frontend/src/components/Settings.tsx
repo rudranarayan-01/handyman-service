@@ -1,7 +1,6 @@
-import React from 'react';
 import {
-    User, ShieldCheck, Bell, CreditCard,
-    Trash2, ChevronRight, Fingerprint,
+    ShieldCheck, Bell, CreditCard,
+    Trash2, ChevronRight, 
     EyeOff, Smartphone, LogOut
 } from 'lucide-react';
 import { useUser, useClerk } from '@clerk/clerk-react';

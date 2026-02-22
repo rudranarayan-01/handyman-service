@@ -1,5 +1,5 @@
 import { AdminDashboard } from '@/components/AdminDashboard/Dashboard'
-import React from 'react'
+// import React from 'react'
 
 const AdminPannel = () => {
   return (

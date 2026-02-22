@@ -19,7 +19,7 @@ import AdminPannel from './pages/AdminPannel';
 import ManageOrderDetails from './components/AdminDashboard/ManageOrderDetails';
 import AdminProtect from './components/Routes/AdminRoute';
 
-import React from 'react';
+// import React from 'react';
 
 function App() {
   useUserSync()

@@ -17,7 +17,7 @@ interface ServiceData {
 
 const ManageServices = () => {
     const [services, setServices] = useState<ServiceData[]>([]);
-    const [loading, setLoading] = useState(true);
+    // const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [isNewCategory, setIsNewCategory] = useState(false);
@@ -36,6 +36,7 @@ const ManageServices = () => {
     }, [showModal]);
 
     const fetchServices = async () => {
+        // setLoading(true)
         try {
             const token = await getToken();
             const response = await api.get('/admin/services', {
@@ -45,7 +46,7 @@ const ManageServices = () => {
         } catch (error) {
             toast.error("Failed to fetch catalog");
         } finally {
-            setLoading(false);
+            // setLoading(false);
         }
     };
 
