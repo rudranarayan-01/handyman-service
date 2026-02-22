@@ -18,13 +18,30 @@ const PORT = process.env.PORT || 5000;
 
 connectDB();
 
-app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+const allowedOrigins = [
+    'http://localhost:5173',
+    process.env.FRONTEND_URL
+];
+
+app.use(cors({
+    origin: (origin, callback) => {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true
+}));
+
 app.use(express.json());
 app.use(clerkMiddleware());
 
 // Base Prefix Setup
-app.use('/api/v1/auth',authRoutes)
-app.use("/api/v1/orders",orderRoutes)
+app.use('/api/v1/auth', authRoutes)
+app.use("/api/v1/orders", orderRoutes)
 app.use('/api/v1/services', serviceRoutes);
 app.use('/api/v1/user', userRoutes)
 app.use('/api/v1/address', addressRoutes)
