@@ -1,11 +1,10 @@
 import React from 'react';
 import {
-    ShieldCheck, Zap, Heart,
-    ArrowRight, Star, Clock,
+    ShieldCheck, Zap, 
+    ArrowRight, Star, 
     Smartphone, Calendar, CheckCircle2,
     Sparkles
 } from 'lucide-react';
-import { Button } from './ui/button';
 
 
 

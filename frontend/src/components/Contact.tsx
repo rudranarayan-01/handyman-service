@@ -1,4 +1,4 @@
-import { Mail, Phone, MapPin, MessageSquare, Send, Github, Twitter, Linkedin } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, Github, Twitter, Linkedin } from 'lucide-react';
 
 const ContactComponent = () => {
     return (

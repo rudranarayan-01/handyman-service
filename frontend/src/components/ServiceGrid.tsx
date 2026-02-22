@@ -1,4 +1,4 @@
-import React from 'react';
+// import React from 'react';
 import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import { applianceServices } from '@/data/Service';
 import {

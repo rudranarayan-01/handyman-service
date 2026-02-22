@@ -1,5 +1,4 @@
-import React from 'react';
-import { Clock, ArrowRight, Bookmark, Share2, ChevronRight, Quote, CheckCircle } from 'lucide-react';
+import { Clock, ArrowRight, Quote, CheckCircle } from 'lucide-react';
 
 const BlogPage = () => {
   const featuredPost = {

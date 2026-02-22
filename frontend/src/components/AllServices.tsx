@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Star, Plus, ShieldCheck, ShoppingBag, Loader2, Info, Clock, CheckCircle2 } from 'lucide-react';
+import { Star, Plus, ShieldCheck, Loader2, Info, Clock, CheckCircle2 } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { Button } from './ui/button';
 import api from '@/api/api'; 

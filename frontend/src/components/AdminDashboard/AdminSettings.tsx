@@ -66,7 +66,7 @@ const AdminSettings = () => {
 
                     {/* Main Content Area */}
                     <div className="lg:col-span-3">
-                        <div className="bg-white rounded-[2.5rem] border border-slate-100 p-8 md:p-10 shadow-sm min-h-[500px]">
+                        <div className="bg-white rounded-[2.5rem] border border-slate-100 p-8 md:p-10 shadow-sm min-h-125">
 
                             {activeTab === 'general' && (
                                 <div className="space-y-8 animate-in slide-in-from-bottom-2">
@@ -127,7 +127,7 @@ const AdminSettings = () => {
                                             </div>
                                             <label className="relative inline-flex items-center cursor-pointer">
                                                 <input type="checkbox" defaultChecked className="sr-only peer" />
-                                                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                                                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
                                             </label>
                                         </div>
                                     ))}

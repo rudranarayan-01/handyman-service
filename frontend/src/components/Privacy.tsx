@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { toast } from "sonner";
 import api from '../api/api';
-import { ShieldCheck, Eye, Mail, BarChart3, Lock } from 'lucide-react';
+import { ShieldCheck, Eye, Mail, BarChart3 } from 'lucide-react';
 
 const PrivacySettings = () => {
     const [settings, setSettings] = useState({

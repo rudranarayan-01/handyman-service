@@ -1,4 +1,4 @@
-import { Search, Wind, Droplets, Zap, Paintbrush, Hammer, Sparkles, ShieldCheck, Home, TreePine } from 'lucide-react';
+import { Droplets, Hammer, Sparkles, ShieldCheck, Home, TreePine } from 'lucide-react';
 export const CATEGORIES = [
     "Home Maintenance",
     "Cleaning & Pest Control",

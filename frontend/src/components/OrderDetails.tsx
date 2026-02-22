@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
-    ChevronLeft, MapPin, Calendar, CreditCard,
-    ShieldCheck, Package, Hash, Clock, ArrowRight,
-    Star
-} from 'lucide-react';
+    ChevronLeft, MapPin, Calendar, 
+    Package, Hash, Clock, ArrowRight} from 'lucide-react';
 import api from '@/api/api';
 import { useAuth } from '@clerk/clerk-react';
 import BackNavigation from './BackNavigation';

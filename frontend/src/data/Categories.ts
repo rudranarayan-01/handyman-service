@@ -1,4 +1,4 @@
-import { Wind, Droplets, Zap, Hammer, Sparkles, Refrigerator, Paintbrush, ShieldCheck } from 'lucide-react';
+import { Wind, Droplets, Zap, Paintbrush } from 'lucide-react';
 
 export const categories = [
     {

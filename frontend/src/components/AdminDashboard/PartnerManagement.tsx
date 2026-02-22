@@ -3,7 +3,7 @@ import api from '@/api/api';
 import { useAuth } from '@clerk/clerk-react';
 import {
     Plus, Search, MapPin, Mail, Phone,
-    X, Check, Edit2, Trash2, ChevronDown, Loader2
+    X, Check, Edit2, Trash2, ChevronDown
 } from 'lucide-react';
 import { toast } from 'sonner';
 
