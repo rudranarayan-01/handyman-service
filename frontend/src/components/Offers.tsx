@@ -56,14 +56,14 @@ const OfferSection = () => {
 
                 {/* Left Button - Only shows when you scroll right */}
                 <CarouselPrevious
-                    className="absolute -left-6 top-1/2 -translate-y-1/2 h-12 w-12 text-white rounded-full border border-gray-200 bg-white shadow-lg hover:bg-white hover:scale-105 transition-all z-30 flex items-center justify-center disabled:opacity-0"
+                    className="absolute -left-6 top-1/2 -translate-y-1/2 h-12 w-12 text-white rounded-full border border-gray-200 bg-white shadow-lg  hover:scale-105 transition-all z-30 flex items-center justify-center disabled:opacity-0"
                 >
                     <ChevronLeft className="h-6 w-6 stroke-[2.5px] text-white" />
                 </CarouselPrevious>
 
                 {/* Right Button - Always prominent like the reference */}
                 <CarouselNext
-                    className="absolute -right-6 top-1/2 -translate-y-1/2 h-12 w-12 rounded-full border border-gray-200 bg-white text-gray-100 shadow-lg hover:bg-white hover:scale-105 transition-all z-30 flex items-center justify-center"
+                    className="absolute -right-6 top-1/2 -translate-y-1/2 h-12 w-12 rounded-full border border-gray-200 bg-white text-gray-100 shadow-lg  hover:scale-105 transition-all z-30 flex items-center justify-center"
                 >
                     <ChevronRight className="h-6 w-6 stroke-[2.5px]" />
                 </CarouselNext>

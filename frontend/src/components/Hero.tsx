@@ -1,7 +1,7 @@
 import { categories } from "@/data/HeroDisplayCategories";
-import { Search } from "lucide-react";
 import { Link } from "react-router-dom";
-// import { categories } from '../data/categories';
+import HeroSearch from "./HeroSearch";
+import { Button } from "./ui/button";
 
 const HeroSection = () => {
     return (
@@ -25,17 +25,7 @@ const HeroSection = () => {
                         </p>
                     </div>
 
-                    {/* Search Bar */}
-                    <div className="relative max-w-lg group">
-                        <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                            <Search className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
-                        </div>
-                        <input
-                            type="text"
-                            placeholder="Search for 'Car wash service'..."
-                            className="w-full pl-12 pr-4 py-5 bg-white border-2 border-gray-100 rounded-2xl shadow-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all text-lg font-medium"
-                        />
-                    </div>
+                    <HeroSearch/>
 
                     {/* Badges */}
                     <div className="flex flex-wrap gap-3">
@@ -54,7 +44,7 @@ const HeroSection = () => {
                         {categories.map((cat, index) => (
                             <div key={index} className="group flex flex-col items-center cursor-pointer">
                                 <div className={`rounded-2xl w-40 h-40 mb-3 flex items-center justify-center overflow-hidden shadow-lg transition-transform transform-gpu hover:scale-105 ${cat.color}`}>
-                                    <img loading="lazy"
+                                    <img fetchPriority="high"
                                         src={cat.image}
                                         alt={cat.name}
                                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
@@ -73,9 +63,13 @@ const HeroSection = () => {
                                 <span className="text-lg font-bold">Secure & Easy Booking </span>
                             </div>
                             <Link to="categories">
-                            <button className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 rounded-xl font-bold transition-all active:scale-95 shadow-lg shadow-blue-500/20">
-                                Explore
-                            </button>
+                            <Button className="bg-blue-600 text-white font-black px-8 py-6 text-lg rounded-2xl
+  animate-pulse
+  shadow-[0_0_15px_rgba(59,130,246,0.6),0_0_40px_rgba(59,130,246,0.3)]
+  hover:shadow-[0_0_25px_rgba(59,130,246,0.9),0_0_60px_rgba(59,130,246,0.5)]
+  hover:scale-105 active:scale-95
+  transition-all duration-300
+  border border-blue-400/50">Explore</Button>
                             </Link>
                         </div>
                     

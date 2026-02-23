@@ -6,7 +6,7 @@ import HeroSection from "@/components/Hero"
 import InterriorBanner from "@/components/InterriorBanner"
 import MostBookedServiceGrid from "@/components/MostBookedServiceGrid"
 import OfferSection from "@/components/Offers"
-import ReviewsSection from "@/components/Reviews"
+// import ReviewsSection from "@/components/Reviews"
 import ServiceGrid from "@/components/ServiceGrid"
 
 const Home = () => {
@@ -15,12 +15,12 @@ const Home = () => {
             <Header />
             <main>
                 <HeroSection />
+                <CookingBanner/>
                 <OfferSection/>
                 <MostBookedServiceGrid/>
                 <InterriorBanner/>
                 <ServiceGrid/>
-                <CookingBanner/>
-                <ReviewsSection/>
+                {/* <ReviewsSection/> */}
                 <HomePageExtraComponents/>
                 <Footer/>
             </main>

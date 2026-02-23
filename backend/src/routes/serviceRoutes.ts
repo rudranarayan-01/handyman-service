@@ -6,10 +6,11 @@ const router = express.Router();
 // Get all services
 router.get('/allService', async (req, res) => {
     try {
-        const services = await Service.find();
+        // Only fetch name and category to keep the response light
+        const services = await Service.find().select('name category');
         res.json(services);
     } catch (err) {
-        res.status(500).json({ error: "Data fetch fail ho gaya" });
+        res.status(500).json({ error: "Failed to fetch services" });
     }
 });
 

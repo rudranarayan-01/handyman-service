@@ -6,6 +6,7 @@ import {
     Sparkles
 } from 'lucide-react';
 import { AnimatedBeam } from './ui/animated-beam';
+import Reviews from './Reviews';
 
 
 
@@ -199,6 +200,7 @@ const HomePageExtraComponents: React.FC = () => {
     return (
         <div className="space-y-10">
             <AnimatedBento />
+            <Reviews/>
             <ProcessFlow />
             {/* <TrustStats /> */}
         </div>
