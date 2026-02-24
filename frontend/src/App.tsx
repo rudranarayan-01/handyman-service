@@ -18,7 +18,7 @@ import BlogPage from './pages/BlogPage';
 import AdminPannel from './pages/AdminPannel';
 import ManageOrderDetails from './components/AdminDashboard/ManageOrderDetails';
 import AdminProtect from './components/Routes/AdminRoute';
-import { ProtectedRoute } from './components/Routes/protectedRoutes';
+import { ProtectedRoute } from './components/Routes/ProtectedRoutes';
 
 // import React from 'react';
 

@@ -15,7 +15,7 @@ const ChefImage = ({ src, alt }: { src: string; alt: string }) => {
     const [loaded, setLoaded] = useState(false);
 
     return (
-        <div className="relative w-full h-full min-h-[260px] md:min-h-[360px] rounded-[2rem] md:rounded-[2.5rem] overflow-hidden shadow-2xl">
+        <div className="relative w-full h-full min-h-65 md:min-h-90 rounded-[2rem] md:rounded-[2.5rem] overflow-hidden shadow-2xl">
             {/* Skeleton */}
             {!loaded && (
                 <div className="absolute inset-0 rounded-[2rem] md:rounded-[2.5rem] overflow-hidden">
