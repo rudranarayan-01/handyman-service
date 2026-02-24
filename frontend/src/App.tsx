@@ -18,7 +18,7 @@ import BlogPage from './pages/BlogPage';
 import AdminPannel from './pages/AdminPannel';
 import ManageOrderDetails from './components/AdminDashboard/ManageOrderDetails';
 import AdminProtect from './components/Routes/AdminRoute';
-import { ProtectedRoute } from './components/Routes/ProtectedRoutes';
+import ProtectedRoutes from './components/Routes/ProtectedRoutes';
 
 // import React from 'react';
 
@@ -39,15 +39,15 @@ function App() {
           <Route path='/blogs' element={<BlogPage/> } />
           <Route path="/contact" element={<ContactPage />} />
 
-          <Route path="/order-history" element={<ProtectedRoute><OrderHistoryPage /></ProtectedRoute>} />
-          <Route path="/order-history/:id" element={<ProtectedRoute><OrderDetailsPage /></ProtectedRoute>} />
-          <Route path="/booking-success" element={<ProtectedRoute><BookingSuccess /></ProtectedRoute>} />
-          <Route path="/profile" element={<ProtectedRoute><Profile/></ProtectedRoute>} />
-          <Route path="/profile-settings" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-          <Route path="/edit-address" element={<ProtectedRoute><AddressPage /></ProtectedRoute>} />
-          <Route path="/settings" element={<ProtectedRoute><SettingPage /></ProtectedRoute>} />
-          <Route path="/privacy" element={<ProtectedRoute><PrivaryPage /></ProtectedRoute>} />
-          <Route path="/shopping-cart" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
+          <Route path="/order-history" element={<ProtectedRoutes><OrderHistoryPage /></ProtectedRoutes>} />
+          <Route path="/order-history/:id" element={<ProtectedRoutes><OrderDetailsPage /></ProtectedRoutes>} />
+          <Route path="/booking-success" element={<ProtectedRoutes><BookingSuccess /></ProtectedRoutes>} />
+          <Route path="/profile" element={<ProtectedRoutes><Profile/></ProtectedRoutes>} />
+          <Route path="/profile-settings" element={<ProtectedRoutes><Profile /></ProtectedRoutes>} />
+          <Route path="/edit-address" element={<ProtectedRoutes><AddressPage /></ProtectedRoutes>} />
+          <Route path="/settings" element={<ProtectedRoutes><SettingPage /></ProtectedRoutes>} />
+          <Route path="/privacy" element={<ProtectedRoutes><PrivaryPage /></ProtectedRoutes>} />
+          <Route path="/shopping-cart" element={<ProtectedRoutes><CheckoutPage /></ProtectedRoutes>} />
         </Routes>
       </Router>
     </CartProvider>
