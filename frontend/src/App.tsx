@@ -19,6 +19,9 @@ import AdminPannel from './pages/AdminPannel';
 import ManageOrderDetails from './components/AdminDashboard/ManageOrderDetails';
 import AdminProtect from './components/routes/AdminRoute';
 import ProtectedRoutes from './components/routes/ProtectedRoutes';
+// import AdminProtect from './components/routes/AdminRoute';
+// frontend\src\components\routes\AdminRoute.tsx
+// import ProtectedRoutes from './components/routes/ProtectedRoutes';
 
 // import React from 'react';
 
