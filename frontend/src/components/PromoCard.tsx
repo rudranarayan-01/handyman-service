@@ -12,11 +12,11 @@ interface PromoCardProps {
 }
 
 // ── Image with skeleton loader ──
-const PromoImage = ({ src, alt, btnBg }: { src: string; alt: string; btnBg: string }) => {
+const PromoImage = ({ src, alt }: { src: string; alt: string; btnBg: string }) => {
     const [loaded, setLoaded] = useState(false);
 
     return (
-        <div className="relative w-full min-h-[220px] sm:min-h-[280px] md:min-h-[320px] rounded-[2rem] overflow-hidden shadow-2xl ring-4 ring-white/20 group-hover:rotate-1 transition-transform duration-700">
+        <div className="relative w-full min-h-55 sm:min-h-70 md:min-h-80 rounded-[2rem] overflow-hidden shadow-2xl ring-4 ring-white/20 group-hover:rotate-1 transition-transform duration-700">
             {/* Skeleton */}
             {!loaded && (
                 <div className="absolute inset-0 shimmer-promo" />
@@ -35,7 +35,7 @@ const PromoImage = ({ src, alt, btnBg }: { src: string; alt: string; btnBg: stri
             />
 
             {/* Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-transparent" />
         </div>
     );
 };

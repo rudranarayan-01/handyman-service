@@ -16,17 +16,17 @@ import { Link, useNavigate } from 'react-router-dom';
 import { SignedIn, SignedOut, SignInButton, useClerk, useUser } from "@clerk/clerk-react";
 
 // ── Skeleton pulse for right side while Clerk loads ──
-const NavSkeleton = () => (
-    <div className="flex items-center gap-3 animate-pulse">
-        {/* Cart skeleton */}
-        <div className="w-9 h-9 bg-gray-200 rounded-xl" />
-        {/* Avatar skeleton */}
-        <div className="flex items-center gap-2 pr-3 border border-gray-100 rounded-2xl">
-            <div className="w-10 h-10 bg-gray-200 rounded-full" />
-            <div className="w-3 h-3 bg-gray-200 rounded-full" />
-        </div>
-    </div>
-);
+// const NavSkeleton = () => (
+//     <div className="flex items-center gap-3 animate-pulse">
+//         {/* Cart skeleton */}
+//         <div className="w-9 h-9 bg-gray-200 rounded-xl" />
+//         {/* Avatar skeleton */}
+//         <div className="flex items-center gap-2 pr-3 border border-gray-100 rounded-2xl">
+//             <div className="w-10 h-10 bg-gray-200 rounded-full" />
+//             <div className="w-3 h-3 bg-gray-200 rounded-full" />
+//         </div>
+//     </div>
+// );
 
 const Header = () => {
     const { cartItems } = useCart();
@@ -276,7 +276,7 @@ const Header = () => {
                     ) : (
                         <>
                             <SignedIn>
-                                <div className="flex items-center gap-3 px-3 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl mb-3 border border-blue-100">
+                                <div className="flex items-center gap-3 px-3 py-3 bg-linear-to-r from-blue-50 to-indigo-50 rounded-2xl mb-3 border border-blue-100">
                                     <div className="relative">
                                         <img src={user?.imageUrl} alt="profile" className="w-10 h-10 rounded-full object-cover border-2 border-blue-200" />
                                         <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white" />
