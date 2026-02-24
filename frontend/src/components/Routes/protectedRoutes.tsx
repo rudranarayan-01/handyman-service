@@ -1,3 +1,4 @@
+import React from 'react';
 import { SignIn, useAuth } from "@clerk/clerk-react";
 import { Loader2 } from "lucide-react";
 
