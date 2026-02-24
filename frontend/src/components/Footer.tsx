@@ -1,4 +1,5 @@
 import { MapPin, Phone, Mail, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
     return (
@@ -35,14 +36,24 @@ const Footer = () => {
                     </div>
 
                     {/* Column 2: Quick Links */}
-                    <div>
+                    <div className='flex flex-col'>
                         <h4 className="text-white font-bold mb-6 uppercase tracking-wider">Quick Links</h4>
-                        <ul className="space-y-3 text-sm">
-                            <li className="hover:text-white cursor-pointer transition-colors">About Us</li>
-                            <li className="hover:text-white cursor-pointer transition-colors">Our Services</li>
-                            <li className="hover:text-white cursor-pointer transition-colors">Service Areas</li>
-                            <li className="hover:text-white cursor-pointer transition-colors">Pricing</li>
-                            <li className="hover:text-white cursor-pointer transition-colors">Become a Partner</li>
+                        <ul className="flex flex-col gap-2 text-sm text-slate-400">
+                            <Link to="/blogs" className="hover:text-white transition-colors">
+                                <li>About Us</li>
+                            </Link>
+                            <Link to="/categories" className="hover:text-white transition-colors">
+                                <li>Our Services</li>
+                            </Link>
+                            <Link to="/areas" className="hover:text-white transition-colors">
+                                <li>Service Areas</li>
+                            </Link>
+                            <Link to="/partner" className="hover:text-white transition-colors">
+                                <li>Become a Partner</li>
+                            </Link>
+                            <Link to="/contact" className="hover:text-white transition-colors">
+                                <li>Contact</li>
+                            </Link>
                         </ul>
                     </div>
 

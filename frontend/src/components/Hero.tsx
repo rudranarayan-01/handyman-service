@@ -84,7 +84,7 @@ const HeroSection = () => {
             <section className="relative pt-20 md:pt-28 lg:pt-32 pb-12 md:pb-16 px-4 md:px-6 bg-[#f9fafb] overflow-hidden min-h-screen">
 
                 {/* Background Decorative */}
-                <div className="absolute top-0 right-0 w-full md:w-1/2 h-full bg-gradient-to-l from-blue-50/60 to-transparent pointer-events-none" />
+                <div className="absolute top-0 right-0 w-full md:w-1/2 h-full bg-linear-to-l from-blue-50/60 to-transparent pointer-events-none" />
                 <div className="absolute bottom-0 left-0 w-72 h-72 bg-cyan-50/40 rounded-full blur-3xl pointer-events-none" />
 
                 <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-8 lg:gap-12 items-center relative z-10">
