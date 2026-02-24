@@ -3,6 +3,7 @@ import { useAuth } from '@clerk/clerk-react';
 import { Users, ShieldAlert, Trash2, X } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/api/api';
+import { Button } from '../ui/button';
 
 interface UserData {
   _id: string;
@@ -122,7 +123,7 @@ const UserDirectory = () => {
                         <option value="manager">Manager</option>
                         <option value="admin">Admin</option>
                       </select>
-                      <button onClick={() => setEditingRole(null)} className="p-1 text-slate-400 hover:text-rose-500"><X size={16}/></button>
+                      <Button onClick={() => setEditingRole(null)} variant="outline" className="p-1 text-red-400 hover:text-rose-500"><X size={16}/></Button>
                     </div>
                   ) : (
                     <span className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider border ${
@@ -135,18 +136,18 @@ const UserDirectory = () => {
                   )}
                 </td>
                 <td className="p-6 text-right flex justify-end gap-2">
-                  <button 
+                  <Button variant='ghost' 
                     onClick={() => setEditingRole(user.clerkId)}
                     className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
                   >
                     <ShieldAlert size={20} />
-                  </button>
-                  <button 
+                  </Button>
+                  <Button variant="outline"
                     onClick={() => handleDelete(user.clerkId, user.firstName)}
                     className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all"
                   >
                     <Trash2 size={20} />
-                  </button>
+                  </Button>
                 </td>
               </tr>
             ))}

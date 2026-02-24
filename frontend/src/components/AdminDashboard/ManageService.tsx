@@ -3,6 +3,7 @@ import { useAuth, useUser } from '@clerk/clerk-react';
 import { Plus, Edit3, Trash2, X, Star } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/api/api';
+import { Button } from '../ui/button';
 
 interface ServiceData {
     _id: string;
@@ -118,10 +119,10 @@ const ManageServices = () => {
                         Live Inventory: {services.length} active items
                     </div>
                 </div>
-                <button onClick={() => handleOpenModal()} className="group bg-slate-900 text-white pl-6 pr-8 py-4 rounded-2xl font-bold flex items-center gap-3 hover:bg-indigo-200 transition-all duration-300 shadow-xl shadow-slate-200">
+                <Button onClick={() => handleOpenModal()} className="group bg-slate-900 text-white pl-6 pr-8 py-4 rounded-2xl font-bold flex items-center gap-3 hover:bg-indigo-200 transition-all duration-300 shadow-xl shadow-slate-200">
                     <Plus className="group-hover:rotate-90 transition-transform duration-300" size={22} />
                     New Entry
-                </button>
+                </Button>
             </header>
 
             <div className="max-w-7xl mx-auto space-y-24">
@@ -152,18 +153,18 @@ const ManageServices = () => {
                                         <div className="absolute inset-0 bg-slate-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                                         <div className="absolute top-3 right-3 flex flex-col gap-2 translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300">
-                                            <button
+                                            <Button
                                                 onClick={() => handleOpenModal(service)}
-                                                className="p-2.5 bg-white rounded-xl text-slate-100 hover:bg-indigo-600 hover:text-white transition-all shadow-lg border border-slate-100"
+                                                className="p-2.5 bg-black rounded-xl text-slate-100 hover:bg-indigo-600 hover:text-white transition-all shadow-lg border border-slate-100"
                                             >
                                                 <Edit3 size={16} />
-                                            </button>
-                                            <button
+                                            </Button>
+                                            <Button
                                                 onClick={() => handleDelete(service._id, service.name)}
                                                 className="p-2.5 bg-white rounded-xl text-rose-600 hover:bg-rose-600 hover:text-white transition-all shadow-lg border border-slate-100"
                                             >
                                                 <Trash2 size={16} />
-                                            </button>
+                                            </Button>
                                         </div>
                                     </div>
 
@@ -204,9 +205,9 @@ const ManageServices = () => {
                             <h2 className="text-3xl font-black text-slate-900 tracking-tight">
                                 {editingId ? 'Modify Service' : 'New Creation'}
                             </h2>
-                            <button onClick={() => setShowModal(false)} className="p-3 hover:bg-slate-50 rounded-2xl transition-colors">
-                                <X size={24} className="text-slate-400" />
-                            </button>
+                            <Button onClick={() => setShowModal(false)} className="p-3 hover:bg-slate-50 rounded-2xl transition-colors">
+                                <X size={24} className="text-red-500" />
+                            </Button>
                         </div>
 
                         {/* Modal Body - Hidden Scrollbar */}
@@ -221,16 +222,16 @@ const ManageServices = () => {
                                                     <option value="">Select Existing...</option>
                                                     {dynamicCategories.map(c => <option key={c} value={c}>{c}</option>)}
                                                 </select>
-                                                <button type="button" onClick={() => setIsNewCategory(true)} className="p-5 bg-indigo-50 text-indigo-100 rounded-2xl font-bold hover:bg-indigo-100 transition-colors">
+                                                <Button  onClick={() => setIsNewCategory(true)} className="p-5 bg-indigo-50 text-indigo-100 rounded-2xl font-bold hover:bg-indigo-100 transition-colors">
                                                     New
-                                                </button>
+                                                </Button>
                                             </div>
                                         ) : (
                                             <div className="flex gap-3 animate-in slide-in-from-right-2">
                                                 <input autoFocus placeholder="Category Name..." className="flex-1 p-5 bg-indigo-50/50 text-indigo-700 rounded-2xl border-none ring-2 ring-indigo-100 font-bold" value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })} required />
-                                                <button type="button" onClick={() => setIsNewCategory(false)} className="p-5 bg-slate-100 text-slate-600 rounded-2xl font-bold">
+                                                <Button onClick={() => setIsNewCategory(false)} className="p-5 bg-slate-100 text-slate-600 rounded-2xl font-bold">
                                                     Cancel
-                                                </button>
+                                                </Button>
                                             </div>
                                         )}
                                     </div>
@@ -263,9 +264,9 @@ const ManageServices = () => {
 
                         {/* Modal Footer */}
                         <div className="p-8 border-t border-slate-50">
-                            <button form="service-form" type="submit" className="w-full py-6 bg-slate-900 text-white rounded-3xl font-black text-xl hover:bg-indigo-600 active:scale-[0.98] transition-all shadow-2xl shadow-indigo-100">
+                            <Button form="service-form" type="submit" className="w-full py-6 bg-slate-900 text-white rounded-3xl font-black text-xl hover:bg-indigo-600 active:scale-[0.98] transition-all shadow-2xl shadow-indigo-100">
                                 {editingId ? 'Sync Changes' : 'Confirm & Publish'}
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>

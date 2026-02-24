@@ -6,6 +6,7 @@ import {
     X, Check, Edit2, Trash2, ChevronDown
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { Button } from '../ui/button';
 
 declare global {
     interface Window {
@@ -216,12 +217,12 @@ const PartnerManagement = () => {
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
                         </div>
-                        <button
+                        <Button
                             onClick={() => (showForm ? resetForm() : setShowForm(true))}
                             className={`${showForm ? 'bg-slate-200 text-slate-600' : 'bg-indigo-600 text-white'} px-6 py-3 rounded-2xl font-bold flex items-center gap-2 transition-all shadow-lg text-sm`}
                         >
                             {showForm ? <X size={18} /> : <Plus size={18} />} {showForm ? "Cancel" : "Add Partner"}
-                        </button>
+                        </Button>
                     </div>
                 </div>
 
@@ -262,9 +263,9 @@ const PartnerManagement = () => {
                                     </div>
                                 )}
                             </div>
-                            <button type="submit" className="md:col-span-3 py-4 bg-indigo-600 text-white rounded-2xl font-black uppercase tracking-widest hover:bg-slate-900 transition-all shadow-xl">
+                            <Button type="submit" className="md:col-span-3 py-4 bg-indigo-600 text-white rounded-2xl font-black uppercase tracking-widest hover:bg-slate-900 transition-all shadow-xl">
                                 {editingId ? "Update Professional" : "Confirm Onboarding"}
-                            </button>
+                            </Button>
                         </form>
                     </div>
                 )}
@@ -310,7 +311,7 @@ const PartnerManagement = () => {
                                         </td>
                                         <td className="p-6 text-center">
                                             <div className="flex items-center justify-center gap-2">
-                                                <button onClick={() => {
+                                                <Button onClick={() => {
                                                     setEditingId(p._id);
                                                     setFormData({
                                                         name: p.name, email: p.email, phone: p.phone,
@@ -319,8 +320,8 @@ const PartnerManagement = () => {
                                                     });
                                                     setShowForm(true);
                                                     window.scrollTo({ top: 0, behavior: 'smooth' });
-                                                }} className="p-2 rounded-lg bg-white text-slate-400 hover:text-indigo-600 border border-slate-100"><Edit2 size={14} /></button>
-                                                <button onClick={() => {/* Delete Logic */}} className="p-2 rounded-lg bg-white text-slate-400 hover:text-rose-600 border border-slate-100"><Trash2 size={14} /></button>
+                                                }} className="p-2 rounded-lg bg-white text-slate-400 hover:text-indigo-600 border border-slate-100"><Edit2 size={14} /></Button>
+                                                <Button onClick={() => {/* Delete Logic */}} className="p-2 rounded-lg bg-white text-slate-400 hover:text-rose-600 border border-slate-100"><Trash2 size={14} /></Button>
                                             </div>
                                         </td>
                                     </tr>

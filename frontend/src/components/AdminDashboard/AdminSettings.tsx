@@ -5,6 +5,7 @@ import {
     Smartphone
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { Button } from '../ui/button';
 
 const AdminSettings = () => {
     const [activeTab, setActiveTab] = useState('general');
@@ -37,13 +38,13 @@ const AdminSettings = () => {
                         </h1>
                         <p className="text-gray-400 font-medium mt-1">Configure your platform's global parameters</p>
                     </div>
-                    <button
+                    <Button
                         onClick={handleSave}
                         disabled={saving}
                         className="flex items-center gap-2 bg-indigo-600 hover:bg-slate-900 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-indigo-100 disabled:opacity-50"
                     >
                         {saving ? "Saving..." : <><Save size={18} /> Save Changes</>}
-                    </button>
+                    </Button>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">

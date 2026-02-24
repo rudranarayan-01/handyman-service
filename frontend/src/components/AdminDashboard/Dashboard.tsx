@@ -49,7 +49,7 @@ export const AdminDashboard = () => {
                 </Button>
 
                 {/* Sign Out Button - Integrated with Clerk */}
-                <button
+                <Button
                     onClick={() => signOut()}
                     className="flex items-center gap-4 p-2 hover:text-red-700 text-rose-400 transition-all font-bold mt-auto group rounded-2xl hover:bg-rose-500/5"
                 >
@@ -57,7 +57,7 @@ export const AdminDashboard = () => {
                         <LogOut size={20} />
                     </div>
                     Sign Out
-                </button>
+                </Button>
             </aside>
 
             {/* --- Main Content --- */}
@@ -70,10 +70,10 @@ export const AdminDashboard = () => {
 
                     <div className="flex items-center gap-4">
                         {/* Notifications */}
-                        <button className="p-3 bg-white rounded-2xl text-slate-500 shadow-sm hover:shadow-md transition-all relative border border-slate-100">
+                        <Button className="p-3 bg-white rounded-2xl text-slate-500 shadow-sm hover:shadow-md transition-all relative border border-slate-100">
                             <Bell size={20} />
                             <span className="absolute top-3 right-3 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></span>
-                        </button>
+                        </Button>
 
                         <div className="h-8 w-[1px] bg-slate-200 mx-2"></div>
 

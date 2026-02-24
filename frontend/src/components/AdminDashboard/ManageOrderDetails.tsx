@@ -8,6 +8,7 @@ import {
     Phone, Trash2, X} from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/api/api';
+import { Button } from '../ui/button';
 
 // --- INTERFACES ---
 interface OrderItem {
@@ -183,9 +184,9 @@ const ManageOrderDetails = () => {
                     <div className="bg-white w-full max-w-md rounded-[2.5rem] p-8 shadow-2xl border border-slate-100">
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-xl font-black text-slate-900 uppercase tracking-tighter">Assign Partner</h2>
-                            <button onClick={() => setShowAssignModal(false)} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
+                            <Button onClick={() => setShowAssignModal(false)} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
                                 <X size={20} className="text-slate-400" />
-                            </button>
+                            </Button>
                         </div>
                         
                         <div className="space-y-4">
@@ -211,13 +212,13 @@ const ManageOrderDetails = () => {
                                 )}
                             </div>
 
-                            <button
+                            <Button
                                 disabled={!selectedPartnerId || updating}
                                 onClick={() => handleStatusUpdate('confirmed', selectedPartnerId)}
                                 className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-slate-900 transition-all shadow-xl shadow-indigo-100 disabled:opacity-50"
                             >
                                 {updating ? "Sending Notifications..." : "Confirm & Notify Partner"}
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>
@@ -242,7 +243,7 @@ const ManageOrderDetails = () => {
 
                     <div className="bg-white p-2 rounded-[1.5rem] border border-slate-100 shadow-sm flex flex-wrap gap-1">
                         {['pending', 'confirmed', 'completed', 'cancelled'].map((s) => (
-                            <button
+                            <Button
                                 key={s}
                                 disabled={updating}
                                 onClick={() => handleStatusClick(s)}
@@ -251,12 +252,12 @@ const ManageOrderDetails = () => {
                                 }`}
                             >
                                 {s}
-                            </button>
+                            </Button>
                         ))}
                     </div>
-                    <button onClick={handleDeleteOrder} className="h-10 px-4 flex items-center gap-2 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white transition-all border border-rose-100 font-black text-[10px]">
+                    <Button onClick={handleDeleteOrder} className="h-10 px-4 flex items-center gap-2 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white transition-all border border-rose-100 font-black text-[10px]">
                         <Trash2 size={16} /> Delete
-                    </button>
+                    </Button>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

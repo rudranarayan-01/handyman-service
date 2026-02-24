@@ -4,6 +4,7 @@ import { Package, Eye, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import api from '@/api/api';
+import { Button } from '../ui/button';
 
 const AdminOrders = () => {
     const [orders, setOrders] = useState<any[]>([]);
@@ -140,9 +141,9 @@ const AdminOrders = () => {
                                     </span>
                                 </td>
                                 <td className="p-6 text-right">
-                                    <button className="p-3 bg-slate-50 text-slate-400 group-hover:text-white group-hover:bg-indigo-600 rounded-2xl transition-all duration-300">
+                                    <Button className="p-3 bg-slate-50 text-slate-400 group-hover:text-white group-hover:bg-indigo-600 rounded-2xl transition-all duration-300">
                                         <Eye size={18} />
-                                    </button>
+                                    </Button>
                                 </td>
                             </tr>
                         ))}
