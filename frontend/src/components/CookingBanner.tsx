@@ -10,37 +10,30 @@ interface CookingPromoProps {
     bgColor?: string;
 }
 
-// ── Image with skeleton loader ──
 const ChefImage = ({ src, alt }: { src: string; alt: string }) => {
     const [loaded, setLoaded] = useState(false);
 
     return (
-        <div className="relative w-full h-full min-h-65 md:min-h-90 rounded-[2rem] md:rounded-[2.5rem] overflow-hidden shadow-2xl">
-            {/* Skeleton */}
+        <div className="relative w-full h-full min-h-64 md:min-h-80 rounded-[2rem] md:rounded-[2.5rem] overflow-hidden shadow-2xl transform-gpu">
             {!loaded && (
-                <div className="absolute inset-0 rounded-[2rem] md:rounded-[2.5rem] overflow-hidden">
-                    <div className="w-full h-full shimmer-cooking" />
-                </div>
+                <div className="absolute inset-0 bg-orange-50 animate-pulse z-10" />
             )}
-            {/* Real image */}
             <img
                 src={src}
                 alt={alt}
                 loading="eager"
-                fetchPriority="high"
+                decoding="async"
                 onLoad={() => setLoaded(true)}
-                className={`w-full h-full object-cover transition-all duration-700 group-hover:scale-110
+                className={`w-full h-full object-cover transition-opacity duration-500 transform-gpu
                     ${loaded ? 'opacity-100' : 'opacity-0'}
                 `}
             />
-            {/* Overlay gradient */}
-            <div className="absolute inset-0 bg-linear-to-t from-black/30 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
 
-            {/* Floating tag */}
             {loaded && (
-                <div className="absolute bottom-4 left-4 md:bottom-6 md:left-6 bg-white/90 backdrop-blur-md p-3 md:p-4 rounded-xl md:rounded-2xl border border-white/50 shadow-xl animate-float">
-                    <p className="text-[11px] md:text-xs font-black text-slate-900">Today's Special</p>
-                    <p className="text-[9px] md:text-[10px] font-bold text-orange-600">Home-style North Indian Thali</p>
+                <div className="absolute bottom-4 left-4 md:bottom-6 md:left-6 bg-white/95 p-3 md:p-4 rounded-xl md:rounded-2xl shadow-xl transform-gpu animate-bounce-subtle border border-white/20">
+                    <p className="text-[10px] md:text-xs font-black text-slate-900">Today's Special</p>
+                    <p className="text-[8px] md:text-[10px] font-bold text-orange-600">Home-style North Indian Thali</p>
                 </div>
             )}
         </div>
@@ -57,156 +50,95 @@ const CookingBanner: React.FC<CookingPromoProps> = ({
     return (
         <>
             <style>{`
-                @keyframes shimmerCooking {
-                    0%   { background-position: -600px 0; }
-                    100% { background-position: 600px 0; }
+                @keyframes bounceSubtle {
+                    0%, 100% { transform: translateY(0); }
+                    50% { transform: translateY(-4px); }
                 }
-                .shimmer-cooking {
-                    background: linear-gradient(90deg, #fef3e2 25%, #fde8c8 50%, #fef3e2 75%);
-                    background-size: 600px 100%;
-                    animation: shimmerCooking 1.5s ease-in-out infinite;
-                }
+                .animate-bounce-subtle { animation: bounceSubtle 3s ease-in-out infinite; }
+                
+                .gpu-layer { transform: translateZ(0); backface-visibility: hidden; }
 
-                @keyframes float {
-                    0%, 100% { transform: translateY(0px); }
-                    50%       { transform: translateY(-6px); }
-                }
-                .animate-float { animation: float 3s ease-in-out infinite; }
-
-                @keyframes fadeSlideUp {
-                    from { opacity: 0; transform: translateY(20px); }
-                    to   { opacity: 1; transform: translateY(0); }
-                }
-                .fade-1 { animation: fadeSlideUp 0.5s ease forwards 0.1s; opacity: 0; }
-                .fade-2 { animation: fadeSlideUp 0.5s ease forwards 0.25s; opacity: 0; }
-                .fade-3 { animation: fadeSlideUp 0.5s ease forwards 0.4s; opacity: 0; }
-                .fade-4 { animation: fadeSlideUp 0.5s ease forwards 0.55s; opacity: 0; }
-                .fade-5 { animation: fadeSlideUp 0.5s ease forwards 0.7s; opacity: 0; }
-
-                @keyframes orb {
-                    0%, 100% { transform: scale(1) translate(0, 0); opacity: 0.3; }
-                    50%       { transform: scale(1.2) translate(10px, -10px); opacity: 0.5; }
-                }
-                .orb-animate { animation: orb 6s ease-in-out infinite; }
-
-                @keyframes btnShimmer {
-                    0%   { transform: translateX(-100%) skewX(-15deg); }
-                    100% { transform: translateX(250%) skewX(-15deg); }
-                }
-                .btn-glow {
-                    box-shadow: 0 8px 30px rgba(234,88,12,0.4);
-                    transition: all 0.3s ease;
-                }
-                .btn-glow:hover {
-                    box-shadow: 0 12px 40px rgba(234,88,12,0.65);
-                    transform: translateY(-2px);
-                }
-                .btn-glow:active { transform: scale(0.96); }
-                .btn-glow::after {
+                .btn-shimmer-effect::after {
                     content: '';
                     position: absolute;
-                    inset: 0;
-                    width: 35%;
-                    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-                    animation: btnShimmer 2.5s ease-in-out infinite;
+                    top: 0; left: -100%;
+                    width: 50%; height: 100%;
+                    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+                    transition: none;
+                }
+                .btn-shimmer-effect:hover::after {
+                    left: 100%;
+                    transition: left 0.6s ease-in-out;
                 }
             `}</style>
 
-            <section className="py-8 md:py-12 px-4 md:px-6 max-w-7xl mx-auto">
+            <section className="py-8 md:py-12 px-4 md:px-6 max-w-7xl mx-auto overflow-hidden">
                 <div className={`
                     ${bgColor} w-full rounded-[2rem] md:rounded-[3rem] overflow-hidden
-                    flex flex-col md:flex-row-reverse
-                    relative border border-orange-100/60
-                    group transition-all duration-500
-                    hover:shadow-[0_30px_80px_-15px_rgba(255,140,0,0.2)]
+                    flex flex-col md:flex-row-reverse relative border border-orange-100/60
+                    transition-shadow duration-300 hover:shadow-xl gpu-layer
                 `}>
 
-                    {/* Decorative orbs */}
-                    <div className="orb-animate absolute top-10 left-10 w-40 h-40 bg-orange-200/25 rounded-full blur-3xl pointer-events-none" />
-                    <div className="orb-animate absolute bottom-10 right-10 w-32 h-32 bg-amber-200/25 rounded-full blur-2xl pointer-events-none" style={{ animationDelay: '3s' }} />
+                    {/* GPU-Friendly Decorative Orbs (using Radial Gradients instead of Filter: Blur) */}
+                    <div className="absolute top-0 left-0 w-64 h-64 bg-[radial-gradient(circle,rgba(251,146,60,0.15)_0%,transparent_70%)] pointer-events-none" />
+                    <div className="absolute bottom-0 right-0 w-80 h-80 bg-[radial-gradient(circle,rgba(251,191,36,0.15)_0%,transparent_70%)] pointer-events-none" />
 
-                    {/* ── Left (Content) ── */}
-                    <div className="flex-1 p-7 sm:p-10 md:p-14 lg:p-16 flex flex-col justify-center items-start z-10">
-
-                        {/* Badge */}
-                        <div className="fade-1 flex items-center gap-2 bg-orange-100 text-orange-700 px-3 md:px-4 py-1.5 rounded-full mb-5 md:mb-6 w-fit">
-                            <Utensils size={13} />
-                            <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest">
-                                Home Cooking Service
-                            </span>
+                    {/* Content */}
+                    <div className="flex-1 p-8 sm:p-10 md:p-14 lg:p-16 flex flex-col justify-center items-start z-10">
+                        
+                        <div className="flex items-center gap-2 bg-orange-100 text-orange-700 px-3 py-1 rounded-full mb-6">
+                            <Utensils size={12} />
+                            <span className="text-[10px] font-black uppercase tracking-widest">Home Cooking</span>
                         </div>
 
-                        {/* Title */}
-                        <h2 className="fade-2 text-2xl sm:text-3xl md:text-4xl font-black tracking-tight mb-3 md:mb-4 leading-[1.1] text-slate-900">
+                        <h2 className="text-3xl md:text-4xl font-black tracking-tight mb-4 leading-tight text-slate-900">
                             {title.split(' ').map((word, i) => (
-                                <span key={`${word}-${i}`} className={word === "Chefs" ? "text-orange-600" : ""}>
+                                <span key={i} className={word === "Chefs" ? "text-orange-600" : ""}>
                                     {word}{' '}
                                 </span>
                             ))}
                         </h2>
 
-                        {/* Subtitle */}
-                        <p className="fade-3 text-base md:text-lg font-medium text-slate-500 mb-7 md:mb-10 max-w-lg leading-relaxed">
+                        <p className="text-base md:text-lg font-medium text-slate-500 mb-8 max-w-lg leading-relaxed">
                             {subtitle}
                         </p>
 
-                        {/* Stats */}
-                        <div className="fade-4 flex items-center gap-5 md:gap-6 mb-7 md:mb-10">
-                            <div className="flex flex-col items-center">
-                                <span className="text-xl md:text-2xl font-black text-slate-900">4.9</span>
-                                <div className="flex text-orange-400 my-0.5">
-                                    {[...Array(3)].map((_, i) => (
-                                        <Star key={i} size={11} fill="currentColor" />
-                                    ))}
-                                </div>
-                                <span className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase mt-0.5">Rating</span>
+                        <div className="flex items-center gap-8 mb-10">
+                            <div className="text-center">
+                                <span className="block text-xl font-black text-slate-900 leading-none">4.9</span>
+                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Rating</span>
                             </div>
-
-                            <div className="w-px h-10 bg-slate-200" />
-
-                            <div className="flex flex-col items-center">
-                                <span className="text-xl md:text-2xl font-black text-slate-900">60m</span>
-                                <Clock size={14} className="text-orange-600 my-0.5" />
-                                <span className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase mt-0.5">Avg Time</span>
+                            <div className="w-px h-8 bg-slate-200" />
+                            <div className="text-center">
+                                <span className="block text-xl font-black text-slate-900 leading-none">60m</span>
+                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Fast</span>
                             </div>
-
-                            <div className="w-px h-10 bg-slate-200" />
-
-                            <div className="flex flex-col items-center">
-                                <span className="text-xl md:text-2xl font-black text-slate-900">50+</span>
-                                <Utensils size={14} className="text-orange-600 my-0.5" />
-                                <span className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase mt-0.5">Dishes</span>
+                            <div className="w-px h-8 bg-slate-200" />
+                            <div className="text-center">
+                                <span className="block text-xl font-black text-slate-900 leading-none">50+</span>
+                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Menu</span>
                             </div>
                         </div>
 
-                        {/* CTA Button */}
-                        <div className="fade-5">
-                            <Link to="/cooking-service">
-                                <button className="
-                                btn-glow
-                                relative overflow-hidden
-                                bg-orange-600 hover:bg-orange-500
-                                text-white font-black
-                                text-xs md:text-sm
-                                uppercase tracking-widest
-                                px-8 md:px-12 py-4 md:py-5
-                                rounded-xl md:rounded-2xl
-                                flex items-center gap-3
-                                group/btn
-                                ">
-                                    <span className="relative z-10">{btnText}</span>
-                                    <ArrowRight
-                                        size={16}
-                                        className="relative z-10 group-hover/btn:translate-x-1 transition-transform duration-200"
-                                    />
-                                </button>
-                            </Link>
-                        </div>
+                        <Link to="/cooking-service" className="w-full sm:w-auto">
+                            <button className="
+                                btn-shimmer-effect
+                                relative overflow-hidden w-full sm:w-auto
+                                bg-orange-600 hover:bg-orange-700
+                                text-white font-black text-xs md:text-sm
+                                uppercase tracking-widest px-10 py-4 md:py-5
+                                rounded-2xl flex items-center justify-center gap-3
+                                transition-transform active:scale-95 shadow-lg shadow-orange-600/20
+                            ">
+                                <span>{btnText}</span>
+                                <ArrowRight size={16} />
+                            </button>
+                        </Link>
                     </div>
 
-                    {/* ── Right (Image) ── */}
-                    <div className="flex-1 p-5 sm:p-8 md:p-10 lg:p-12 flex items-center justify-center">
-                        <div className="w-full transition-transform duration-700 group-hover:rotate-1">
+                    {/* Image */}
+                    <div className="flex-1 p-6 sm:p-8 md:p-10 lg:p-12 flex items-center justify-center">
+                        <div className="w-full max-w-md md:max-w-none">
                             <ChefImage src={image} alt="Cooking Service" />
                         </div>
                     </div>
