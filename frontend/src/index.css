@@ -101,8 +101,12 @@
     transform: translateZ(0);
     will-change: transform;
     backface-visibility: hidden;
+    perspective: 1000px;
   }
   
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  .no-tap-highlight {
+    -webkit-tap-highlight-color: transparent;
+  }
 }
