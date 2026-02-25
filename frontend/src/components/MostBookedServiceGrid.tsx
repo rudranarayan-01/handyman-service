@@ -38,7 +38,7 @@ const ServiceCard = ({ service }: { service: any }) => {
             className="cursor-pointer group/card flex flex-col transform-gpu will-change-transform"
         >
             <div className="relative aspect-[3/4] w-full rounded-2xl md:rounded-3xl overflow-hidden bg-gray-100 shadow-md">
-                
+
                 {!loaded && <div className="absolute inset-0 bg-gray-200 animate-pulse z-10" />}
 
                 <img
@@ -121,6 +121,7 @@ const MostBookedServiceGrid = () => {
 
     return (
         <section className="py-10 md:py-14 px-4 md:px-6 max-w-7xl mx-auto overflow-hidden">
+            {/* Header section remains unchanged */}
             <div className="flex justify-between items-end mb-6 md:mb-8">
                 <div className="space-y-1">
                     <div className="flex items-center gap-2 mb-1">
@@ -140,12 +141,12 @@ const MostBookedServiceGrid = () => {
             </div>
 
             <div className="relative">
-                <Carousel 
-                    opts={{ 
-                        align: "start", 
-                        dragFree: true, // Smooth glide on mobile
+                <Carousel
+                    opts={{
+                        align: "start",
+                        dragFree: true,
                         containScroll: "trimSnaps"
-                    }} 
+                    }}
                     className="w-full touch-pan-y no-tap-highlight"
                 >
                     <CarouselContent className="-ml-3 md:-ml-4 gpu-accelerate">
@@ -162,8 +163,10 @@ const MostBookedServiceGrid = () => {
                             ))
                         }
                     </CarouselContent>
-                    <CarouselPrevious className="hidden md:flex -left-4" />
-                    <CarouselNext className="hidden md:flex -right-4" />
+
+                    {/* FIXED BUTTONS HERE */}
+                    <CarouselPrevious className="flex -left-2 md:-left-4 h-8 w-8 md:h-10 md:w-10" />
+                    <CarouselNext className="flex -right-2 md:-right-4 h-8 w-8 md:h-10 md:w-10" />
                 </Carousel>
             </div>
         </section>
