@@ -18,7 +18,8 @@ import BlogPage from './pages/BlogPage';
 import AdminPannel from './pages/AdminPannel';
 import ManageOrderDetails from './components/AdminDashboard/ManageOrderDetails';
 import AdminProtect from './components/routes/AdminRoute';
-import ProtectedRoutes from './components/routes/ProtectedRoutes';
+import ProtectedRoutes from './components/routes/protectedRoutes';
+import ScrollToTop from './components/ScrollToTop';
 
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
     <Toaster position="top-right" richColors/>
     <CartProvider>
       <Router>
+        <ScrollToTop/>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/admin" element={<AdminProtect><AdminPannel /></AdminProtect>} />

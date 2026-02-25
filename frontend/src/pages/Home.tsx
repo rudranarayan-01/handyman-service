@@ -20,7 +20,6 @@ const Home = () => {
                 <MostBookedServiceGrid/>
                 <InterriorBanner/>
                 <ServiceGrid/>
-                {/* <ReviewsSection/> */}
                 <HomePageExtraComponents/>
                 <Footer/>
             </main>

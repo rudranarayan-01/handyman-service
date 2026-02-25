@@ -122,4 +122,23 @@ router.get('/top-booked', async (req, res) => {
     }
 });
 
+router.get('/appliance-repair', async (req, res) => {
+    try {
+        const services = await Service.find({ 
+            category: 'Appliance Repair', 
+            isActive: true 
+        })
+        .select('name image rating reviews price') // Only fetch fields used in UI
+        .limit(10)
+        .sort({ rating: -1 });
+
+        return res.status(200).json(services);
+    } catch (error: any) {
+        return res.status(500).json({ 
+            message: "Error fetching appliance services", 
+            error: error.message 
+        });
+    }
+});
+
 export default router;
