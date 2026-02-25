@@ -4,20 +4,19 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Font & Rendering */
+  /* Font Stack & Smoothing */
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  /* Mobile behavior */
+  /* Mobile Physics */
   -webkit-text-size-adjust: 100%;
   touch-action: pan-y;
 
-  /* Theme Variables - OKLCH */
+  /* Theme Variables (Light) */
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -61,7 +60,8 @@
 
 @layer base {
   * {
-    @apply border-border;
+    /* Using direct var() to fix the @apply error */
+    border-color: var(--border);
   }
   
   html, body {
@@ -69,16 +69,31 @@
     margin: 0;
     padding: 0;
     min-height: 100vh;
-    /* This makes the carousel feel smoother on iOS */
-    -webkit-overflow-scrolling: touch; 
-    /* Hide scrollbars globally */
     scrollbar-width: none;
     -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
   }
 
   body::-webkit-scrollbar {
     display: none;
   }
+}
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
 }
 
 @layer utilities {
@@ -87,11 +102,7 @@
     will-change: transform;
     backface-visibility: hidden;
   }
-}
-
-/* Specific component fixes */
-@layer components {
-  .modal-input {
-    @apply w-full px-4 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none font-semibold text-slate-700 placeholder:text-slate-300;
-  }
+  
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 }
