@@ -154,7 +154,7 @@ const ServiceCarousel = () => {
                             </CarouselItem>
                         ))
                         : services.map((service) => (
-                            <CarouselItem key={service._id} className="pl-4 md:pl-6 basis-[70%] sm:basis-[40%] md:basis-[25%] lg:basis-[20%]">
+                            <CarouselItem key={service._id} className="pl-4 md:pl-6 basis-[70%] sm:basis-[40%] md:basis-[25%] lg:basis-[20%] smooth-gpu">
                                 <ServiceCard service={service} />
                             </CarouselItem>
                         ))
