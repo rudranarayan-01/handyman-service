@@ -43,7 +43,7 @@ const ServiceCard = ({ service }: { service: Service }) => {
     return (
         <div
             onClick={handleCategoryNav}
-            className="group/card flex flex-col h-full cursor-pointer"
+            className="group/card flex flex-col h-full cursor-pointer will-change-transform transform-gpu"
         >
             <div className="relative aspect-[4/5] w-full rounded-[2.2rem] overflow-hidden mb-3 bg-gray-50 border border-black/[0.03] shadow-sm">
                 <img
@@ -141,12 +141,12 @@ const ServiceCarousel = () => {
             <Carousel 
                 opts={{ 
                     align: "start", 
-                    dragFree: true, // This makes the "smooth" dragging effect
+                    dragFree: true, 
                     containScroll: "trimSnaps" 
                 }} 
-                className="w-full cursor-grab active:cursor-grabbing"
+                className="w-full touch-pan-y cursor-grab active:cursor-grabbing"
             >
-                <CarouselContent className="-ml-4 md:-ml-6">
+                <CarouselContent className="-ml-4 md:-ml-6 will-change-transform">
                     {isLoading
                         ? Array.from({ length: 5 }).map((_, i) => (
                             <CarouselItem key={i} className="pl-4 md:pl-6 basis-[70%] sm:basis-[40%] md:basis-[25%] lg:basis-[20%]">
