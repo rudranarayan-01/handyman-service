@@ -9,7 +9,7 @@ export const offers = [
         category: "Repairing and Maintenance"
     },
     {
-        title: "Instant Medical Checkup ",
+        title: "Instant Medical Checkup at Home",
         desc: "Starts from ₹499",
         btnText: "Book now",
         bgColor: "bg-[#EA9F9F]",
