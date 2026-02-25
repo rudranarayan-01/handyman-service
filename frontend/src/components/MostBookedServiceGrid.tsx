@@ -130,13 +130,13 @@ const MostBookedServiceGrid = () => {
                     <h2 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">Most Booked Services</h2>
                     <p className="text-xs md:text-sm text-gray-400 font-medium hidden sm:block">Trusted by thousands of customers this month</p>
                 </div>
-                <button
+                <Button variant="outline"
                     onClick={() => navigate('/categories')}
-                    className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-widest text-gray-500 hover:text-indigo-600 transition-colors group/all"
+                    className="flex items-center gap-1.5 text-[13px] font-black uppercase tracking-widest text-gray-400 hover:text-indigo-600 transition-colors group/all"
                 >
                     <span className="hidden sm:inline">See All</span>
                     <ArrowRight size={14} className="group-hover/all:translate-x-1 transition-transform" />
-                </button>
+                </Button>
             </div>
 
             <div className="relative">
@@ -146,17 +146,17 @@ const MostBookedServiceGrid = () => {
                         dragFree: true, // Smooth glide on mobile
                         containScroll: "trimSnaps"
                     }} 
-                    className="w-full touch-pan-y"
+                    className="w-full touch-pan-y no-tap-highlight"
                 >
-                    <CarouselContent className="-ml-3 md:-ml-4">
+                    <CarouselContent className="-ml-3 md:-ml-4 gpu-accelerate">
                         {loading
                             ? [...Array(4)].map((_, i) => (
-                                <CarouselItem key={i} className="pl-3 md:pl-4 basis-[65%] sm:basis-[40%] md:basis-[28%] lg:basis-[22%]">
+                                <CarouselItem key={i} className="pl-3 md:pl-4 basis-[65%] sm:basis-[40%] md:basis-[28%] lg:basis-[22%] gpu-accelerate">
                                     <ServiceSkeleton />
                                 </CarouselItem>
                             ))
                             : services.map((service) => (
-                                <CarouselItem key={service._id} className="pl-3 md:pl-4 basis-[65%] sm:basis-[40%] md:basis-[28%] lg:basis-[22%]">
+                                <CarouselItem key={service._id} className="pl-3 md:pl-4 basis-[65%] sm:basis-[40%] md:basis-[28%] lg:basis-[22%] gpu-accelerate">
                                     <ServiceCard service={service} />
                                 </CarouselItem>
                             ))
