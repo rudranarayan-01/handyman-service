@@ -3,20 +3,20 @@ import { Link, useParams } from 'react-router-dom';
 import { Star, Plus, ShieldCheck, Loader2, Info, Clock, CheckCircle2 } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { Button } from './ui/button';
-import api from '@/api/api'; 
+import api from '@/api/api';
 import BackNavigation from './BackNavigation';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
 } from "@/components/ui/dialog";
 
 const AllServices = () => {
     const { categoryId } = useParams();
     const { addToCart, cartItems, totalAmount } = useCart();
-    
+
     const [services, setServices] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -41,7 +41,7 @@ const AllServices = () => {
 
     return (
         <div className="min-h-screen bg-[#F9FBFF] pb-32 mt-20 font-sans">
-            <BackNavigation/>
+            <BackNavigation />
 
             <main className="max-w-6xl mx-auto px-6 pt-8">
                 {/* Header Section */}
@@ -65,10 +65,10 @@ const AllServices = () => {
                         {services.length > 0 ? (
                             services.map((service) => {
                                 const isItemInCart = cartItems.some((item: { _id: any; }) => item._id === service._id);
-                                
+
                                 return (
                                     <div key={service._id} className="group bg-white rounded-[2.5rem] border border-gray-100 p-6 flex flex-col sm:flex-row gap-8 hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] transition-all duration-500 relative">
-                                        
+
                                         {/* PLAIN INFO ICON - RIGHT TOP */}
                                         <div className="absolute top-6 right-8">
                                             <Dialog>
@@ -79,7 +79,7 @@ const AllServices = () => {
                                                     <DialogHeader>
                                                         <DialogTitle className="text-2xl font-black text-gray-900 tracking-tight">{service.name}</DialogTitle>
                                                     </DialogHeader>
-                                                    
+
                                                     <div className="space-y-5 ">
                                                         <div className="flex items-center gap-4 bg-gray-50/50 px-5 rounded-2xl border border-gray-100">
                                                             <div className="flex items-center gap-2">
@@ -111,10 +111,10 @@ const AllServices = () => {
                                                             ))}
                                                         </div>
 
-                                                        <Button 
+                                                        <Button
                                                             onClick={() => addToCart(service)}
                                                             disabled={isItemInCart}
-                                                            className="w-full py-8 rounded-[1.5rem] font-black text-xs uppercase tracking-[0.2em] shadow-lg active:scale-95 transition-all"
+                                                            className="w-full py-8 rounded-[1.5rem] text-white font-black text-xs uppercase tracking-[0.2em] shadow-lg active:scale-95 transition-all"
                                                         >
                                                             {isItemInCart ? "Already Added" : `Book Now - ₹${service.price}`}
                                                         </Button>
@@ -125,10 +125,10 @@ const AllServices = () => {
 
                                         {/* Image Container */}
                                         <div className="relative w-full sm:w-44 h-44 rounded-[2rem] overflow-hidden bg-gray-50 shrink-0">
-                                            <img 
-                                                src={service.image} 
-                                                alt={service.name} 
-                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" 
+                                            <img
+                                                src={service.image}
+                                                alt={service.name}
+                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
                                             />
                                         </div>
 
@@ -153,11 +153,10 @@ const AllServices = () => {
                                                 <Button
                                                     onClick={() => addToCart(service)}
                                                     disabled={isItemInCart}
-                                                    className={`rounded-2xl font-black px-10 py-7 transition-all border-none ${
-                                                        isItemInCart 
-                                                        ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-100' 
-                                                        : 'bg-gray-900 text-white hover:bg-blue-600 shadow-xl shadow-gray-100'
-                                                    }`}
+                                                    className={`rounded-2xl font-black px-10 py-7 transition-all border-none ${isItemInCart
+                                                            ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-100'
+                                                            : 'bg-gray-900 text-white hover:bg-blue-600 shadow-xl shadow-gray-100'
+                                                        }`}
                                                 >
                                                     {isItemInCart ? "Added" : "Add"} <Plus className="ml-2 w-4 h-4" />
                                                 </Button>

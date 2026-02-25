@@ -38,9 +38,9 @@ const Header = () => {
     const closeMobile = () => setMobileOpen(false);
 
     const navLinks = [
-        { label: 'Services',  to: '/categories' },
+        { label: 'Services', to: '/categories' },
         { label: 'Providers', to: '/providers' },
-        { label: 'Blogs',     to: '/blogs' },
+        { label: 'Blogs', to: '/blogs' },
     ];
 
     return (
@@ -156,34 +156,37 @@ const Header = () => {
                                             </div>
                                         </DropdownMenuTrigger>
 
-                                        <DropdownMenuContent className="w-64 mt-2 rounded-[1.5rem] p-3 shadow-2xl border-gray-100" align="end">
-                                            <DropdownMenuLabel className="px-3">
-                                                <div className="flex items-center gap-3 mb-1">
-                                                    <img src={user?.imageUrl} alt="profile" className="w-10 h-10 rounded-full object-cover" />
+                                        <DropdownMenuContent
+                                            className="w-66 mt-3 rounded-[1.5rem] p-3 shadow-[0_20px_50px_rgba(0,0,0,0.15)] border-white/40 bg-white/90 backdrop-blur-xl animate-in fade-in zoom-in duration-200"
+                                            align="end"
+                                        >
+                                            <DropdownMenuLabel className="px-3 pb-3">
+                                                <div className="flex items-center gap-3">
+                                                    <img src={user?.imageUrl} alt="profile" className="w-11 h-11 rounded-full object-cover border-2 border-white shadow-sm" />
                                                     <div className="flex flex-col min-w-0">
-                                                        <p className="text-sm font-black text-gray-900 truncate">{user?.fullName}</p>
-                                                        <p className="text-[11px] text-gray-400 truncate">{user?.primaryEmailAddress?.emailAddress}</p>
+                                                        <p className="text-sm font-black text-gray-900 truncate tracking-tight">{user?.fullName}</p>
+                                                        <p className="text-[11px] text-gray-500 truncate font-medium">{user?.primaryEmailAddress?.emailAddress}</p>
                                                     </div>
                                                 </div>
                                             </DropdownMenuLabel>
 
-                                            <DropdownMenuSeparator className="bg-gray-50" />
+                                            <DropdownMenuSeparator className="bg-gray-100/50 mx-2" />
 
-                                            <DropdownMenuGroup>
-                                                <DropdownMenuItem onClick={() => navigate('/profile')} className="rounded-xl py-2.5 cursor-pointer group">
-                                                    <UserCircle className="w-5 h-5 mr-3 text-gray-400 group-hover:text-blue-600" />
-                                                    <span className="font-bold text-gray-700">My Profile</span>
+                                            <DropdownMenuGroup className="space-y-1 mt-1">
+                                                <DropdownMenuItem onClick={() => navigate('/profile')} className="rounded-xl py-2.5 cursor-pointer group hover:bg-blue-50 transition-colors">
+                                                    <UserCircle className="w-5 h-5 mr-3 text-gray-400 group-hover:text-blue-600 transition-colors" />
+                                                    <span className="font-bold text-gray-700 group-hover:text-blue-700">My Profile</span>
                                                 </DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => navigate('/order-history')} className="rounded-xl py-2.5 cursor-pointer group">
-                                                    <Package className="w-5 h-5 mr-3 text-gray-400 group-hover:text-blue-600" />
-                                                    <span className="font-bold text-gray-700">Bookings</span>
+                                                <DropdownMenuItem onClick={() => navigate('/order-history')} className="rounded-xl py-2.5 cursor-pointer group hover:bg-blue-50 transition-colors">
+                                                    <Package className="w-5 h-5 mr-3 text-gray-400 group-hover:text-blue-600 transition-colors" />
+                                                    <span className="font-bold text-gray-700 group-hover:text-blue-700">Bookings</span>
                                                 </DropdownMenuItem>
                                             </DropdownMenuGroup>
 
-                                            <DropdownMenuSeparator className="bg-gray-50" />
+                                            <DropdownMenuSeparator className="bg-gray-100/50 mx-2" />
 
-                                            <DropdownMenuItem onClick={() => signOut()} className="rounded-xl py-2 cursor-pointer text-red-500 focus:bg-red-50 focus:text-red-600 group">
-                                                <LogOut className="w-5 h-5 mr-3" />
+                                            <DropdownMenuItem onClick={() => signOut()} className="rounded-xl py-3 mt-1 cursor-pointer text-red-500 focus:bg-red-50 focus:text-red-600 group">
+                                                <LogOut className="w-5 h-5 mr-3 transition-transform group-hover:-translate-x-1" />
                                                 <span className="font-black uppercase text-[11px] tracking-widest">Logout</span>
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>
@@ -211,9 +214,8 @@ const Header = () => {
             {/* Backdrop */}
             <div
                 onClick={closeMobile}
-                className={`fixed inset-0 z-40 bg-black/40 backdrop-blur-sm transition-opacity duration-300 lg:hidden ${
-                    mobileOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-                }`}
+                className={`fixed inset-0 z-40 bg-black/40 backdrop-blur-sm transition-opacity duration-300 lg:hidden ${mobileOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+                    }`}
             />
 
             {/* Slide-in Panel */}
