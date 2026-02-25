@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Utensils, Star, Clock, ArrowRight } from 'lucide-react';
+import { Utensils, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface CookingPromoProps {
