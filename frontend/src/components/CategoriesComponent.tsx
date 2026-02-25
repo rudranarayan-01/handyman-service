@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '@/api/api';
-import { Search, Loader2, ArrowRight } from 'lucide-react';
+import { Search, ArrowRight } from 'lucide-react';
 import { categoryMeta } from '@/constants/categories';
 
 // ─── TYPES ───

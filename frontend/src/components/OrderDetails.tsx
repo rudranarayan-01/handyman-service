@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
-    ChevronLeft, MapPin, Calendar, 
+    MapPin, Calendar, 
     Package, Hash, Clock, ArrowRight, Phone, MessageSquare
 } from 'lucide-react';
 import api from '@/api/api';

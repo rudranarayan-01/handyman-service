@@ -1,5 +1,5 @@
 import { Trash2, ShieldCheck, ShoppingBag, Loader2, MapPin, Phone, CheckCircle2, PlusCircle, ArrowLeft } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { useCart } from '@/context/CartContext';
 import api from '@/api/api';
