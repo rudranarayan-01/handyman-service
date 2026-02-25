@@ -4,6 +4,8 @@ import {
     Carousel,
     CarouselContent,
     CarouselItem,
+    CarouselNext,
+    CarouselPrevious,
 } from "@/components/ui/carousel";
 import api from '@/api/api';
 import { useNavigate } from 'react-router-dom';
@@ -49,16 +51,19 @@ const ServiceCard = ({ service }: { service: Service }) => {
                 <img
                     src={service.image}
                     alt={service.name}
+                    loading="lazy"
+                    decoding="async"
                     onLoad={() => setIsLoaded(true)}
                     className={cn(
                         "w-full h-full object-cover transition-all duration-700 group-hover/card:scale-110",
                         isLoaded ? "opacity-100 scale-100" : "opacity-0 scale-105"
                     )}
                 />
-                
-                <div className="absolute inset-0 bg-black/10 opacity-0 group-hover/card:opacity-100 transition-all duration-300 flex items-center justify-center">
-                    <Button 
-                        size="sm" 
+
+                {/* Desktop Hover Overlay - Keep hidden on mobile via md:flex */}
+                <div className="absolute inset-0 bg-black/10 opacity-0 group-hover/card:opacity-100 transition-all duration-300 hidden md:flex items-center justify-center">
+                    <Button
+                        size="sm"
                         className="rounded-full bg-white text-black hover:bg-indigo-600 hover:text-white shadow-xl translate-y-4 group-hover/card:translate-y-0 transition-transform"
                         onClick={(e) => {
                             e.stopPropagation();
@@ -113,53 +118,86 @@ const ServiceCarousel = () => {
     }, []);
 
     return (
-        <section className="py-16 px-4 md:px-6 max-w-7xl mx-auto overflow-hidden">
-            <div className="flex items-end justify-between mb-10">
+        <section className="py-12 px-4 md:py-16 md:px-6 max-w-7xl mx-auto overflow-hidden">
+            <div className="flex items-end justify-between mb-8 md:mb-10">
                 <div className="space-y-2">
                     <div className="flex items-center gap-2">
                         <span className="h-[2px] w-8 bg-indigo-600 rounded-full" />
                         <span className="text-[11px] font-black uppercase tracking-[0.2em] text-indigo-600">Premium Care</span>
                     </div>
                     <div>
-                        <h2 className="text-3xl md:text-4xl font-black text-gray-900 tracking-tight">Appliance Repair</h2>
-                        <p className="text-gray-500 text-sm md:text-base font-medium mt-1">
-                            Expert fixes for your essential home devices, delivered at your doorstep.
+                        <h2 className="text-2xl md:text-4xl font-black text-gray-900 tracking-tight">Appliance Repair</h2>
+                        <p className="text-gray-500 text-xs md:text-base font-medium mt-1">
+                            Expert fixes for your home devices.
                         </p>
                     </div>
                 </div>
 
-                <Button 
-                    variant="link" 
-                    className="text-gray-400 uppercase font-bold hover:no-underline group p-0"
+                <Button
+                    variant="link"
+                    className="text-gray-400 uppercase text-[10px] md:text-xs font-bold hover:no-underline group p-0"
                     onClick={() => navigate('/categories/appliance-repair')}
                 >
-                    Explore all 
-                    <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                    Explore all
+                    <ArrowRight size={16} className="ml-1 md:ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
             </div>
 
-            <Carousel 
-                opts={{ 
-                    align: "start", 
-                    dragFree: true, 
-                    containScroll: "trimSnaps" 
-                }} 
-                className="w-full touch-pan-y cursor-grab active:cursor-grabbing"
+            <Carousel
+                opts={{
+                    align: "start",
+                    dragFree: true,
+                    containScroll: "trimSnaps",
+                    loop: true
+                }}
+                className="w-full relative touch-pan-y cursor-grab active:cursor-grabbing"
             >
                 <CarouselContent className="-ml-4 md:-ml-6 will-change-transform">
                     {isLoading
                         ? Array.from({ length: 5 }).map((_, i) => (
-                            <CarouselItem key={i} className="pl-4 md:pl-6 basis-[70%] sm:basis-[40%] md:basis-[25%] lg:basis-[20%]">
+                            <CarouselItem key={i} className="pl-4 md:pl-6 basis-[75%] sm:basis-[45%] md:basis-[25%] lg:basis-[20%]">
                                 <ServiceSkeletonCard />
                             </CarouselItem>
                         ))
                         : services.map((service) => (
-                            <CarouselItem key={service._id} className="pl-4 md:pl-6 basis-[70%] sm:basis-[40%] md:basis-[25%] lg:basis-[20%] smooth-gpu">
+                            <CarouselItem key={service._id} className="pl-4 md:pl-6 basis-[75%] sm:basis-[45%] md:basis-[25%] lg:basis-[20%] smooth-gpu">
                                 <ServiceCard service={service} />
                             </CarouselItem>
                         ))
                     }
                 </CarouselContent>
+
+                {/* Forced Visible Navigation Controls for All Devices */}
+                <div className="flex justify-between items-center mt-6 md:mt-0">
+                    <CarouselPrevious
+                        className="
+                            static translate-y-0 h-10 w-10 
+                            md:absolute md:-left-5 md:top-1/2 md:-translate-y-1/2
+                            flex items-center justify-center 
+                            bg-white shadow-lg border-gray-100 text-gray-900 
+                            hover:bg-indigo-600 hover:text-white
+                            z-30 transition-all opacity-100
+                        "
+                    />
+
+                    {/* Mobile Only: Simple page indicator */}
+                    <div className="flex gap-1 md:hidden">
+                        <div className="h-1 w-8 bg-indigo-600 rounded-full" />
+                        <div className="h-1 w-2 bg-gray-200 rounded-full" />
+                        <div className="h-1 w-2 bg-gray-200 rounded-full" />
+                    </div>
+
+                    <CarouselNext
+                        className="
+                            static translate-y-0 h-10 w-10 
+                            md:absolute md:-right-5 md:top-1/2 md:-translate-y-1/2
+                            flex items-center justify-center 
+                            bg-white shadow-lg border-gray-100 text-gray-900 
+                            hover:bg-indigo-600 hover:text-white
+                            z-30 transition-all opacity-100
+                        "
+                    />
+                </div>
             </Carousel>
         </section>
     );

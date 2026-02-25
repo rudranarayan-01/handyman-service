@@ -165,8 +165,8 @@ const MostBookedServiceGrid = () => {
                     </CarouselContent>
 
                     {/* FIXED BUTTONS HERE */}
-                    <CarouselPrevious className="flex -left-2 md:-left-4 h-8 w-8 md:h-10 md:w-10" />
-                    <CarouselNext className="flex -right-2 md:-right-4 h-8 w-8 md:h-10 md:w-10" />
+                    <CarouselPrevious className="flex -left-2 hover:bg-black hover:text-white md:-left-4 h-8 w-8 md:h-10 md:w-10" />
+                    <CarouselNext className="flex -right-2 md:-right-4 hover:bg-black hover:text-white h-8 w-8 md:h-10 md:w-10" />
                 </Carousel>
             </div>
         </section>

@@ -15,7 +15,7 @@ export const offers = [
         bgColor: "bg-[#EA9F9F]",
         textColor: "text-white",
         image: "/images/MedicalServices/medical-checkup.jpg",
-        category: "Medical Services"
+        category: "Medical Emergencies"
     },
     {
         title: "Wash & Shine Your Car within Minutes",
