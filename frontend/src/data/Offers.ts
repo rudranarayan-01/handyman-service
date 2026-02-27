@@ -6,7 +6,7 @@ export const offers = [
         bgColor: "bg-[#d4d2cc]",
         textColor: "text-gray-900",
         image: "/images/InterriorDesign/interior.jpg",
-        category: "Repairing and Maintenance"
+        category: "home renovations"
     },
     {
         title: "Instant Medical Checkup at Home",
