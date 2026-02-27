@@ -20,6 +20,7 @@ import ManageOrderDetails from './components/AdminDashboard/ManageOrderDetails';
 import AdminProtect from './components/routes/AdminRoute';
 import ProtectedRoutes from './components/routes/protectedRoutes';
 import ScrollToTop from './components/ScrollToTop';
+import ProviderPage from './pages/ProviderPage';
 
 
 function App() {
@@ -39,6 +40,7 @@ function App() {
           <Route path="/categories/:categoryId" element={<ShoppingPage />} />
           <Route path='/blogs' element={<BlogPage/> } />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/providers" element={<ProviderPage />} />
 
           <Route path="/order-history" element={<ProtectedRoutes><OrderHistoryPage /></ProtectedRoutes>} />
           <Route path="/order-history/:id" element={<ProtectedRoutes><OrderDetailsPage /></ProtectedRoutes>} />

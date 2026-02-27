@@ -39,14 +39,12 @@ const OrderHistory = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] py-10 mt-10 px-4">
+    <div className="min-h-screen bg-[#F8FAFC] py-10 mt-15 px-4">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <span className="text-[28px] font-black text-gray-900 tracking-tight">Booking History</span>
-          <button onClick={fetchOrders} className="p-2 bg-white rounded-xl border border-gray-200 shadow-sm hover:bg-gray-50 transition-all">
-            <ReceiptText className="w-5 h-5 text-gray-100" />
-          </button>
+          
         </div>
 
         {/* Order List */}
