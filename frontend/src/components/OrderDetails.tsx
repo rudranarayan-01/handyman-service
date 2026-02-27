@@ -1,13 +1,14 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
-    MapPin, Calendar, 
+    MapPin, Calendar,
     Package, Hash, Clock, ArrowRight, Phone, MessageSquare
 } from 'lucide-react';
 import api from '@/api/api';
 import { useAuth } from '@clerk/clerk-react';
 import BackNavigation from './BackNavigation';
 import FeedbackSection from './FeedbackSection';
+import { generateInvoice } from '@/lib/generateInvoice';
 
 // --- Skeleton Component for better UX ---
 const DetailsSkeleton = () => (
@@ -103,7 +104,7 @@ const OrderDetails = () => {
                             <h2 className="text-lg md:text-xl font-black text-gray-900 uppercase italic leading-none">{order.status}</h2>
                         </div>
                     </div>
-                    
+
                     <div className="w-full md:w-auto p-5 md:p-8 bg-gray-50/50 border-t md:border-t-0 md:border-l border-gray-100 flex items-center min-w-[300px]">
                         {order?.assignedPartner ? (
                             <div className="flex items-center justify-between w-full md:justify-start gap-4 animate-in fade-in slide-in-from-right-4 duration-500">
@@ -226,7 +227,10 @@ const OrderDetails = () => {
                             </section>
 
                             <section className="pt-2">
-                                <button className="w-full bg-gray-900 hover:bg-blue-600 h-14 rounded-2xl font-black text-xs uppercase tracking-widest text-white transition-all shadow-lg shadow-gray-200 flex items-center justify-center gap-2 group active:scale-95">
+                                <button
+                                    onClick={() => generateInvoice(order)}
+                                    className="w-full bg-gray-900 hover:bg-blue-600 h-14 rounded-2xl font-black text-xs uppercase tracking-widest text-white transition-all shadow-lg shadow-gray-200 flex items-center justify-center gap-2 group active:scale-95"
+                                >
                                     Download Invoice <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                                 </button>
                             </section>
@@ -237,18 +241,18 @@ const OrderDetails = () => {
                                 <div className="w-8 h-8 rounded-full bg-blue-600 border-2 border-white flex items-center justify-center text-white text-[10px] font-black">?</div>
                             </div>
                             <p className="font-bold text-gray-600 text-xs mb-3">Questions about this booking?</p>
-                            <button className="flex items-center gap-2 mx-auto text-gray-900 font-black uppercase text-[10px] tracking-widest border-b-2 border-gray-900 pb-1 hover:text-blue-600 hover:border-blue-600 transition-colors">
+                            <button onClick={() => navigate("/contact")} className="flex items-center gap-2 mx-auto text-gray-900 font-black uppercase text-[10px] tracking-widest border-b-2 border-gray-900 pb-1 hover:text-blue-600 hover:border-blue-600 transition-colors">
                                 <MessageSquare size={14} /> Contact Support
                             </button>
                         </div>
                     </div>
                 </div>
-                
+
                 {order?.status === 'completed' && (
                     <div className="mt-8 animate-in fade-in zoom-in-95 duration-700">
                         <FeedbackSection
                             existingFeedback={order.feedback}
-                            onSuccess={fetchOrder} 
+                            onSuccess={fetchOrder}
                         />
                     </div>
                 )}
