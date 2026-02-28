@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, ChevronDown, Check, Loader2 } from 'lucide-react';
+import { X, ChevronDown, Check } from 'lucide-react';
 import { Button } from '../ui/button';
 
 // --- TYPES ---

@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useAuth } from '@clerk/clerk-react';
-import { Users, ShieldAlert, Trash2, X, Search, Mail, ShieldCheck } from 'lucide-react';
+import { Users, Trash2, X, Search, Mail, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/api/api';
 import { Button } from '../ui/button';

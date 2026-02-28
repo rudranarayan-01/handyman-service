@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Calendar, Clock, ChevronRight, MapPin, ReceiptText, Loader2 } from 'lucide-react';
+import { Calendar, Clock, ChevronRight, MapPin,  Loader2 } from 'lucide-react';
 import { useAuth } from '@clerk/clerk-react'; // or your auth provider
 import toast from 'react-hot-toast';
 import api from '@/api/api';
