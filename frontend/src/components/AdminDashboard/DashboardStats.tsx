@@ -62,7 +62,7 @@ const DashboardStats = () => {
 
     const cards = [
         { label: 'Total Revenue', value: `₹${stats.revenue.toLocaleString()}`, icon: <IndianRupee size={22} />, color: 'emerald' },
-        { label: 'Active Orders', value: stats.activeOrders, icon: <PackageCheck size={22} />, color: 'indigo' },
+        { label: 'Pending Orders', value: stats.activeOrders, icon: <PackageCheck size={22} />, color: 'indigo' },
         { label: 'Total Customers', value: stats.totalCustomers, icon: <Users size={22} />, color: 'blue' },
         { label: 'Growth Rate', value: stats.growthRate, icon: <TrendingUp size={22} />, color: 'purple' },
     ];

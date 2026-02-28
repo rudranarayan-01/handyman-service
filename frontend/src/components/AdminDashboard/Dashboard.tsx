@@ -44,7 +44,7 @@ export const AdminDashboard = () => {
                     <SidebarItem id="settings" label="App Settings" icon={<Settings size={20} />} activeTab={activeTab} setActiveTab={setActiveTab} />
                 </nav>
 
-                <Button>
+                <Button className='text-white'>
                     <a href="/">My website</a>
                 </Button>
 

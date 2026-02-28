@@ -12,6 +12,7 @@ import userRoutes from "./routes/userRoutes"
 import addressRoutes from "./routes/addressRoutes"
 import adminRoutes from "./routes/adminRoutes"
 import contactRoutes from "./routes/contactRoutes"
+import providerRoutes from "./routes/providerRoutes"
 import { clerkMiddleware } from '@clerk/express';
 
 const app = express();
@@ -39,6 +40,7 @@ app.use('/api/v1/services', serviceRoutes);
 app.use('/api/v1/user', userRoutes)
 app.use('/api/v1/address', addressRoutes)
 app.use("/api/v1/admin", adminRoutes)
+app.use("/api/v1/partners", providerRoutes)
 app.use("/api/v1", contactRoutes)
 
 

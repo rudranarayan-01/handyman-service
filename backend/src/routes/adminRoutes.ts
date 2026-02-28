@@ -81,7 +81,7 @@ router.delete('/users/:clerkId', fastAuth, isAdmin, async (req, res) => {
 
 
 // Order Management 
-router.get('/orders', fastAuth, isAdmin, async (req, res) => {
+router.get('/orders', async (req, res) => {
     try {
         const orders = await Order.aggregate([
             { $sort: { createdAt: -1 } },
@@ -104,7 +104,7 @@ router.get('/orders', fastAuth, isAdmin, async (req, res) => {
 });
 
 // GET /admin/orders/:orderId
-router.get('/orders/:orderId', fastAuth, isAdmin, async (req: any, res: any) => {
+router.get('/orders/:orderId',  async (req: any, res: any) => {
     try {
         const { orderId } = req.params;
 
@@ -126,7 +126,7 @@ router.get('/orders/:orderId', fastAuth, isAdmin, async (req: any, res: any) => 
 
 
 // Get Eligible partner for service
-router.get('/partners/eligible', fastAuth, isAdmin, async (req, res) => {
+router.get('/partners/eligible',  async (req, res) => {
     try {
         const city = req.query.city ? String(req.query.city) : "";
         const serviceName = req.query.service ? String(req.query.service) : "";
@@ -151,7 +151,7 @@ router.get('/partners/eligible', fastAuth, isAdmin, async (req, res) => {
 });
 
 // update Order
-router.patch('/orders/:orderId', async (req, res) => {
+router.patch('/orders/:orderId',  async (req, res) => {
     try {
         const { orderId } = req.params;
         const { status, partnerId } = req.body; 
