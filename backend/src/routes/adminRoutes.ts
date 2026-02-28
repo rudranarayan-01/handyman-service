@@ -6,6 +6,7 @@ import { createClerkClient } from '@clerk/backend';
 import { Order } from '../models/Orders';
 import { Service } from '../models/Service';
 import { Partner } from '../models/Partners';
+import { triggerOrderNotifications } from '../lib/notifications';
 const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
 
 const router = express.Router();
@@ -179,6 +180,7 @@ router.patch('/orders/:orderId',  async (req, res) => {
         if (!updatedOrder) {
             return res.status(404).json({ message: "Order database mein nahi mila" });
         }
+        triggerOrderNotifications(updatedOrder, updatedOrder.assignedPartner);
 
         return res.status(200).json({
             success: true,
