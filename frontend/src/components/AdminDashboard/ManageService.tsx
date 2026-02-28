@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useAuth, useUser } from '@clerk/clerk-react';
-import { Plus, Edit3, Trash2, X, Star } from 'lucide-react';
+import { Plus, Edit3, Trash2, X, Star, Search, PackageOpen } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/api/api';
 import { Button } from '../ui/button';
@@ -16,12 +16,35 @@ interface ServiceData {
     rating: number;
 }
 
+// --- SKELETON COMPONENT ---
+const ServiceSkeleton = () => (
+    <div className="space-y-12 animate-pulse">
+        {[1, 2].map((section) => (
+            <div key={section}>
+                <div className="h-6 w-32 bg-slate-200 rounded-full mb-8" />
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-10">
+                    {[1, 2, 3, 4].map((i) => (
+                        <div key={i} className="bg-white rounded-[1.5rem] md:rounded-[2rem] p-3 border border-slate-100">
+                            <div className="h-24 md:h-40 bg-slate-100 rounded-[1rem] md:rounded-[1.5rem] mb-4" />
+                            <div className="space-y-2 px-2">
+                                <div className="h-4 w-3/4 bg-slate-100 rounded" />
+                                <div className="h-3 w-1/2 bg-slate-100 rounded" />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        ))}
+    </div>
+);
+
 const ManageServices = () => {
     const [services, setServices] = useState<ServiceData[]>([]);
-    // const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [isNewCategory, setIsNewCategory] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
 
     const [formData, setFormData] = useState({
         name: '', category: '', price: '', description: '', image: '', duration: ''
@@ -31,14 +54,13 @@ const ManageServices = () => {
     const { user, isLoaded } = useUser();
     const hasAccess = user?.publicMetadata?.role === 'admin' || user?.publicMetadata?.role === 'manager';
 
-    // Disable Body Scroll when Modal is open
     useEffect(() => {
         document.body.style.overflow = showModal ? 'hidden' : 'unset';
     }, [showModal]);
 
     const fetchServices = async () => {
-        // setLoading(true)
         try {
+            setLoading(true);
             const token = await getToken();
             const response = await api.get('/admin/services', {
                 headers: { Authorization: `Bearer ${token}` }
@@ -47,13 +69,23 @@ const ManageServices = () => {
         } catch (error) {
             toast.error("Failed to fetch catalog");
         } finally {
-            // setLoading(false);
+            setLoading(false);
         }
     };
 
     useEffect(() => { if (isLoaded && hasAccess) fetchServices(); }, [isLoaded, hasAccess]);
 
-    const dynamicCategories = Array.from(new Set(services.map(s => s.category))).sort();
+    // --- SEARCH & FILTER LOGIC ---
+    const filteredServices = useMemo(() => {
+        return services.filter(s => 
+            s.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+            s.category.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    }, [services, searchQuery]);
+
+    const dynamicCategories = useMemo(() => {
+        return Array.from(new Set(filteredServices.map(s => s.category))).sort();
+    }, [filteredServices]);
 
     const handleOpenModal = (service?: ServiceData) => {
         if (service) {
@@ -66,7 +98,7 @@ const ManageServices = () => {
         } else {
             setEditingId(null);
             setFormData({ name: '', category: '', price: '', description: '', image: '', duration: '' });
-            setIsNewCategory(dynamicCategories.length === 0);
+            setIsNewCategory(services.length === 0);
         }
         setShowModal(true);
     };
@@ -105,167 +137,161 @@ const ManageServices = () => {
     if (!hasAccess) return <div className="h-screen flex items-center justify-center font-black text-rose-500 uppercase tracking-widest">Unauthorized Access</div>;
 
     return (
-        <div className="min-h-screen bg-slate-50/50 p-6 md:p-12">
+        <div className="min-h-screen bg-slate-50/50 p-4 md:p-12">
             <style>{`
                 .no-scrollbar::-webkit-scrollbar { display: none; }
                 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
             `}</style>
 
-            <header className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-16">
+            <header className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10 md:mb-16">
                 <div>
-                    <h1 className="text-5xl font-black text-slate-900 tracking-tight mb-2">Service Hub</h1>
-                    <div className="flex items-center gap-2 text-slate-500 font-medium">
+                    <h1 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tight mb-2">Service Hub</h1>
+                    <div className="flex items-center gap-2 text-slate-500 font-bold text-xs md:text-sm">
                         <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                        Live Inventory: {services.length} active items
+                        Live Inventory: {services.length} items
                     </div>
                 </div>
-                <Button onClick={() => handleOpenModal()} className="group bg-slate-900 text-white pl-6 pr-8 py-4 rounded-2xl font-bold flex items-center gap-3 hover:bg-indigo-200 transition-all duration-300 shadow-xl shadow-slate-200">
-                    <Plus className="group-hover:rotate-90 transition-transform duration-300" size={22} />
-                    New Entry
-                </Button>
+                
+                <div className="flex flex-col sm:flex-row w-full md:w-auto gap-4">
+                    {/* Search Bar */}
+                    <div className="relative flex-1 sm:min-w-[300px]">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                        <input 
+                            type="text"
+                            placeholder="Search name or category..."
+                            className="w-full pl-12 pr-4 py-4 bg-white border border-slate-100 rounded-2xl font-bold text-sm focus:ring-2 focus:ring-indigo-500 outline-none shadow-sm transition-all"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                    </div>
+                    <Button onClick={() => handleOpenModal()} className="bg-slate-900 text-white px-6 py-4 rounded-2xl font-black flex items-center justify-center gap-3 hover:bg-indigo-600 transition-all shadow-xl">
+                        <Plus size={20} />
+                        <span>New Entry</span>
+                    </Button>
+                </div>
             </header>
 
-            <div className="max-w-7xl mx-auto space-y-24">
-                {dynamicCategories.map(cat => (
-                    <section key={cat} className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-                        <div className="flex items-baseline gap-4 mb-8">
-                            <h2 className="text-xl font-black text-slate-800 tracking-tighter">{cat}</h2>
-                            <div className="h-0.5 grow bg-slate-100 rounded-full" />
-                        </div>
+            <div className="max-w-7xl mx-auto space-y-16 md:space-y-24">
+                {loading ? (
+                    <ServiceSkeleton />
+                ) : filteredServices.length > 0 ? (
+                    dynamicCategories.map(cat => (
+                        <section key={cat} className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                            <div className="flex items-baseline gap-4 mb-6 md:mb-8">
+                                <h2 className="text-lg md:text-xl font-black text-slate-800 tracking-tighter uppercase">{cat}</h2>
+                                <div className="h-0.5 grow bg-slate-100 rounded-full" />
+                            </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                            {services.filter(s => s.category === cat).map(service => (
-                                <div key={service._id} className="group relative bg-white rounded-[2rem] p-3 border border-slate-100 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.07)] transition-all duration-500">
-                                    {/* Image Container - Smaller & Stylish */}
-                                    <div className="relative h-40 w-full rounded-[1.5rem] overflow-hidden bg-slate-50 mb-4">
-                                        <img
-                                            src={service.image}
-                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                                            alt={service.name}
-                                        />
+                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-10">
+                                {filteredServices.filter(s => s.category === cat).map(service => (
+                                    <div key={service._id} className="group relative bg-white rounded-[1.5rem] md:rounded-[2rem] p-2 md:p-3 border border-slate-100 hover:shadow-xl transition-all duration-500">
+                                        <div className="relative h-28 md:h-44 w-full rounded-[1.2rem] md:rounded-[1.5rem] overflow-hidden bg-slate-50 mb-3">
+                                            <img
+                                                src={service.image}
+                                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                                alt={service.name}
+                                            />
+                                            <div className="absolute bottom-2 left-2 px-2 md:px-3 py-1 bg-white/90 backdrop-blur-md rounded-lg md:rounded-xl shadow-sm">
+                                                <span className="text-indigo-600 font-black text-[10px] md:text-sm">₹{service.price}</span>
+                                            </div>
 
-                                        {/* Floating Price Tag */}
-                                        <div className="absolute bottom-3 left-3 px-3 py-1.5 bg-white/90 backdrop-blur-md rounded-xl shadow-sm">
-                                            <span className="text-indigo-600 font-black text-sm tracking-tight">₹{service.price}</span>
+                                            <div className="absolute top-2 right-2 flex flex-col gap-1.5 md:gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all">
+                                                <Button onClick={() => handleOpenModal(service)} className="p-2 md:p-2.5 bg-black rounded-lg md:rounded-xl text-white hover:bg-indigo-600 transition-all shadow-lg">
+                                                    <Edit3 size={14} />
+                                                </Button>
+                                                <Button onClick={() => handleDelete(service._id, service.name)} className="p-2 md:p-2.5 bg-white rounded-lg md:rounded-xl text-rose-600 hover:bg-rose-600 hover:text-white transition-all shadow-lg border border-slate-100">
+                                                    <Trash2 size={14} />
+                                                </Button>
+                                            </div>
                                         </div>
 
-                                        {/* Hover Overlay with Quick Actions */}
-                                        <div className="absolute inset-0 bg-slate-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                                        <div className="absolute top-3 right-3 flex flex-col gap-2 translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300">
-                                            <Button
-                                                onClick={() => handleOpenModal(service)}
-                                                className="p-2.5 bg-black rounded-xl text-slate-100 hover:bg-indigo-600 hover:text-white transition-all shadow-lg border border-slate-100"
-                                            >
-                                                <Edit3 size={16} />
-                                            </Button>
-                                            <Button
-                                                onClick={() => handleDelete(service._id, service.name)}
-                                                className="p-2.5 bg-white rounded-xl text-rose-600 hover:bg-rose-600 hover:text-white transition-all shadow-lg border border-slate-100"
-                                            >
-                                                <Trash2 size={16} />
-                                            </Button>
-                                        </div>
-                                    </div>
-
-                                    {/* Content Area - Tight & Clean */}
-                                    <div className="px-2">
-                                        <div className="flex flex-col mb-3">
-                                            <h3 className="font-black text-slate-900 text-lg leading-tight truncate">{service.name}</h3>
-                                            <div className="flex items-center gap-2 mt-1">
-                                                <div className="flex items-center gap-1 text-amber-500 font-bold text-[10px]">
-                                                    <Star size={10} fill="currentColor" /> {service.rating}
+                                        <div className="px-1 md:px-2">
+                                            <h3 className="font-black text-slate-900 text-xs md:text-lg leading-tight truncate">{service.name}</h3>
+                                            <div className="flex items-center gap-2 mt-1 mb-2">
+                                                <div className="flex items-center gap-1 text-amber-500 font-bold text-[8px] md:text-[10px]">
+                                                    <Star size={8} fill="currentColor" /> {service.rating}
                                                 </div>
-                                                <span className="text-slate-300">•</span>
-                                                <div className="text-slate-400 font-bold text-[10px] uppercase tracking-wider">
+                                                <span className="text-slate-300 text-[8px]">•</span>
+                                                <div className="text-slate-400 font-bold text-[8px] md:text-[10px] uppercase">
                                                     {service.duration}
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <p className="text-slate-500 text-xs leading-relaxed line-clamp-2 mb-2">
-                                            {service.description}
-                                        </p>
                                     </div>
-                                </div>
-                            ))}
-                        </div>
-                    </section>
-                ))}
+                                ))}
+                            </div>
+                        </section>
+                    ))
+                ) : (
+                    <div className="flex flex-col items-center justify-center py-20 text-slate-300">
+                        <PackageOpen size={64} strokeWidth={1} className="mb-4" />
+                        <p className="text-xl font-bold">No services found matching your search</p>
+                    </div>
+                )}
             </div>
 
-            {/* Modal - The Professional Way */}
+            {/* Modal */}
             {showModal && (
-                <div className="fixed inset-0 z-100 flex items-center justify-center p-4 md:p-10">
-                    <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-xl" onClick={() => setShowModal(false)} />
-
-                    <div className="relative bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-300">
-                        {/* Modal Header */}
-                        <div className="p-8 pb-4 flex justify-between items-center">
-                            <h2 className="text-3xl font-black text-slate-900 tracking-tight">
-                                {editingId ? 'Modify Service' : 'New Creation'}
+                <div className="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-0 md:p-10">
+                    <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-md" onClick={() => setShowModal(false)} />
+                    <div className="relative bg-white w-full max-w-2xl rounded-t-[2.5rem] md:rounded-[3rem] shadow-2xl flex flex-col max-h-[95vh] animate-in slide-in-from-bottom md:zoom-in-95 duration-300">
+                        <div className="p-6 md:p-8 pb-4 flex justify-between items-center">
+                            <h2 className="text-2xl md:text-3xl font-black text-slate-900">
+                                {editingId ? 'Edit Service' : 'New Entry'}
                             </h2>
-                            <Button onClick={() => setShowModal(false)} className="p-3 hover:bg-slate-50 rounded-2xl transition-colors">
-                                <X size={24} className="text-red-500" />
+                            <Button onClick={() => setShowModal(false)} className="p-2 hover:bg-slate-50 rounded-xl">
+                                <X size={24} className="text-slate-400" />
                             </Button>
                         </div>
 
-                        {/* Modal Body - Hidden Scrollbar */}
-                        <div className="flex-1 overflow-y-auto no-scrollbar p-8 pt-4">
-                            <form onSubmit={handleSubmit} id="service-form" className="space-y-8">
+                        <div className="flex-1 overflow-y-auto no-scrollbar p-6 md:p-8 pt-0">
+                            <form onSubmit={handleSubmit} id="service-form" className="space-y-6">
                                 <div className="space-y-2">
-                                    <label className="text-xs font-black uppercase text-slate-400 tracking-widest ml-1">Category Control</label>
-                                    <div className="flex flex-col gap-4">
-                                        {!isNewCategory ? (
-                                            <div className="flex gap-3">
-                                                <select className="flex-1 p-5 bg-slate-50 rounded-2xl border-none ring-1 ring-slate-100 font-bold outline-none appearance-none" value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })} required>
-                                                    <option value="">Select Existing...</option>
-                                                    {dynamicCategories.map(c => <option key={c} value={c}>{c}</option>)}
-                                                </select>
-                                                <Button  onClick={() => setIsNewCategory(true)} className="p-5 bg-indigo-50 text-indigo-100 rounded-2xl font-bold hover:bg-indigo-100 transition-colors">
-                                                    New
-                                                </Button>
-                                            </div>
-                                        ) : (
-                                            <div className="flex gap-3 animate-in slide-in-from-right-2">
-                                                <input autoFocus placeholder="Category Name..." className="flex-1 p-5 bg-indigo-50/50 text-indigo-700 rounded-2xl border-none ring-2 ring-indigo-100 font-bold" value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })} required />
-                                                <Button onClick={() => setIsNewCategory(false)} className="p-5 bg-slate-100 text-slate-600 rounded-2xl font-bold">
-                                                    Cancel
-                                                </Button>
-                                            </div>
-                                        )}
-                                    </div>
+                                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Category Control</label>
+                                    {!isNewCategory ? (
+                                        <div className="flex gap-2">
+                                            <select className="flex-1 p-4 bg-slate-50 rounded-2xl border-none ring-1 ring-slate-100 font-bold outline-none text-sm" value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })} required>
+                                                <option value="">Select Existing...</option>
+                                                {Array.from(new Set(services.map(s => s.category))).map(c => <option key={c} value={c}>{c}</option>)}
+                                            </select>
+                                            <Button type="button" onClick={() => setIsNewCategory(true)} className="px-4 bg-indigo-50 text-indigo-600 rounded-2xl font-bold text-xs uppercase">New</Button>
+                                        </div>
+                                    ) : (
+                                        <div className="flex gap-2 animate-in slide-in-from-right-2">
+                                            <input autoFocus placeholder="Category Name..." className="flex-1 p-4 bg-indigo-50/50 text-indigo-700 rounded-2xl ring-2 ring-indigo-100 font-bold text-sm outline-none" value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })} required />
+                                            <Button type="button" onClick={() => setIsNewCategory(false)} className="px-4 bg-slate-100 text-slate-600 rounded-2xl font-bold text-xs uppercase">Back</Button>
+                                        </div>
+                                    )}
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="col-span-2">
-                                        <label className="text-xs font-black uppercase text-slate-400 tracking-widest ml-1">Service Title</label>
-                                        <input required placeholder="Ex: Premium Spa Treatment" className="w-full p-5 bg-slate-50 rounded-2xl border-none ring-1 ring-slate-100 mt-2 font-bold focus:ring-2 focus:ring-indigo-500 transition-all outline-none" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                                    <div className="md:col-span-2">
+                                        <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Service Title</label>
+                                        <input required className="w-full p-4 bg-slate-50 rounded-2xl border-none ring-1 ring-slate-100 font-bold focus:ring-2 focus:ring-indigo-500 outline-none" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
                                     </div>
                                     <div>
-                                        <label className="text-xs font-black uppercase text-slate-400 tracking-widest ml-1">Pricing (INR)</label>
-                                        <input type="number" required className="w-full p-5 bg-slate-50 rounded-2xl border-none ring-1 ring-slate-100 mt-2 font-bold outline-none" value={formData.price} onChange={e => setFormData({ ...formData, price: e.target.value })} />
+                                        <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Price (INR)</label>
+                                        <input type="number" required className="w-full p-4 bg-slate-50 rounded-2xl border-none ring-1 ring-slate-100 font-bold outline-none" value={formData.price} onChange={e => setFormData({ ...formData, price: e.target.value })} />
                                     </div>
                                     <div>
-                                        <label className="text-xs font-black uppercase text-slate-400 tracking-widest ml-1">Time Estimate</label>
-                                        <input placeholder="Ex: 45 Mins" className="w-full p-5 bg-slate-50 rounded-2xl border-none ring-1 ring-slate-100 mt-2 font-bold outline-none" value={formData.duration} onChange={e => setFormData({ ...formData, duration: e.target.value })} />
+                                        <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Duration</label>
+                                        <input placeholder="Ex: 45 Mins" className="w-full p-4 bg-slate-50 rounded-2xl border-none ring-1 ring-slate-100 font-bold outline-none" value={formData.duration} onChange={e => setFormData({ ...formData, duration: e.target.value })} />
                                     </div>
-                                    <div className="col-span-2">
-                                        <label className="text-xs font-black uppercase text-slate-400 tracking-widest ml-1">Display Image URL</label>
-                                        <input placeholder="https://images.unsplash.com/..." className="w-full p-5 bg-slate-50 rounded-2xl border-none ring-1 ring-slate-100 mt-2 font-bold outline-none" value={formData.image} onChange={e => setFormData({ ...formData, image: e.target.value })} />
+                                    <div className="md:col-span-2">
+                                        <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Image URL</label>
+                                        <input className="w-full p-4 bg-slate-50 rounded-2xl border-none ring-1 ring-slate-100 font-bold outline-none text-xs" value={formData.image} onChange={e => setFormData({ ...formData, image: e.target.value })} />
                                     </div>
-                                    <div className="col-span-2">
-                                        <label className="text-xs font-black uppercase text-slate-400 tracking-widest ml-1">Service Description</label>
-                                        <textarea rows={4} className="w-full p-5 bg-slate-50 rounded-2xl border-none ring-1 ring-slate-100 mt-2 font-medium outline-none" value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} />
+                                    <div className="md:col-span-2">
+                                        <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Description</label>
+                                        <textarea rows={3} className="w-full p-4 bg-slate-50 rounded-2xl border-none ring-1 ring-slate-100 font-medium outline-none text-sm" value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} />
                                     </div>
                                 </div>
                             </form>
                         </div>
 
-                        {/* Modal Footer */}
-                        <div className="p-8 border-t border-slate-50">
-                            <Button form="service-form" type="submit" className="w-full py-6 bg-slate-900 text-white rounded-3xl font-black text-xl hover:bg-indigo-600 active:scale-[0.98] transition-all shadow-2xl shadow-indigo-100">
-                                {editingId ? 'Sync Changes' : 'Confirm & Publish'}
+                        <div className="p-6 md:p-8 border-t border-slate-50">
+                            <Button form="service-form" type="submit" className="w-full py-4 md:py-6 bg-slate-900 text-white rounded-2xl md:rounded-3xl font-black text-lg md:text-xl hover:bg-indigo-600 transition-all">
+                                {editingId ? 'Save Changes' : 'Confirm Entry'}
                             </Button>
                         </div>
                     </div>

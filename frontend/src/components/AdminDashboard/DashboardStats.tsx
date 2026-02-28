@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "@clerk/clerk-react"; // Token fetch karne ke liye
+import { useAuth } from "@clerk/clerk-react";
 import { 
   IndianRupee, PackageCheck, Users, TrendingUp, 
   PackageOpen 
@@ -7,8 +7,43 @@ import {
 import { formatDistanceToNow } from "date-fns";
 import api from "@/api/api";
 
+// --- SKELETON COMPONENT ---
+const StatsSkeleton = () => (
+    <div className="space-y-6 md:space-y-10 animate-pulse">
+        {/* 2x2 on mobile/tablet, 4x1 on desktop */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+            {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="bg-white p-5 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] border border-slate-50 h-32 md:h-44 flex flex-col justify-between">
+                    <div className="w-8 h-8 md:w-12 md:h-12 rounded-xl bg-slate-100" />
+                    <div className="space-y-2">
+                        <div className="h-2 w-12 bg-slate-100 rounded" />
+                        <div className="h-6 w-20 bg-slate-100 rounded-lg" />
+                    </div>
+                </div>
+            ))}
+        </div>
+        <div className="bg-white rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 border border-slate-50">
+            <div className="h-6 w-32 bg-slate-100 rounded-lg mb-8" />
+            <div className="space-y-4">
+                {[1, 2].map((i) => (
+                    <div key={i} className="flex items-center justify-between p-4 border-b border-slate-50">
+                        <div className="flex items-center gap-3 md:gap-5">
+                            <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-slate-100" />
+                            <div className="space-y-2">
+                                <div className="h-4 w-24 md:w-40 bg-slate-100 rounded" />
+                                <div className="h-2 w-16 md:w-24 bg-slate-100 rounded" />
+                            </div>
+                        </div>
+                        <div className="h-6 w-12 bg-slate-100 rounded" />
+                    </div>
+                ))}
+            </div>
+        </div>
+    </div>
+);
+
 const DashboardStats = () => {
-    const { getToken } = useAuth(); // Clerk's magic function
+    const { getToken } = useAuth();
     const [stats, setStats] = useState({
         revenue: 0,
         activeOrders: 0,
@@ -22,24 +57,12 @@ const DashboardStats = () => {
         const fetchDashboardData = async () => {
             try {
                 setLoading(true);
-                
-                // 1. Get Fresh Token from Clerk
                 const token = await getToken();
-                
-                // 2. Set Headers for Authorization
-                const config = {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                };
-
-                // 3. Parallel API Calls with Token
+                const config = { headers: { Authorization: `Bearer ${token}` } };
                 const [statsRes, ordersRes] = await Promise.all([
                     api.get('/admin/dashboard-stats', config),
                     api.get('/admin/orders-recent', config)
                 ]);
-
-                // 4. Update States
                 setStats({
                     revenue: statsRes.data.revenue || 0,
                     activeOrders: statsRes.data.activeOrders || 0,
@@ -47,33 +70,31 @@ const DashboardStats = () => {
                     growthRate: statsRes.data.growthRate || "18.4%"
                 });
                 setRecentOrders(Array.isArray(ordersRes.data) ? ordersRes.data : []);
-
-            } catch (err: any) {
-                console.error("Dashboard Fetch Error (401 Check):", err.response || err);
+            } catch (err) {
+                console.error("Fetch Error:", err);
             } finally {
                 setLoading(false);
             }
         };
-
         fetchDashboardData();
     }, [getToken]);
 
-    if (loading) return <div className="p-20 text-center font-black text-slate-400 animate-pulse text-2xl">UPDATING DASHBOARD...</div>;
+    if (loading) return <StatsSkeleton />;
 
     const cards = [
-        { label: 'Total Revenue', value: `₹${stats.revenue.toLocaleString()}`, icon: <IndianRupee size={22} />, color: 'emerald' },
-        { label: 'Pending Orders', value: stats.activeOrders, icon: <PackageCheck size={22} />, color: 'indigo' },
-        { label: 'Total Customers', value: stats.totalCustomers, icon: <Users size={22} />, color: 'blue' },
-        { label: 'Growth Rate', value: stats.growthRate, icon: <TrendingUp size={22} />, color: 'purple' },
+        { label: 'Total Revenue', value: `₹${stats.revenue.toLocaleString()}`, icon: <IndianRupee size={20} />, color: 'emerald' },
+        { label: 'Pending Orders', value: stats.activeOrders, icon: <PackageCheck size={20} />, color: 'indigo' },
+        { label: 'Total Customers', value: stats.totalCustomers, icon: <Users size={20} />, color: 'blue' },
+        { label: 'Growth Rate', value: stats.growthRate, icon: <TrendingUp size={20} />, color: 'purple' },
     ];
 
     return (
-        <div className="space-y-10">
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="space-y-6 md:space-y-10">
+            {/* Stats Grid: 2 columns for mobile/tablet, 4 for desktop */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
                 {cards.map((s, i) => (
-                    <div key={i} className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-50 flex flex-col justify-between hover:scale-[1.02] transition-transform">
-                        <div className={`w-12 h-12 mb-6 rounded-2xl flex items-center justify-center ${
+                    <div key={i} className="bg-white p-5 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] shadow-sm border border-slate-50 flex flex-col justify-between hover:shadow-md transition-all">
+                        <div className={`w-8 h-8 md:w-12 md:h-12 mb-3 md:mb-6 rounded-xl flex items-center justify-center ${
                             s.color === 'emerald' ? 'bg-emerald-50 text-emerald-600' : 
                             s.color === 'indigo' ? 'bg-indigo-50 text-indigo-600' :
                             s.color === 'blue' ? 'bg-blue-50 text-blue-600' : 'bg-purple-50 text-purple-600'
@@ -81,42 +102,51 @@ const DashboardStats = () => {
                             {s.icon}
                         </div>
                         <div>
-                            <p className="text-slate-400 text-xs font-black uppercase tracking-widest mb-1">{s.label}</p>
-                            <h3 className="text-3xl font-black text-slate-900">{s.value}</h3>
+                            <p className="text-slate-400 text-[9px] md:text-[10px] font-black uppercase tracking-widest mb-1">{s.label}</p>
+                            <h3 className="text-lg md:text-3xl font-black text-slate-900">{s.value}</h3>
                         </div>
                     </div>
                 ))}
             </div>
 
-            {/* Recent Orders List */}
-            <div className="bg-white rounded-[3rem] shadow-sm border border-slate-50 p-10">
-                <h3 className="text-2xl font-black text-slate-900 mb-10">Recent Activity</h3>
-                <div className="space-y-6">
-                    {recentOrders.length > 0 ? recentOrders.map((order, idx) => (
-                        <div key={order._id} className="flex items-center justify-between p-4 hover:bg-slate-50 rounded-[2rem] transition-all group border border-transparent hover:border-slate-100">
-                            <div className="flex items-center gap-5">
-                                <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center font-black text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-all">
-                                    {order.userDetails?.fullName?.charAt(0) || (idx + 1)}
+            {/* Recent Activity: Single line layout with price on the right */}
+            <div className="bg-white rounded-[2rem] md:rounded-[3rem] shadow-sm border border-slate-50 p-6 md:p-10">
+                <div className="flex items-center justify-between mb-8">
+                    <h3 className="text-lg md:text-2xl font-black text-slate-900">Recent Activity</h3>
+                    <button className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">View All</button>
+                </div>
+
+                <div className="space-y-2">
+                    {recentOrders.length > 0 ? recentOrders.map((order) => (
+                        <div key={order._id} className="flex items-center justify-between p-3 md:p-4 hover:bg-slate-50 rounded-2xl md:rounded-[2rem] transition-all group">
+                            <div className="flex items-center gap-3 md:gap-5 min-w-0">
+                                <div className="w-10 h-10 md:w-12 md:h-12 shrink-0 rounded-xl md:rounded-2xl bg-slate-100 flex items-center justify-center font-black text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-all text-xs md:text-base">
+                                    {order.userDetails?.fullName?.charAt(0) || "U"}
                                 </div>
-                                <div>
-                                    <h4 className="font-bold text-slate-800 text-lg">{order.items?.[0]?.name || "Service"}</h4>
-                                    <p className="text-sm text-slate-400 font-bold">
-                                        {order.userDetails?.fullName || order.customerDetails?.name || 'Guest User'} • 
-                                        {order.createdAt ? ` ${formatDistanceToNow(new Date(order.createdAt))} ago` : ' just now'}
+                                <div className="min-w-0">
+                                    <h4 className="font-bold text-slate-800 text-sm md:text-lg truncate">
+                                        {order.items?.[0]?.name || "Service"}
+                                    </h4>
+                                    <p className="text-[10px] md:text-sm text-slate-400 font-bold truncate">
+                                        {order.userDetails?.fullName || 'Guest User'} • {order.createdAt ? formatDistanceToNow(new Date(order.createdAt)) : 'now'}
                                     </p>
                                 </div>
                             </div>
-                            <div className="text-right">
-                                <span className="block font-black text-slate-900 text-lg">₹{order.totalAmount}</span>
-                                <span className={`text-[10px] font-black uppercase px-2 py-1 rounded-md ${order.status === 'confirmed' ? 'bg-emerald-50 text-emerald-500' : 'bg-amber-50 text-amber-500'}`}>
+                            
+                            {/* Price and Status on the same line */}
+                            <div className="flex flex-col items-end shrink-0 ml-4">
+                                <span className="font-black text-slate-900 text-sm md:text-lg">₹{order.totalAmount}</span>
+                                <span className={`text-[8px] md:text-[10px] font-black uppercase px-2 py-0.5 rounded-md mt-1 ${
+                                    order.status === 'confirmed' ? 'bg-emerald-50 text-emerald-500' : 'bg-amber-50 text-amber-500'
+                                }`}>
                                     {order.status}
                                 </span>
                             </div>
                         </div>
                     )) : (
-                        <div className="text-center py-20 flex flex-col items-center">
-                            <PackageOpen size={48} className="text-slate-200 mb-4" />
-                            <p className="text-slate-400 font-bold text-xl">No Recent Orders Found</p>
+                        <div className="text-center py-10">
+                            <PackageOpen size={40} className="mx-auto text-slate-200 mb-2" />
+                            <p className="text-slate-400 font-bold">No Recent Orders</p>
                         </div>
                     )}
                 </div>
