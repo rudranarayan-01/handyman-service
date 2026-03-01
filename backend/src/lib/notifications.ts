@@ -14,11 +14,11 @@ export const triggerOrderNotifications = async (order: any, partner?: any) => {
         // --- 1. LOGIC FOR "CONFIRMED" (PARTNER ASSIGNED) ---
         if (status === 'confirmed' && partner) {
             // SMS to Customer
-            await twilioClient.messages.create({
-                body: `Hi ${customerDetails.name}, your ${serviceName} is confirmed! Professional ${partner.name} (${partner.phone}) is on the way. Order ID: ${orderId}`,
-                from: process.env.TWILIO_PHONE_NUMBER,
-                to: customerDetails.phone
-            });
+            // await twilioClient.messages.create({
+            //     body: `Hi ${customerDetails.name}, your ${serviceName} is confirmed! Professional ${partner.name} (${partner.phone}) is on the way. Order ID: ${orderId}`,
+            //     from: process.env.TWILIO_PHONE_NUMBER,
+            //     to: customerDetails.phone
+            // });
 
             // Email to Customer via Resend
             await resend.emails.send({
@@ -27,13 +27,21 @@ export const triggerOrderNotifications = async (order: any, partner?: any) => {
                 subject: `Order Confirmed: ${orderId}`,
                 html: `<strong>Professional Assigned!</strong><br/>${partner.name} has been assigned to your order for ${serviceName}.`
             });
+            // Email to Partner via Resend
+            await resend.emails.send({
+                from: 'Support <delivered@resend.dev>', 
+                to: partner.email,
+                subject: `Order Confirmed: ${orderId}`,
+                html: `<strong>Professional Assigned!</strong><br/>${partner.name} has been assigned to your order for ${serviceName}.`
+            });
 
             // SMS to Partner
-            await twilioClient.messages.create({
-                body: `New Job Assigned! Order: ${orderId}. Customer: ${customerDetails.name}, Address: ${customerDetails.address}.`,
-                from: process.env.TWILIO_PHONE_NUMBER,
-                to: partner.phone
-            });
+            // await twilioClient.messages.create({
+            //     body: `New Job Assigned! Order: ${orderId}. Customer: ${customerDetails.name}, Address: ${customerDetails.address}.`,
+            //     from: process.env.TWILIO_PHONE_NUMBER,
+            //     to: partner.phone
+            // });
+
             console.log(`Notifications for CONFIRMATION would be sent here. Partner: ${partner.name}, Customer: ${customerDetails.name}`);
         }
 
