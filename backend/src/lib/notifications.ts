@@ -63,6 +63,23 @@ export const triggerOrderNotifications = async (order: any, partner?: any) => {
             });
             console.log(`Notifications for COMPLETION would be sent here. Customer: ${customerDetails.name}`);
         }
+        if (status === 'cancelled') {
+            // SMS to Customer
+            // await twilioClient.messages.create({
+            //     body: `Order Cancelled! Your ${serviceName} order (${orderId}) has been marked as cancelled.`,
+            //     from: process.env.TWILIO_PHONE_NUMBER,
+            //     to: customerDetails.phone
+            // });
+
+            // Email to Customer
+            await resend.emails.send({
+                from: 'Support <delivered@resend.dev>', // Use your verified domain in production
+                to: customerDetails.email,
+                subject: `Order Cancelled: ${orderId}`,
+                html: `<h1>Order Cancelled!</h1><p>Your service ${serviceName} was cancelled.</p>`
+            });
+            console.log(`Notifications for CANCELLATION would be sent here. Customer: ${customerDetails.name}`);
+        }
 
     } catch (error) {
         // We log the error but don't "throw" it, so the Order Update still works
