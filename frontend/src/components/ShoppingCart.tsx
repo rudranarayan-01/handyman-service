@@ -81,7 +81,7 @@ const ShoppingCart = () => {
             if (response.data.success) {
                 toast.success("Order Placed Successfully!");
                 clearCart();
-                navigate('/booking-success');
+                navigate(`/booking-success?orderId=${response.data.orderId}`);
             }
         } catch (err: any) {
             toast.error("Order Failed: " + (err.response?.data?.error || "Server Error"));

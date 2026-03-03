@@ -3,6 +3,7 @@ import { Order } from '../models/Orders';
 import { requireAuth } from '@clerk/express';
 import { fastAuth } from '../middleware/auth';
 import { sendOrderEmail } from '../lib/mail';
+import mongoose from 'mongoose';
 
 const router = express.Router();
 
@@ -142,5 +143,44 @@ router.delete("/:id/feedback", async (req, res) => {
     }
 });
 
+// This route for fetching order details for the Booking Success page
+
+router.get('/details/:id', async (req,res) => {
+    try {
+        const { id } = req.params;
+
+        // 1. Find the order (searching both custom orderId and MongoDB _id)
+        const order = await Order.findOne({ 
+            $or: [
+                { orderId: id }, 
+                { _id: mongoose.isValidObjectId(id) ? id : new mongoose.Types.ObjectId() } 
+            ] 
+        });
+
+        // 2. Critical Check: If no order is found, don't let the code continue
+        if (!order) {
+            return res.status(404).json({ message: "Order not found in database" });
+        }
+
+        // 3. Safe Mapping (Using optional chaining ?. to prevent crashes)
+        const responseData = {
+            _id: order.orderId || order._id,
+            scheduledDate: order.bookingDate 
+                ? new Date(order.bookingDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
+                : "Date TBD",
+            scheduledTime: order.bookingDate 
+                ? new Date(order.bookingDate).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
+                : "Time TBD",
+            address: order.customerDetails?.address || "Address not provided",
+            serviceName: order.items && order.items.length > 0 ? order.items[0].name : "General Service",
+            totalAmount: order.totalAmount || 0
+        };
+
+        res.status(200).json(responseData);
+    } catch (error) {
+        console.error("Backend Crash Log:", error);
+        res.status(500).json({ message: "Internal Server Error", error: error });
+    }
+});
 
 export default router;
