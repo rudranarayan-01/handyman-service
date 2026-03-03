@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { CheckCircle2, Calendar, MapPin, Loader2, Phone, Zap, ChevronLeft } from 'lucide-react';
+import { CheckCircle2, Calendar, MapPin, Loader2, Phone, Zap } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import api from '@/api/api';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 // --- Types ---
 interface OrderDetails {
