@@ -66,11 +66,15 @@ const HeroSection = () => {
                                 <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
                                 <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Trusted by Millions</span>
                             </div>
-                            <h1 className="text-3xl sm:text-5xl lg:text-6xl xl:text-6xl font-black text-gray-900 leading-[1.05] tracking-tighter uppercase">
+                            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-[900] text-slate-900 leading-[0.9] tracking-[-0.05em] uppercase">
                                 Services at Your <br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">Doorstep,</span>
+                                <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 to-cyan-500 italic">
+                                    Doorstep,
+                                </span>
                                 <br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600">Instantly</span>
+                                <span className="text-transparent bg-clip-text bg-linear-to-r from-cyan-500 to-blue-600">
+                                    Instantly
+                                </span>
                             </h1>
                             <p className="text-base md:text-lg text-gray-500 font-medium max-w-md leading-relaxed">
                                 Flawless doorstep comfort delivered instantly every time.
