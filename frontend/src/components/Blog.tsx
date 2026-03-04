@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Clock, ArrowRight, Quote, CheckCircle, ShieldCheck, Zap, Star } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 const BlogPage = () => {
   const [activeTab, setActiveTab] = useState('All Stories');

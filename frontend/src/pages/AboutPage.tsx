@@ -1,5 +1,4 @@
-import React from 'react';
-import { ShieldCheck, Clock, Users, Award } from 'lucide-react'; // Optional: Use any icon library
+import { ShieldCheck, Clock, Award } from 'lucide-react'; // Optional: Use any icon library
 
 const AboutPage = () => {
   return (
