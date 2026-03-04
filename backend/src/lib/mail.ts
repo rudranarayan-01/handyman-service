@@ -2,33 +2,30 @@ import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-/**
- * Sends a stylish, branded confirmation email for new bookings.
- * Handles MongoDB ObjectIds automatically to prevent .slice() errors.
- */
+
 export const sendOrderEmail = async (userEmail: string, orderDetails: any) => {
-  try {
-    const { _id, items, totalAmount, bookingDate } = orderDetails;
-    
-    // 1. SAFE ID HANDLING: Convert MongoDB ObjectId to String
-    const fullOrderId = _id?.toString() || "PENDING";
-    const displayId = fullOrderId.slice(-6).toUpperCase();
+    try {
+        const { _id, items, totalAmount, bookingDate } = orderDetails;
 
-    // 2. DATE FORMATTING: Indian Standard Format
-    const formattedDate = new Date(bookingDate).toLocaleDateString('en-IN', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+        // 1. SAFE ID HANDLING: Convert MongoDB ObjectId to String
+        const fullOrderId = _id?.toString() || "PENDING";
+        const displayId = fullOrderId.slice(-6).toUpperCase();
 
-    // 3. SEND EMAIL
-    await resend.emails.send({
-      from: 'Handyman Service <onboarding@resend.dev>', // Replace with your domain when ready
-      to: userEmail,
-      subject: `Booking Confirmed! Order #${displayId}`,
-      html: `
+        // 2. DATE FORMATTING: Indian Standard Format
+        const formattedDate = new Date(bookingDate).toLocaleDateString('en-IN', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        // 3. SEND EMAIL
+        await resend.emails.send({
+            from: 'Handyman Service <onboarding@resend.dev>', // Replace with your domain when ready
+            to: userEmail,
+            subject: `Booking Confirmed! Order #${displayId}`,
+            html: `
         <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f7f9; padding: 40px 20px;">
             <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 24px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);">
                 
@@ -97,9 +94,9 @@ export const sendOrderEmail = async (userEmail: string, orderDetails: any) => {
             </p>
         </div>
       `
-    });
-    console.log(`Email successfully sent for Order: ${fullOrderId}`);
-  } catch (error) {
-    console.error("CRITICAL: Email failed to send:", error);
-  }
+        });
+        console.log(`Email successfully sent for Order: ${fullOrderId}`);
+    } catch (error) {
+        console.error("CRITICAL: Email failed to send:", error);
+    }
 };

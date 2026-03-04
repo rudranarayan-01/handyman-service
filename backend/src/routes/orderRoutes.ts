@@ -4,6 +4,8 @@ import { requireAuth } from '@clerk/express';
 import { fastAuth } from '../middleware/auth';
 import { sendOrderEmail } from '../lib/mail';
 import mongoose from 'mongoose';
+import { triggerBookingSuccess } from '../lib/whatsapp_message';
+import { sendWhatsAppMessage } from '../lib/whatsapp_setup';
 
 const router = express.Router();
 
@@ -16,6 +18,7 @@ router.post('/book', fastAuth, async (req: any, res: any) => {
     try {
         const { userId } = req.auth; // Clerk ID from middleware
         const { cartItems, totalAmount, userEmail, userName, address, phone } = req.body;
+        // console.log("Received booking request:", { userId, cartItems, totalAmount, userEmail, userName, address, phone });
 
         if (!cartItems?.length) {
             return res.status(400).json({ error: "Cart is empty" });
@@ -31,7 +34,7 @@ router.post('/book', fastAuth, async (req: any, res: any) => {
             customerDetails: {
                 name: userName || 'Customer', // Frontend se pass karein ya Clerk se nikalein
                 email: userEmail,
-                phone: phone, 
+                phone: phone,
                 address: address
             },
             items: cartItems.map((item: any) => ({
@@ -49,10 +52,26 @@ router.post('/book', fastAuth, async (req: any, res: any) => {
         // 3. Email trigger (Non-blocking)
         // Background run
         sendOrderEmail(userEmail, newOrder).catch(err => console.log("Email Error:", err));
+        // Trigger WhatsApp message
+        const whatsappMsg = `
+*HANDYMAN SERVICE PRO* 🛠️
+--------------------------
+✅ *Booking Successfully Placed!*
+
+Hi *${userName || 'Customer'}*, your request for *${newOrder.items[0].name}* has been received.
+
+📌 *Order ID:* #${customOrderId}
+💰 *Total Amount:* ₹${totalAmount}
+📅 *Date:* ${new Date().toLocaleDateString('en-IN')}
+
+_Our team will contact you shortly to confirm the professional's arrival time._
+        `.trim();
+        sendWhatsAppMessage(phone, whatsappMsg).catch(err => console.log("WhatsApp Message Error:", err));
+
 
         // 4. Send back the Custom Order ID for tracking
-        res.status(201).json({ 
-            success: true, 
+        res.status(201).json({
+            success: true,
             message: "Order placed successfully",
             orderId: newOrder.orderId, // Human readable
             dbId: newOrder._id,         // Technical ID
@@ -84,7 +103,7 @@ router.get('/history', fastAuth, async (req: any, res: any) => {
 router.get('/:id', requireAuth(), async (req: any, res: any) => {
     try {
         const order = await Order.findById(req.params.id)
-            .populate('assignedPartner', 'name phone'); 
+            .populate('assignedPartner', 'name phone');
 
         if (!order) {
             return res.status(404).json({ error: "Order not found" });
@@ -106,8 +125,8 @@ router.patch("/:id/feedback", fastAuth, async (req, res) => {
         // Agar aap MongoDB ki _id use kar rahe hain:
         const updatedOrder = await Order.findByIdAndUpdate(
             id,
-            { 
-                feedback: { rating, comment, submittedAt: new Date() } 
+            {
+                feedback: { rating, comment, submittedAt: new Date() }
             },
             { new: true }
         );
@@ -127,7 +146,7 @@ router.delete("/:id/feedback", async (req, res) => {
 
         const updatedOrder = await Order.findByIdAndUpdate(
             id,
-            { 
+            {
                 $unset: { feedback: "" }
             },
             { new: true }
@@ -139,22 +158,22 @@ router.delete("/:id/feedback", async (req, res) => {
 
         res.status(200).json({ message: "Feedback deleted successfully", updatedOrder });
     } catch (error) {
-        res.status(500).json({ message: error});
+        res.status(500).json({ message: error });
     }
 });
 
 // This route for fetching order details for the Booking Success page
 
-router.get('/details/:id', async (req,res) => {
+router.get('/details/:id', async (req, res) => {
     try {
         const { id } = req.params;
 
         // 1. Find the order (searching both custom orderId and MongoDB _id)
-        const order = await Order.findOne({ 
+        const order = await Order.findOne({
             $or: [
-                { orderId: id }, 
-                { _id: mongoose.isValidObjectId(id) ? id : new mongoose.Types.ObjectId() } 
-            ] 
+                { orderId: id },
+                { _id: mongoose.isValidObjectId(id) ? id : new mongoose.Types.ObjectId() }
+            ]
         });
 
         // 2. Critical Check: If no order is found, don't let the code continue
@@ -165,10 +184,10 @@ router.get('/details/:id', async (req,res) => {
         // 3. Safe Mapping (Using optional chaining ?. to prevent crashes)
         const responseData = {
             _id: order.orderId || order._id,
-            scheduledDate: order.bookingDate 
+            scheduledDate: order.bookingDate
                 ? new Date(order.bookingDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
                 : "Date TBD",
-            scheduledTime: order.bookingDate 
+            scheduledTime: order.bookingDate
                 ? new Date(order.bookingDate).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
                 : "Time TBD",
             address: order.customerDetails?.address || "Address not provided",

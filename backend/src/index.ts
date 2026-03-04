@@ -14,6 +14,7 @@ import adminRoutes from "./routes/adminRoutes"
 import contactRoutes from "./routes/contactRoutes"
 import providerRoutes from "./routes/providerRoutes"
 import { clerkMiddleware } from '@clerk/express';
+import { connectToWhatsApp, sendWhatsAppMessage } from './lib/whatsapp_setup';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -48,6 +49,17 @@ app.get('/', (req, res) => {
     res.send('Handyman API V1 is live! 🚀');
 });
 
-app.listen(PORT, () => {
+app.get('/test-wa', async (req, res) => {
+    try {
+        const myNumber = "918260348599"; // Your own number with country code, for testing
+        await sendWhatsAppMessage(myNumber, "🛠️ *Handyman Pro Test*\n\nIf you're reading this, the bot is working perfectly!");
+        res.send("Message Sent!");
+    } catch (err) {
+        res.status(500).send("Error");
+    }
+});
+
+app.listen(PORT, async () => {
     console.log(`✅ Server running on http://localhost:${PORT}`);
+    await connectToWhatsApp();
 });

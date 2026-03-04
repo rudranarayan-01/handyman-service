@@ -6,7 +6,7 @@ import { createClerkClient } from '@clerk/backend';
 import { Order } from '../models/Orders';
 import { Service } from '../models/Service';
 import { Partner } from '../models/Partners';
-import { triggerOrderNotifications } from '../lib/notifications';
+import { triggerOrderNotifications } from '../lib/Allnotifications';
 const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
 
 const router = express.Router();
