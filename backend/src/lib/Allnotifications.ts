@@ -1,9 +1,11 @@
 import { Resend } from 'resend';
 import { sendWhatsAppMessage } from './whatsapp_setup';
+
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 // --- Helper: Format Phone for WhatsApp (91 prefix) ---
 const formatWAHandle = (phone: string) => {
+    if (!phone) return "";
     const clean = phone.replace(/\D/g, '');
     return clean.length === 10 ? `91${clean}` : clean;
 };
@@ -34,7 +36,7 @@ export const triggerOrderNotifications = async (order: any, partner?: any) => {
     const shortId = orderId.slice(-8).toUpperCase();
 
     try {
-        // --- 1. CONFIRMED ---
+        // --- 1. CONFIRMED (Always sends to both Partner and Customer) ---
         if (status === 'confirmed' && partner) {
             const htmlContent = emailTemplate(
                 "Professional Assigned!",
@@ -48,19 +50,18 @@ export const triggerOrderNotifications = async (order: any, partner?: any) => {
                  <p>Order ID: <span style="font-family: monospace; background: #eee; padding: 2px 5px;">#${shortId}</span></p>`
             );
 
-            // Email to Customer & Partner
-            await Promise.all([
+            // Emails
+            await Promise.allSettled([
                 resend.emails.send({ from: 'Handyman Service <onboarding@resend.dev>', to: customerDetails.email, subject: `Confirmed: Professional Assigned for ${serviceName}`, html: htmlContent }),
                 resend.emails.send({ from: 'Handyman Service <onboarding@resend.dev>', to: partner.email, subject: `New Assignment: ${serviceName}`, html: htmlContent })
             ]);
 
-            // WhatsApp to Customer
+            // WhatsApps
             const customerWaMsg = `*HANDYMAN PRO: Professional Assigned!* 🛠️\n\nHi *${customerDetails.name}*, your service for *${serviceName}* is confirmed.\n\n👤 *Expert:* ${partner.name}\n📞 *Contact:* ${partner.phone}\n🆔 *Order ID:* #${shortId}\n\nOur expert will reach your location shortly.`;
-            sendWhatsAppMessage(formatWAHandle(customerDetails.phone), customerWaMsg).catch(e => console.log("WA Error:", e));
-
-            // WhatsApp to Partner
             const partnerWaMsg = `*NEW JOB ASSIGNED* 👷\n\nHi *${partner.name}*, you have a new task:\n\n📌 *Service:* ${serviceName}\n👤 *Client:* ${customerDetails.name}\n📍 *Address:* ${customerDetails.address}\n📞 *Client Phone:* ${customerDetails.phone}\n🆔 *Order ID:* #${shortId}`;
-            sendWhatsAppMessage(formatWAHandle(partner.phone), partnerWaMsg).catch(e => console.log("WA Error:", e));
+
+            sendWhatsAppMessage(formatWAHandle(customerDetails.phone), customerWaMsg).catch(e => console.log("WA Error Customer:", e));
+            sendWhatsAppMessage(formatWAHandle(partner.phone), partnerWaMsg).catch(e => console.log("WA Error Partner:", e));
         }
 
         // --- 2. COMPLETED ---
@@ -72,19 +73,23 @@ export const triggerOrderNotifications = async (order: any, partner?: any) => {
                 '#10b981'
             );
 
-            await Promise.all([
-                resend.emails.send({ from: 'Handyman Service <onboarding@resend.dev>', to: customerDetails.email, subject: `Service Done: ${serviceName}`, html: htmlContent }),
-                resend.emails.send({ from: 'Handyman Service <onboarding@resend.dev>', to: partner.email, subject: `Service Completed: ${serviceName}`, html: htmlContent })
-            ]);
+            // Always send to Customer, only send to Partner if exists
+            const emailRecipients = [
+                resend.emails.send({ from: 'Handyman Service <onboarding@resend.dev>', to: customerDetails.email, subject: `Service Done: ${serviceName}`, html: htmlContent })
+            ];
+            if (partner?.email) {
+                emailRecipients.push(resend.emails.send({ from: 'Handyman Service <onboarding@resend.dev>', to: partner.email, subject: `Job Completed: ${serviceName}`, html: htmlContent }));
+            }
+            await Promise.allSettled(emailRecipients);
 
-            // WhatsApp to Customer
-            const completedWaMsg = `*SERVICE COMPLETED* ✅\n\nHi *${customerDetails.name}*, your *${serviceName}* is successfully finished. We hope you liked the service!\n\nThank you for choosing Handyman Service Pro.`;
-            sendWhatsAppMessage(formatWAHandle(customerDetails.phone), completedWaMsg).catch(e => console.log("WA Error:", e));
+            // WhatsApp - Customer
+            const completedWaMsg = `*SERVICE COMPLETED* ✅\n\nHi *${customerDetails.name}*, your *${serviceName}* is successfully finished. We hope you liked the service!`;
+            sendWhatsAppMessage(formatWAHandle(customerDetails.phone), completedWaMsg).catch(e => console.log("WA Error Customer:", e));
 
-            // WhatsApp to Partner
-            if (partner) {
-                const partnerCompletedWaMsg = `*JOB COMPLETED* ✅\n\nHi *${partner.name}*, the order *#${shortId}* for *${serviceName}* has been marked as completed. Great work!`;
-                sendWhatsAppMessage(formatWAHandle(partner.phone), partnerCompletedWaMsg).catch(e => console.log("WA Error:", e));
+            // WhatsApp - Partner (Only if exists)
+            if (partner?.phone) {
+                const partnerCompletedWaMsg = `*JOB COMPLETED* ✅\n\nHi *${partner.name}*, the order *#${shortId}* for *${serviceName}* has been marked as completed. Well done!`;
+                sendWhatsAppMessage(formatWAHandle(partner.phone), partnerCompletedWaMsg).catch(e => console.log("WA Error Partner:", e));
             }
         }
 
@@ -97,23 +102,27 @@ export const triggerOrderNotifications = async (order: any, partner?: any) => {
                 '#ef4444'
             );
 
-            await Promise.all([
-                resend.emails.send({ from: 'Handyman Service <onboarding@resend.dev>', to: customerDetails.email, subject: `Cancelled: Order #${shortId}`, html: htmlContent }),
-                resend.emails.send({ from: 'Handyman Service <onboarding@resend.dev>', to: partner.email, subject: `Cancelled: Order #${shortId}`, html: htmlContent })
-            ]);
+            // Always send to Customer, only send to Partner if exists
+            const emailRecipients = [
+                resend.emails.send({ from: 'Handyman Service <onboarding@resend.dev>', to: customerDetails.email, subject: `Cancelled: Order #${shortId}`, html: htmlContent })
+            ];
+            if (partner?.email) {
+                emailRecipients.push(resend.emails.send({ from: 'Handyman Service <onboarding@resend.dev>', to: partner.email, subject: `Job Cancelled: ${serviceName}`, html: htmlContent }));
+            }
+            await Promise.allSettled(emailRecipients);
 
-            // WhatsApp to Customer
-            const cancelWaMsg = `*ORDER CANCELLED* ❌\n\nHi *${customerDetails.name}*, your order *#${shortId}* for *${serviceName}* has been cancelled. If this was a mistake, please contact support.`;
-            sendWhatsAppMessage(formatWAHandle(customerDetails.phone), cancelWaMsg).catch(e => console.log("WA Error:", e));
+            // WhatsApp - Customer
+            const cancelWaMsg = `*ORDER CANCELLED* ❌\n\nHi *${customerDetails.name}*, your order *#${shortId}* for *${serviceName}* has been cancelled.`;
+            sendWhatsAppMessage(formatWAHandle(customerDetails.phone), cancelWaMsg).catch(e => console.log("WA Error Customer:", e));
 
-            // WhatsApp to Partner
-            if (partner) {
+            // WhatsApp - Partner (Only if exists)
+            if (partner?.phone) {
                 const partnerCancelWaMsg = `*JOB CANCELLED* ❌\n\nHi *${partner.name}*, the order *#${shortId}* for *${serviceName}* assigned to you has been cancelled.`;
-                sendWhatsAppMessage(formatWAHandle(partner.phone), partnerCancelWaMsg).catch(e => console.log("WA Error:", e));
+                sendWhatsAppMessage(formatWAHandle(partner.phone), partnerCancelWaMsg).catch(e => console.log("WA Error Partner:", e));
             }
         }
 
-        console.log(`Notifications triggered for order ${orderId}`);
+        console.log(`Notifications triggered for order ${orderId} status: ${status}`);
 
     } catch (error) {
         console.error("Notification Service Failed:", error);
