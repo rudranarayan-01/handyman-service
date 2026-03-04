@@ -154,7 +154,7 @@ const ManageServices = () => {
                 
                 <div className="flex flex-col sm:flex-row w-full md:w-auto gap-4">
                     {/* Search Bar */}
-                    <div className="relative flex-1 sm:min-w-[300px]">
+                    <div className="relative flex-1 sm:min-w-75">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                         <input 
                             type="text"
@@ -232,7 +232,7 @@ const ManageServices = () => {
 
             {/* Modal */}
             {showModal && (
-                <div className="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-0 md:p-10">
+                <div className="fixed inset-0 z-100 flex items-end md:items-center justify-center p-0 md:p-10">
                     <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-md" onClick={() => setShowModal(false)} />
                     <div className="relative bg-white w-full max-w-2xl rounded-t-[2.5rem] md:rounded-[3rem] shadow-2xl flex flex-col max-h-[95vh] animate-in slide-in-from-bottom md:zoom-in-95 duration-300">
                         <div className="p-6 md:p-8 pb-4 flex justify-between items-center">

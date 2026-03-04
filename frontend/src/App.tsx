@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom';
 import Home from './pages/Home';
 import Profile from './pages/Profile';
 import OrderHistoryPage from './pages/OrderHistoryPage';
@@ -41,6 +41,7 @@ function App() {
           <Route path='/blogs' element={<BlogPage/> } />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/providers" element={<ProviderPage />} />
+          {/* <Route path="/about" element={<AboutPage />} /> */}
 
           <Route path="/order-history" element={<ProtectedRoutes><OrderHistoryPage /></ProtectedRoutes>} />
           <Route path="/order-history/:id" element={<ProtectedRoutes><OrderDetailsPage /></ProtectedRoutes>} />
@@ -51,6 +52,8 @@ function App() {
           <Route path="/settings" element={<ProtectedRoutes><SettingPage /></ProtectedRoutes>} />
           <Route path="/privacy" element={<ProtectedRoutes><PrivaryPage /></ProtectedRoutes>} />
           <Route path="/shopping-cart" element={<ProtectedRoutes><CheckoutPage /></ProtectedRoutes>} />
+
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
     </CartProvider>
