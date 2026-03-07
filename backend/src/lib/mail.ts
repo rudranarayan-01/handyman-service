@@ -1,17 +1,23 @@
-import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// This only contains Booking confirmation
 
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.GMAIL_USER, 
+        pass: process.env.GMAIL_APP_PASS,
+    },
+});
 
 export const sendOrderEmail = async (userEmail: string, orderDetails: any) => {
     try {
         const { _id, items, totalAmount, bookingDate } = orderDetails;
 
-        // 1. SAFE ID HANDLING: Convert MongoDB ObjectId to String
         const fullOrderId = _id?.toString() || "PENDING";
         const displayId = fullOrderId.slice(-6).toUpperCase();
 
-        // 2. DATE FORMATTING: Indian Standard Format
         const formattedDate = new Date(bookingDate).toLocaleDateString('en-IN', {
             day: 'numeric',
             month: 'long',
@@ -20,9 +26,9 @@ export const sendOrderEmail = async (userEmail: string, orderDetails: any) => {
             minute: '2-digit'
         });
 
-        // 3. SEND EMAIL
-        await resend.emails.send({
-            from: 'Handyman Service <onboarding@resend.dev>', // Replace with your domain when ready
+        // 2. Define Mail Options
+        const mailOptions = {
+            from: `"Handyman Service Pro" <${process.env.GMAIL_USER}>`,
             to: userEmail,
             subject: `Booking Confirmed! Order #${displayId}`,
             html: `
@@ -74,12 +80,6 @@ export const sendOrderEmail = async (userEmail: string, orderDetails: any) => {
                         <p style="margin: 0 0 10px 0; color: #64748b; font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px;">Booking Date & Time</p>
                         <p style="margin: 0; font-size: 18px; font-weight: 800; color: #0f172a;">${formattedDate}</p>
                     </div>
-
-                    <div style="margin-top: 40px; text-align: center;">
-                        <p style="color: #64748b; font-size: 14px; line-height: 1.6;">
-                            Need to reschedule? You can manage your booking via the dashboard or contact our support team.
-                        </p>
-                    </div>
                 </div>
                 
                 <div style="background-color: #0f172a; padding: 30px; text-align: center;">
@@ -88,15 +88,14 @@ export const sendOrderEmail = async (userEmail: string, orderDetails: any) => {
                     </p>
                 </div>
             </div>
-            
-            <p style="text-align: center; color: #94a3b8; font-size: 12px; margin-top: 30px;">
-                You received this email because of your recent booking on our platform.
-            </p>
         </div>
       `
-        });
-        console.log(`Email successfully sent for Order: ${fullOrderId}`);
+        };
+
+        // 3. Send the Email
+        await transporter.sendMail(mailOptions);
+        console.log(`Nodemailer: Email successfully sent for Order: ${fullOrderId}`);
     } catch (error) {
-        console.error("CRITICAL: Email failed to send:", error);
+        console.error("Nodemailer CRITICAL Error:", error);
     }
 };
