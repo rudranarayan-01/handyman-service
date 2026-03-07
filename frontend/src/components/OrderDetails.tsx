@@ -77,7 +77,7 @@ const OrderDetails = () => {
     );
 
     return (
-        <div className="min-h-screen bg-[#FDFDFD] pb-20 mt-10 md:mt-20">
+        <div className="min-h-screen bg-[#FDFDFD] pb-20 mt-20 md:mt-20 ">
             <BackNavigation />
             <main className="max-w-5xl mx-auto px-4 md:px-6">
                 {/* Header Section */}

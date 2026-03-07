@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import {
     LayoutDashboard, Settings, Users, Package, Calendar, LogOut,
-    Bell, UserRoundCheck, Menu, X, ExternalLink
+    Bell, UserRoundCheck, Menu, X, ExternalLink,
+    Ticket
 } from 'lucide-react';
 import SidebarItem, { SidebarItemSkeleton } from './SideBar';
 import UserDirectory from './UserDirectory';
@@ -12,6 +13,7 @@ import PartnerManagement from './PartnerManagement';
 import AdminSettings from './AdminSettings';
 import { useUser, UserButton, useClerk } from '@clerk/clerk-react';
 import { Button } from '../ui/button';
+import OfferList from './OfferList';
 
 // --- FULL PAGE SKELETON ---
 const DashboardSkeleton = () => (
@@ -83,6 +85,7 @@ export const AdminDashboard = () => {
                     <SidebarItem id="orders" label="Orders" icon={<Calendar size={18} />} activeTab={activeTab} setActiveTab={setActiveTab} onItemClick={() => setIsMobileMenuOpen(false)} />
                     <SidebarItem id="users" label="Users" icon={<Users size={18} />} activeTab={activeTab} setActiveTab={setActiveTab} onItemClick={() => setIsMobileMenuOpen(false)} />
                     <SidebarItem id="partners" label="Partners" icon={<UserRoundCheck size={18} />} activeTab={activeTab} setActiveTab={setActiveTab} onItemClick={() => setIsMobileMenuOpen(false)} />
+                    <SidebarItem id="offers" label="Offers" icon={<Ticket size={18} />} activeTab={activeTab} setActiveTab={setActiveTab} onItemClick={() => setIsMobileMenuOpen(false)} />
                     <SidebarItem id="settings" label="Settings" icon={<Settings size={18} />} activeTab={activeTab} setActiveTab={setActiveTab} onItemClick={() => setIsMobileMenuOpen(false)} />
                 </nav>
 
@@ -155,6 +158,7 @@ export const AdminDashboard = () => {
                         {activeTab === 'users' && <UserDirectory />}
                         {activeTab === 'orders' && <AdminOrders />}
                         {activeTab === 'partners' && <PartnerManagement />}
+                        {activeTab === 'offers' && <OfferList />}
                         {activeTab === 'settings' && <AdminSettings />}
                     </div>
                 </div>

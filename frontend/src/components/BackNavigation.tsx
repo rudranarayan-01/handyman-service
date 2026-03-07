@@ -8,7 +8,7 @@ const BackNavigation = () => {
                 <div className="max-w-6xl mx-auto flex items-center justify-between">
                     <Link to="/categories" className="flex items-center gap-2 font-bold text-gray-800 hover:text-blue-600 transition-all">
                         <ChevronLeft className="w-5 h-5" />
-                        <span className="hidden sm:inline">Back to Categories</span>
+                        <span className="hidden sm:inline text-gray-700">Back to Categories</span>
                     </Link>
                 </div>
             </nav>

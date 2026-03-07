@@ -77,7 +77,7 @@ const ShoppingCart = () => {
 
     return (
         <div className="min-h-screen bg-[#F8FAFC] mt-16 md:mt-24 pb-32 lg:pb-12">
-            <header className="bg-white/80 backdrop-blur-md border-b border-slate-100 sticky top-0 z-[60]">
+            <header className="bg-white/80 backdrop-blur-md border-b border-slate-100  top-0 z-60">
                 <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
                     <button onClick={() => navigate(-1)} className="p-2 hover:bg-slate-50 rounded-full"><ArrowLeft className="w-6 h-6" /></button>
                     <span className="text-lg font-black uppercase tracking-tight">Checkout Summary</span>
@@ -139,7 +139,7 @@ const ShoppingCart = () => {
                         <p className="text-[10px] font-black text-slate-400">TOTAL TO PAY</p>
                         <p className="text-2xl font-black text-slate-900">₹{grandTotal}</p>
                     </div>
-                    <Button onClick={handlePlaceOrder} disabled={isSubmitting || !selectedAddressId} className="flex-1 bg-slate-900 h-14 rounded-2xl font-black uppercase">
+                    <Button onClick={handlePlaceOrder} disabled={isSubmitting || !selectedAddressId} className="flex-1 bg-slate-900 h-14 rounded-2xl text-white uppercase">
                         {isSubmitting ? "Processing..." : "Confirm & Pay"}
                     </Button>
                 </div>

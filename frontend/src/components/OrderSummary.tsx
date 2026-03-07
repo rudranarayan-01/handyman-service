@@ -21,14 +21,11 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
     return (
         <div className="lg:sticky lg:top-28 space-y-4">
             {/* Coupon Section */}
-            <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden">
                 <OffersSection
                     cartTotal={totalAmount} 
                     onApply={onApplyOffer}
                     appliedCode={appliedCode}
                 />
-            </div>
-
             {/* Price Breakdown */}
             <div className="bg-white rounded-[2.5rem] p-6 md:p-8 border border-slate-100 shadow-xl">
                 <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-6">Order Details</h3>

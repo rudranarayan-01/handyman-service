@@ -104,7 +104,7 @@ router.post('/validate', async (req, res) => {
  * @route   GET /api/offers/admin/all
  * @desc    Get ALL offers including inactive/expired for Admin Panel
  */
-router.get('/admin/all', async (req, res) => {
+router.get('/all', async (req, res) => {
     try {
         const offers = await Offer.find().sort({ createdAt: -1 });
         res.json({ success: true, offers });
