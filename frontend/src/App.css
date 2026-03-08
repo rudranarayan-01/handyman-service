@@ -15,3 +15,53 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
+
+/* Premium Promo Button Utility */
+@layer components {
+  .promo-btn {
+    @apply relative overflow-hidden transition-all duration-300 active:scale-95;
+    background-size: 200% auto;
+  }
+
+  /* The Shimmering Light Streak */
+  .promo-btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.3),
+      transparent
+    );
+    transform: skewX(-25deg);
+    transition: none;
+    animation: promoBtnShimmer 3s infinite ease-in-out;
+  }
+
+  /* Subtle Hover Lift */
+  .promo-btn:hover {
+    @apply -translate-y-0.5 brightness-110;
+    box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.4);
+  }
+}
+
+/* Keyframes */
+@keyframes promoBtnShimmer {
+  0% { left: -100%; }
+  30% { left: 150%; } /* Move quickly across */
+  100% { left: 150%; } /* Wait before repeating */
+}
+
+@keyframes glowOpacity {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.02); }
+}
+
+/* Apply this for the pulsing "Live" effect on the button background if desired */
+.glow-pulse-bg {
+  animation: glowOpacity 2.5s ease-in-out infinite;
+}

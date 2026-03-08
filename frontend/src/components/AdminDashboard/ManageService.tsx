@@ -4,6 +4,7 @@ import { Plus, Edit3, Trash2, X, Star, Search, PackageOpen } from 'lucide-react'
 import { toast } from 'sonner';
 import api from '@/api/api';
 import { Button } from '../ui/button';
+import ServiceImageUpload from './ServiceImageUpload';
 
 interface ServiceData {
     _id: string;
@@ -77,8 +78,8 @@ const ManageServices = () => {
 
     // --- SEARCH & FILTER LOGIC ---
     const filteredServices = useMemo(() => {
-        return services.filter(s => 
-            s.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        return services.filter(s =>
+            s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
             s.category.toLowerCase().includes(searchQuery.toLowerCase())
         );
     }, [services, searchQuery]);
@@ -151,12 +152,12 @@ const ManageServices = () => {
                         Live Inventory: {services.length} items
                     </div>
                 </div>
-                
+
                 <div className="flex flex-col sm:flex-row w-full md:w-auto gap-4">
                     {/* Search Bar */}
                     <div className="relative flex-1 sm:min-w-75">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                        <input 
+                        <input
                             type="text"
                             placeholder="Search name or category..."
                             className="w-full pl-12 pr-4 py-4 bg-white border border-slate-100 rounded-2xl font-bold text-sm focus:ring-2 focus:ring-indigo-500 outline-none shadow-sm transition-all"
@@ -277,9 +278,13 @@ const ManageServices = () => {
                                         <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Duration</label>
                                         <input placeholder="Ex: 45 Mins" className="w-full p-4 bg-slate-50 rounded-2xl border-none ring-1 ring-slate-100 font-bold outline-none" value={formData.duration} onChange={e => setFormData({ ...formData, duration: e.target.value })} />
                                     </div>
+                                    {/* Image  */}
+                                    {/* Replace the old Image URL div with this */}
                                     <div className="md:col-span-2">
-                                        <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Image URL</label>
-                                        <input className="w-full p-4 bg-slate-50 rounded-2xl border-none ring-1 ring-slate-100 font-bold outline-none text-xs" value={formData.image} onChange={e => setFormData({ ...formData, image: e.target.value })} />
+                                        <ServiceImageUpload
+                                            value={formData.image}
+                                            onChange={(url) => setFormData({ ...formData, image: url })}
+                                        />
                                     </div>
                                     <div className="md:col-span-2">
                                         <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Description</label>

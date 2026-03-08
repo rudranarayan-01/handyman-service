@@ -1,38 +1,43 @@
-export interface Category {
-    name: string;
-    image: string; 
-    color: string;
-}
 
-export const categories: Category[] = [
-    { 
-        name: "Painting Services", 
-        image: "/images/Painting/painting-services.jpg", 
-        color: "bg-blue-50" 
+export const getHeroOptimizedUrl = (publicId: string) => {
+    const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'dnz67rxu0';
+
+    // f_auto: chooses best format (WebP/AVIF)
+    // q_auto: reduces file size without losing quality
+    // w_400: resizes to fit the grid perfectly
+    return `https://res.cloudinary.com/${cloudName}/image/upload/f_auto,q_auto,w_400/${publicId}`;
+};
+
+
+export const categories = [
+    {
+        name: "Painting Services",
+        image: "painting-services", // Matches your .jpg link
+        slug: "home-renovations"
     },
-    { 
-        name: "Cleaning & Pest Control", 
-        image: "/images/Cleaning/cleaning.jpg", 
-        color: "bg-yellow-50" 
+    {
+        name: "Cleaning & Pest Control",
+        image: "cleaning", // Matches your .jpg link
+        slug: "cleaning-&-pest-control"
     },
-    { 
-        name: "Plumbing Services", 
-        image: "/images/Plumbing/Plumbing.jpg", 
-        color: "bg-purple-50" 
+    {
+        name: "Plumbing Services",
+        image: "plumbing", // Matches your .jpg link
+        slug: "appliance-repair"
     },
-    { 
-        name: "Repairing and Maintenance", 
-        image: "/images/Repairing/ac-repair.jpg", 
-        color: "bg-cyan-50" 
+    {
+        name: "Repairing and Maintenance",
+        image: "ac-repair", // Matches your .jpg link
+        slug: "appliance-repair"
     },
-    { 
-        name: "Women's Saloon", 
-        image: "/images/Parlour/makeup.jpg", 
-        color: "bg-green-50" 
+    {
+        name: "Women's Saloon",
+        image: "makeup", // Matches your .jpg link
+        slug: "personal-grooming-"
     },
-    { 
-        name: "Ayurvedic Massage", 
-        image: "/images/Parlour/home-massage-service.jpg", 
-        color: "bg-rose-50" 
+    {
+        name: "Ayurvedic Massage",
+        image: "home-massage-service", // This one is already working
+        slug: "personal-grooming-"
     },
 ];

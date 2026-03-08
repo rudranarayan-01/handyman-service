@@ -177,7 +177,7 @@ const AllServices = () => {
 
             {/* STICKY CART - REDESIGNED */}
             {cartItems.length > 0 && (
-                <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] w-[95%] max-w-md">
+                <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-100 w-[95%] max-w-md">
                     <div className="bg-gray-900/95 backdrop-blur-xl rounded-[2rem] p-3 pl-6 flex items-center justify-between shadow-[0_30px_60px_rgba(0,0,0,0.3)] border border-white/5">
                         <div className="flex flex-col">
                             <span className="text-white font-black text-xl tracking-tighter leading-none">₹{totalAmount}</span>

@@ -57,19 +57,6 @@ const CookingBanner: React.FC<CookingPromoProps> = ({
                 .animate-bounce-subtle { animation: bounceSubtle 3s ease-in-out infinite; }
                 
                 .gpu-layer { transform: translateZ(0); backface-visibility: hidden; }
-
-                .btn-shimmer-effect::after {
-                    content: '';
-                    position: absolute;
-                    top: 0; left: -100%;
-                    width: 50%; height: 100%;
-                    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-                    transition: none;
-                }
-                .btn-shimmer-effect:hover::after {
-                    left: 100%;
-                    transition: left 0.6s ease-in-out;
-                }
             `}</style>
 
             <section className="py-8 md:py-12 px-4 md:px-6 max-w-7xl mx-auto overflow-hidden">
@@ -122,6 +109,7 @@ const CookingBanner: React.FC<CookingPromoProps> = ({
 
                         <Link to="/cooking-service" className="w-full sm:w-auto">
                             <button className="
+                                promo-btn
                                 btn-shimmer-effect
                                 relative overflow-hidden w-full sm:w-auto
                                 bg-orange-600 hover:bg-orange-700

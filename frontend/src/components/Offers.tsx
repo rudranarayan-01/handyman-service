@@ -35,7 +35,7 @@ const OfferCard = ({ offer }: { offer: typeof offers[0] }) => {
                 group/card cursor-pointer
                 transition-all duration-300
                 active:scale-[0.98]
-                transform-gpu
+                transform-gpu promo-btn
             `}
         >
             {!loaded && (

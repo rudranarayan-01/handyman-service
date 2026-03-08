@@ -16,6 +16,7 @@
     "@clerk/backend": "^2.30.0",
     "@clerk/express": "^1.7.68",
     "@whiskeysockets/baileys": "^7.0.0-rc.9",
+    "cloudinary": "^2.9.0",
     "cors": "^2.8.6",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",

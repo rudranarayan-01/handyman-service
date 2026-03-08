@@ -1,4 +1,4 @@
-import express, { Router } from 'express';
+import express from 'express';
 // IMPORTANT: Use curly braces here!
 import { fastAuth, isAdmin } from '../middleware/auth';
 import { User } from '../models/User';
@@ -8,6 +8,7 @@ import { Service } from '../models/Service';
 import { Partner } from '../models/Partners';
 import { triggerOrderNotifications } from '../lib/Allnotifications';
 const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
+const cloudinary = require('../config/cloudinary');
 
 const router = express.Router();
 
@@ -256,9 +257,28 @@ router.patch('/services/:id', fastAuth, isAdmin, async (req, res) => {
 // DELETE Service
 router.delete('/services/:id', fastAuth, isAdmin, async (req, res) => {
     try {
+        // 1. Find the service first to get the image URL
+        const service = await Service.findById(req.params.id);
+        if (!service) return res.status(404).json({ message: "Service not found" });
+
+        // 2. Extract public_id from the Cloudinary URL
+        // Example URL: https://res.cloudinary.com/demo/image/upload/v1234/sample.jpg
+        // We need "sample"
+        if (service.image && service.image.includes('cloudinary')) {
+            const urlParts = service.image.split('/');
+            const lastPart = urlParts[urlParts.length - 1]; // "sample.jpg"
+            const publicId = lastPart.split('.')[0]; // "sample"
+            
+            // Delete from Cloudinary
+            await cloudinary.uploader.destroy(publicId);
+        }
+
+        // 3. Delete from MongoDB
         await Service.findByIdAndDelete(req.params.id);
-        res.status(200).json({ message: "Service deleted successfully" });
+
+        res.status(200).json({ message: "Service and associated image deleted" });
     } catch (err) {
+        console.error(err);
         res.status(500).json({ error: "Delete failed" });
     }
 });
