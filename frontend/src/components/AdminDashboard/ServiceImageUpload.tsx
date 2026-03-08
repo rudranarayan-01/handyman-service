@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Upload, X, Loader2, RefreshCw } from 'lucide-react';
+import { Upload, X, RefreshCw } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'sonner';
 
