@@ -13,7 +13,7 @@ import addressRoutes from "./routes/addressRoutes"
 import adminRoutes from "./routes/adminRoutes"
 import contactRoutes from "./routes/contactRoutes"
 import providerRoutes from "./routes/providerRoutes"
-import offersRoutes from "./routes/OffersRoutes"
+import offersRoutes from "./routes/offersRoutes"
 import { clerkMiddleware } from '@clerk/express';
 import { connectToWhatsApp, sendWhatsAppMessage } from './lib/whatsapp_setup';
 
