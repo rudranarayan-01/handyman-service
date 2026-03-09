@@ -18,7 +18,7 @@ const Footer = () => {
                                 </div>
                                 <div >
                                     <a href="/" className="flex flex-col leading-none sm:flex">
-                                        <span className="font-bold text-[18px] tracking-tighter text-white uppercase">Handyman</span>
+                                        <span className="font-bold text-[18px] tracking-tighter text-white uppercase">Housexpertz</span>
                                         <span className="font-medium text-[14px] tracking-tight text-gray-300">Service</span>
                                     </a>
                                 </div>
@@ -74,15 +74,15 @@ const Footer = () => {
                         <ul className="space-y-4 text-sm">
                             <li className="flex items-start gap-3">
                                 <MapPin className="w-5 h-5 text-blue-500 shrink-0" />
-                                <span>123 Tech Park, Electronic City, Bengaluru, KA 560100</span>
+                                <span>9 Guru Nanak Market, Lajpat Nagar 4, New Delhi - 110024 (Near Moolchand Metro Station)</span>
                             </li>
                             <li className="flex items-center gap-3">
                                 <Phone className="w-5 h-5 text-blue-500 shrink-0" />
-                                <span>+91 6370260339</span>
+                                <span>+91 9811797407</span>
                             </li>
                             <li className="flex items-center gap-3">
                                 <Mail className="w-5 h-5 text-blue-500 shrink-0" />
-                                <span>help@boysatwork.in</span>
+                                <span>shivskukreja@gmail.com</span>
                             </li>
                         </ul>
                     </div>
