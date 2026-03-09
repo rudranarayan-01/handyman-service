@@ -1,28 +1,15 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '@/api/api';
-import { Search, ArrowRight } from 'lucide-react';
+import { Search, ArrowRight, ShieldCheck, ImageOff } from 'lucide-react';
 import { categoryMeta } from '@/constants/categories';
 
-// ─── TYPES ───
+// --- TYPES ---
 interface CategoryStat {
-  categoryImage: string;
+  categoryImage?: string;
   _id: string; 
   count: number;
 }
-
-// ─── SKELETON COMPONENT ───
-const CategorySkeleton = () => (
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-    {[...Array(8)].map((_, i) => (
-      <div key={i} className="h-64 md:h-80 rounded-3xl bg-gray-100 animate-pulse flex flex-col justify-end p-8">
-        <div className="w-12 h-12 rounded-2xl bg-gray-200 mb-4" />
-        <div className="h-6 w-3/4 bg-gray-200 rounded mb-2" />
-        <div className="h-4 w-1/2 bg-gray-200 rounded" />
-      </div>
-    ))}
-  </div>
-);
 
 const CategoryPage = () => {
   const navigate = useNavigate();
@@ -34,7 +21,7 @@ const CategoryPage = () => {
     const fetchCategoryData = async () => {
       try {
         const res = await api.get('/services/category-stats');
-        setStats(res.data);
+        setStats(res.data || []);
       } catch (err) {
         console.error("Error fetching category stats:", err);
       } finally {
@@ -44,7 +31,6 @@ const CategoryPage = () => {
     fetchCategoryData();
   }, []);
 
-  // Performance: Memoize filtered results to avoid recalculation on every render
   const filteredStats = useMemo(() => {
     return stats.filter(stat =>
       stat._id.toLowerCase().includes(searchQuery.toLowerCase())
@@ -53,91 +39,131 @@ const CategoryPage = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-20 mt-15">
+      {/* 1. INJECTED CSS ANIMATIONS - Ensures visibility immediately */}
+      <style>{`
+        @keyframes revealUp {
+          0% { opacity: 0; transform: translateY(40px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        .animate-reveal { 
+          animation: revealUp 0.8s cubic-bezier(0.2, 1, 0.3, 1) forwards; 
+        }
+      `}</style>
 
-        {/* Header Section */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-12 md:mb-16">
-          <div className="max-w-2xl">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-gray-900 tracking-tighter leading-[1.1] md:leading-[0.9]">
-              What do you <br className="hidden md:block" />
-              <span className="text-blue-600">need help</span> with?
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12 md:pt-32 md:pb-20">
+        
+        {/* HEADER SECTION */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12 mb-16">
+          <div className="max-w-2xl animate-reveal" style={{ opacity: 0 }}>
+            <div className="flex items-center gap-2 mb-6">
+                <span className="h-[2px] w-8 bg-blue-600"></span>
+                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600">Premium Home Care</span>
+            </div>
+            <h1 className="text-6xl md:text-8xl font-black text-gray-900 tracking-tighter leading-[0.8] mb-8">
+              Expert <br />
+              <span className="text-blue-600">Solutions.</span>
             </h1>
-            <p className="mt-4 text-gray-500 font-medium md:text-lg">
-              Select a category to see available professional services.
-            </p>
+            <div className="flex items-center gap-4 text-gray-500 font-bold text-sm">
+                <ShieldCheck size={20} className="text-blue-600" />
+                <span>Background Verified Professionals</span>
+            </div>
           </div>
 
-          <div className="relative w-full lg:w-96 group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-600 transition-colors w-5 h-5" />
+          {/* SEARCH BAR */}
+          <div className="relative w-full lg:w-96 animate-reveal" style={{ opacity: 0, animationDelay: '0.2s' }}>
             <input
               type="text"
-              placeholder="Search categories..."
-              className="w-full pl-12 pr-4 py-4 rounded-2xl border border-gray-200 outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all text-lg"
+              placeholder="Search category..."
+              className="w-full bg-white border-b-2 border-gray-200 py-4 px-2 outline-none focus:border-blue-600 transition-all text-xl font-bold text-gray-800 placeholder:text-gray-300"
               onChange={(e) => setSearchQuery(e.target.value)}
             />
+            <Search className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 w-6 h-6" />
           </div>
         </div>
 
-        {/* Content Section */}
+        {/* CONTENT GRID */}
         {loading ? (
-          <CategorySkeleton />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="aspect-[4/5] rounded-[2.5rem] bg-gray-100 animate-pulse" />
+            ))}
+          </div>
         ) : (
-          <>
-            {filteredStats.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                {filteredStats.map((stat) => {
-                  const catName = stat._id;
-                  const meta = categoryMeta[catName];
-                  const displayImage = stat.categoryImage || meta?.image || 'https://via.placeholder.com/400';
-                  const Icon = meta?.icon || Search;
-                  const catSlug = catName.toLowerCase().replace(/\s+/g, '-');
-
-                  return (
-                    <div
-                      key={catName}
-                      onClick={() => navigate(`/categories/${catSlug}`)}
-                      className="group relative h-64 md:h-80 rounded-[2.5rem] overflow-hidden cursor-pointer bg-gray-100 transition-all duration-500 hover:shadow-2xl hover:-translate-y-1"
-                    >
-                      {/* Image with Lazy Loading */}
-                      <img
-                        src={displayImage}
-                        loading="lazy"
-                        className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-1000 ease-out"
-                        alt={catName}
-                      />
-
-                      {/* Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
-
-                      {/* Content */}
-                      <div className="absolute inset-0 p-6 md:p-8 flex flex-col justify-end">
-                        <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-xl flex items-center justify-center mb-4 group-hover:bg-blue-600 group-hover:rotate-[360deg] transition-all duration-500">
-                          <Icon className="w-6 h-6 text-white" />
-                        </div>
-                        
-                        <div className="transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                            <h3 className="text-xl md:text-2xl font-black text-white leading-tight mb-1">
-                                {catName}
-                            </h3>
-                            <div className="flex items-center justify-between">
-                                <p className="text-xs md:text-sm font-bold text-blue-400 uppercase tracking-widest">
-                                    {stat.count} Services
-                                </p>
-                                <ArrowRight className="text-white w-5 h-5 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
-                            </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="text-center py-20">
-                <p className="text-gray-400 text-xl font-medium">No categories found matching "{searchQuery}"</p>
-              </div>
-            )}
-          </>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+            {filteredStats.map((stat, index) => (
+               <CategoryCard 
+                  key={stat._id} 
+                  stat={stat} 
+                  index={index} 
+                  navigate={navigate} 
+               />
+            ))}
+          </div>
         )}
+
+        {!loading && filteredStats.length === 0 && (
+          <div className="py-20 text-center animate-reveal">
+            <p className="text-gray-400 text-xl font-bold italic">No categories match your search...</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// --- CARD SUB-COMPONENT ---
+const CategoryCard = ({ stat, index, navigate }: any) => {
+  const [hasError, setHasError] = useState(false);
+  const meta = categoryMeta[stat._id];
+  const Icon = meta?.icon || Search;
+  const displayImage = stat.categoryImage || meta?.image;
+  const catSlug = stat._id.toLowerCase().replace(/\s+/g, '-');
+
+  return (
+    <div
+      onClick={() => navigate(`/categories/${catSlug}`)}
+      className="group relative aspect-[4/5] rounded-[2.5rem] overflow-hidden cursor-pointer bg-gray-100 animate-reveal hover:shadow-2xl transition-all duration-500"
+      style={{ 
+        opacity: 0, 
+        animationDelay: `${0.1 * (index % 8)}s` 
+      }}
+    >
+      {/* IMAGE HANDLING (Fixes image_e956da.jpg layout shifts) */}
+      {displayImage && !hasError ? (
+        <img
+          src={displayImage}
+          onError={() => setHasError(true)}
+          alt={stat._id}
+          className="absolute inset-0 w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700 ease-out"
+        />
+      ) : (
+        <div className="absolute inset-0 bg-slate-200 flex items-center justify-center">
+          <ImageOff className="text-slate-400" size={32} />
+        </div>
+      )}
+
+      {/* OVERLAYS */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
+
+      {/* TEXT & ICON */}
+      <div className="absolute inset-0 p-8 flex flex-col justify-end">
+        <div className="mb-4 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+            <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20 group-hover:bg-blue-600 transition-all">
+                <Icon className="text-white w-6 h-6" />
+            </div>
+        </div>
+
+        <div className="space-y-1">
+          <h3 className="text-3xl font-black text-white leading-[0.9] tracking-tighter">
+            {stat._id}
+          </h3>
+          <div className="flex items-center justify-between">
+            <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest group-hover:text-white transition-colors">
+              {stat.count} Specialties
+            </p>
+            <ArrowRight className="text-white w-5 h-5 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import HomePageExtraComponents from "@/components/AdditionalComponents"
 import CookingBanner from "@/components/CookingBanner"
+import FAQSection from "@/components/FAQ"
 import Footer from "@/components/Footer"
 import Header from "@/components/Header"
 import HeroSection from "@/components/Hero"
@@ -13,16 +14,18 @@ const Home = () => {
     return (
         <div className="relative min-h-screen">
             <Header />
-            <main>
+            <div
+            >
                 <HeroSection />
-                <CookingBanner/>
-                <OfferSection/>
-                <MostBookedServiceGrid/>
-                <InterriorBanner/>
-                <ServiceGrid/>
-                <HomePageExtraComponents/>
-                <Footer/>
-            </main>
+                <CookingBanner />
+                <OfferSection />
+                <MostBookedServiceGrid />
+                <InterriorBanner />
+                <ServiceGrid />
+                <HomePageExtraComponents />
+                <FAQSection/>
+                <Footer />
+            </div>
         </div>
     )
 }
