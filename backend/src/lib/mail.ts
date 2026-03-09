@@ -28,7 +28,7 @@ export const sendOrderEmail = async (userEmail: string, orderDetails: any) => {
 
         // 2. Define Mail Options
         const mailOptions = {
-            from: `"Handyman Service Pro" <${process.env.GMAIL_USER}>`,
+            from: `"Homexpertz Service Pro" <${process.env.GMAIL_USER}>`,
             to: userEmail,
             subject: `Booking Confirmed! Order #${displayId}`,
             html: `
@@ -36,7 +36,7 @@ export const sendOrderEmail = async (userEmail: string, orderDetails: any) => {
             <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 24px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);">
                 
                 <div style="background-color: #0f172a; padding: 25px; text-align: center;">
-                    <h1 style="color: #ffffff; margin: 0; font-size: 18px; font-weight: 900; letter-spacing: 3px; text-transform: uppercase;">Handyman Service Pro</h1>
+                    <h1 style="color: #ffffff; margin: 0; font-size: 18px; font-weight: 900; letter-spacing: 3px; text-transform: uppercase;">Homexpertz Service Pro</h1>
                 </div>
 
                 <div style="background-color: #2563eb; padding: 40px 30px; text-align: center;">
@@ -84,7 +84,7 @@ export const sendOrderEmail = async (userEmail: string, orderDetails: any) => {
                 
                 <div style="background-color: #0f172a; padding: 30px; text-align: center;">
                     <p style="color: #475569; font-size: 11px; margin: 0; font-weight: 800; text-transform: uppercase; letter-spacing: 2px;">
-                        Handyman Service Pro • Quality Guaranteed
+                        Homexpertz Service Pro • Quality Guaranteed
                     </p>
                 </div>
             </div>

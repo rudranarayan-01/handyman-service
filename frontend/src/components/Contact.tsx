@@ -35,7 +35,7 @@ const Contact = () => {
 
                     <div className="space-y-6">
                         {[
-                            { icon: Mail, label: 'Email us', val: 'support@handyman.com' },
+                            { icon: Mail, label: 'Email us', val: 'support@Homexpertz.com' },
                             { icon: Phone, label: 'Call us', val: '+91 98765 43210' },
                             { icon: MapPin, label: 'Visit us', val: '123 Tech Park, Bangalore, India' },
                         ].map((item, i) => (

@@ -26,14 +26,14 @@ export const generateInvoice = (order: any) => {
 
     doc.setFontSize(12);
     doc.setTextColor(accentColor[0], accentColor[1], accentColor[2]);
-    doc.text("Handyman Service", 140, 20);
+    doc.text("Homexpertz Service", 140, 20);
     
     doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
     doc.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
     doc.text("GSTIN: 21AAAAA0000A1Z5", 140, 26);
     doc.text("Bhubaneswar, Odisha, 751024", 140, 31);
-    doc.text("support@handyman.com", 140, 36);
+    doc.text("support@Homexpertz.com", 140, 36);
 
     // Divider Line
     doc.setDrawColor(lightGray[0], lightGray[1], lightGray[2]);
@@ -146,7 +146,7 @@ export const generateInvoice = (order: any) => {
     doc.setFontSize(10);
     doc.setFont("helvetica", "italic");
     doc.setTextColor(accentColor[0], accentColor[1], accentColor[2]);
-    doc.text("Thank you for choosing Handyman!", 105, pageHeight - 15, { align: 'center' });
+    doc.text("Thank you for choosing Homexpertz!", 105, pageHeight - 15, { align: 'center' });
 
     // --- 6. Save PDF ---
     doc.save(`Invoice_${order.orderId.toUpperCase()}.pdf`);

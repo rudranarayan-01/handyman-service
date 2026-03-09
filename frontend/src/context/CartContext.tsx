@@ -5,13 +5,13 @@ const CartContext = createContext<any>(null);
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     // 1. Initial State LocalStorage se uthao taaki refresh par data na jaye
     const [cartItems, setCartItems] = useState<any[]>(() => {
-        const savedCart = localStorage.getItem('handyman_cart');
+        const savedCart = localStorage.getItem('Homexpertz_cart');
         return savedCart ? JSON.parse(savedCart) : [];
     });
 
     // 2. Jab bhi cart change ho, LocalStorage update karo
     useEffect(() => {
-        localStorage.setItem('handyman_cart', JSON.stringify(cartItems));
+        localStorage.setItem('Homexpertz_cart', JSON.stringify(cartItems));
     }, [cartItems]);
 
     const addToCart = (service: any) => {

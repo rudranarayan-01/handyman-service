@@ -49,19 +49,20 @@ app.use("/api/v1", contactRoutes)
 
 
 app.get('/', (req, res) => {
-    res.send('Handyman API V1 is live! 🚀');
+    res.send('Homexpertz API V1 is live! 🚀');
 });
 
 app.get('/test-wa', async (req, res) => {
     try {
-        const myNumber = "918260348599"; // Your own number with country code, for testing
-        await sendWhatsAppMessage(myNumber, "🛠️ *Handyman Pro Test*\n\nIf you're reading this, the bot is working perfectly!");
+        const myNumber = "918260348599"; 
+        await sendWhatsAppMessage(myNumber, "🛠️ *Homexpertz Pro Test*\n\nIf you're reading this, the bot is working perfectly!");
         res.send("Message Sent!");
     } catch (err) {
         res.status(500).send("Error");
     }
 });
 
+// await connectToWhatsApp();
 app.listen(PORT, async () => {
     console.log(`✅ Server running on http://localhost:${PORT}`);
     await connectToWhatsApp();
