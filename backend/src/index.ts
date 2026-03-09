@@ -24,8 +24,9 @@ connectDB();
 
 app.use(cors({
     origin: [
+        "https://housexpertz.in", // for local development
         "https://handyman-service-uhsx.onrender.com",
-        "http://localhost:5173" // for local development
+        "http://localhost:5173",
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
