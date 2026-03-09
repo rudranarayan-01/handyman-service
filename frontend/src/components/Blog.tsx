@@ -1,4 +1,3 @@
-import React from 'react';
 import { MessageSquare, Star, ArrowRight, ShieldCheck, Clock, Award, Quote } from 'lucide-react';
 
 const HousexpertzBlog = () => {
