@@ -28,8 +28,8 @@ const BlogPage = () => {
   ];
 
   const customerStories = [
-    { id: 1, name: "Sneha Kapoor", location: "Gurugram", story: "My sofa looked beyond repair after my toddler's party. The Homexpertz Pro spent 3 hours and now it looks brand new.", service: "Deep Sofa Cleaning", avatar: "https://i.pravatar.cc/150?u=sneha" },
-    { id: 2, name: "Rahul Mehra", location: "Mumbai", story: "Getting my AC serviced was always a hassle until I tried Homexpertz Service. Transparent pricing and no mess.", service: "AC Power Jet Service", avatar: "https://i.pravatar.cc/150?u=rahul" },
+    { id: 1, name: "Sneha Kapoor", location: "Gurugram", story: "My sofa looked beyond repair after my toddler's party. The Housexpertz Pro spent 3 hours and now it looks brand new.", service: "Deep Sofa Cleaning", avatar: "https://i.pravatar.cc/150?u=sneha" },
+    { id: 2, name: "Rahul Mehra", location: "Mumbai", story: "Getting my AC serviced was always a hassle until I tried Housexpertz Service. Transparent pricing and no mess.", service: "AC Power Jet Service", avatar: "https://i.pravatar.cc/150?u=rahul" },
   ];
 
   const categories = ['All Stories', 'Home Decor', 'Maintenance', 'Cleaning', 'Safety', 'Expert Tips'];
@@ -41,7 +41,7 @@ const BlogPage = () => {
       <header className="max-w-7xl mx-auto px-6 pt-24 pb-12">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <h1 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter mb-4">
-            Homexpertz <span className="text-blue-600">Journal</span>
+            Housexpertz <span className="text-blue-600">Journal</span>
           </h1>
           <p className="text-slate-500 font-medium text-lg md:text-xl max-w-2xl">
             Pro tips, maintenance guides, and real transformation stories from the experts you trust.
@@ -165,7 +165,7 @@ const BlogPage = () => {
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-20">
               <h3 className="text-4xl md:text-5xl font-black text-white tracking-tighter mb-4">Voices of our Community</h3>
-              <p className="text-slate-400 font-medium text-lg">Real experiences from people who trusted Homexpertz Service.</p>
+              <p className="text-slate-400 font-medium text-lg">Real experiences from people who trusted Housexpertz Service.</p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -203,7 +203,7 @@ const BlogPage = () => {
                 Ready to make your home <br className="hidden md:block"/> smarter and cleaner?
             </h2>
             <p className="text-blue-100 font-medium mb-12 text-lg md:text-xl opacity-90">
-                Book a professional Homexpertz in less than 60 seconds.
+                Book a professional Housexpertz in less than 60 seconds.
             </p>
             <div className="flex flex-col md:flex-row items-center justify-center gap-4">
                 <button className="w-full md:w-auto bg-white text-blue-700 px-14 py-6 rounded-[2.5rem] font-black text-xl hover:scale-105 transition-all shadow-2xl active:scale-95">

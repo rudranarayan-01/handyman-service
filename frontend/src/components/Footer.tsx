@@ -91,7 +91,7 @@ const Footer = () => {
 
                 {/* Bottom Bar */}
                 <div className="pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4 text-[12px] uppercase tracking-widest font-medium text-gray-500">
-                    <p>© 2026 Homexpertz Services Pvt Ltd.</p>
+                    <p>© 2026 Housexpertz Services Pvt Ltd.</p>
                     <div className="flex gap-6">
                         <span className="hover:text-gray-300 cursor-pointer">Privacy Policy</span>
                         <span className="hover:text-gray-300 cursor-pointer">Terms of Service</span>

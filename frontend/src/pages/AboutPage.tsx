@@ -11,7 +11,7 @@ const AboutPage = () => {
               We’re Redefining <span className="text-blue-500">Home Care</span> in India.
             </h1>
             <p className="text-lg text-slate-300 leading-relaxed mb-8">
-              Homexpertz Service Pro started with a simple idea: booking a reliable plumber, 
+              Housexpertz Service Pro started with a simple idea: booking a reliable plumber, 
               electrician, or carpenter should be as easy as ordering food online. 
               No more endless phone calls or bargaining. Just professional service at your doorstep.
             </p>
@@ -70,7 +70,7 @@ const AboutPage = () => {
                 <Award size={24} />
               </div>
               <h3 className="text-xl font-bold mb-3">Quality Guaranteed</h3>
-              <p className="text-slate-600 leading-relaxed text-sm">Not happy with the fix? We offer a 15-day service warranty on all jobs completed through Homexpertz Service Pro.</p>
+              <p className="text-slate-600 leading-relaxed text-sm">Not happy with the fix? We offer a 15-day service warranty on all jobs completed through Housexpertz Service Pro.</p>
             </div>
           </div>
         </div>
@@ -84,7 +84,7 @@ const AboutPage = () => {
             <div className="aspect-square bg-slate-200 rounded-[40px] overflow-hidden">
                 <img 
                   src="/images/our-team.webp" 
-                  alt="Our Homexpertz Team in India" 
+                  alt="Our Housexpertz Team in India" 
                   className="w-full h-full object-cover"
                 />
             </div>

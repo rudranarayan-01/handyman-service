@@ -100,7 +100,7 @@ const AllServices = () => {
                                                         </div>
 
                                                         <div className="space-y-4">
-                                                            <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400">Homexpertz Promise</h4>
+                                                            <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400">Housexpertz Promise</h4>
                                                             {['Verified Professional', '30-Day Warranty', 'Safety First Protocol'].map((item) => (
                                                                 <div key={item} className="flex items-center gap-3">
                                                                     <div className="w-5 h-5 bg-emerald-50 rounded-full flex items-center justify-center">

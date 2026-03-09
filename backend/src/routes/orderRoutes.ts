@@ -54,7 +54,7 @@ router.post('/book', fastAuth, async (req: any, res: any) => {
         sendOrderEmail(userEmail, newOrder).catch(err => console.log("Email Error:", err));
         // Trigger WhatsApp message
         const whatsappMsg = `
-*Homexpertz SERVICE PRO* 🛠️
+*Housexpertz SERVICE PRO* 🛠️
 --------------------------
 ✅ *Booking Successfully Placed!*
 

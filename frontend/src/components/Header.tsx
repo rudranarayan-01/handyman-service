@@ -233,7 +233,7 @@ const Header = () => {
                             <span className="text-white font-black text-sm">HS</span>
                         </div>
                         <div className="flex flex-col leading-none">
-                            <span className="font-black text-sm tracking-tighter text-black uppercase">Homexpertz</span>
+                            <span className="font-black text-sm tracking-tighter text-black uppercase">Housexpertz</span>
                             <span className="font-bold text-[9px] tracking-tight text-gray-400 uppercase">Pro Service</span>
                         </div>
                     </div>

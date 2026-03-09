@@ -70,7 +70,7 @@ export async function connectToWhatsApp() {
             }
         } else if (connection === 'open') {
             isReady = true;
-            console.log('\n✅ SUCCESS: Homexpertz Bot is Linked & Active!\n');
+            console.log('\n✅ SUCCESS: Housexpertz Bot is Linked & Active!\n');
         }
     });
 }

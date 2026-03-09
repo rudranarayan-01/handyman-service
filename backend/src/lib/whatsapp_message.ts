@@ -4,7 +4,7 @@ export const triggerBookingSuccess = async (order: any) => {
     const phone = order.customerDetails.phone; // Ensure it has '91' prefix
     
     const message = `
-*Homexpertz SERVICE PRO* 🛠️
+*Housexpertz SERVICE PRO* 🛠️
 --------------------------
 ✅ *BOOKING CONFIRMED*
 

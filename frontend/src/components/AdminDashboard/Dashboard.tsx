@@ -74,7 +74,7 @@ export const AdminDashboard = () => {
                         <Package className="text-white" size={22} />
                     </div>
                     <span className="font-black text-2xl tracking-tighter text-slate-900">
-                        Homexpertz <br /><span className="text-indigo-600 text-[10px] uppercase tracking-[0.3em] font-bold">Admin Panel</span>
+                        Housexpertz <br /><span className="text-indigo-600 text-[10px] uppercase tracking-[0.3em] font-bold">Admin Panel</span>
                     </span>
                 </div>
 

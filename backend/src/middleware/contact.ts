@@ -20,7 +20,7 @@ export const sendContactEmail = async (req: Request<{}, {}, ContactBody>, res: R
 
     try {
         const { data, error } = await resend.emails.send({
-            from: 'Homexpertz Hub <onboarding@resend.dev>', // Verify your domain to change this
+            from: 'Housexpertz Hub <onboarding@resend.dev>', // Verify your domain to change this
             to: ['rudranarayansahu080@gmail.com'], // Your business inbox
             replyTo: email,
             subject: `Contact: ${subject || 'New Inquiry'}`,
@@ -33,7 +33,7 @@ export const sendContactEmail = async (req: Request<{}, {}, ContactBody>, res: R
                         <p style="white-space: pre-wrap;">${message}</p>
                     </div>
                     <footer style="margin-top: 20px; font-size: 12px; color: #999;">
-                        Sent via Homexpertz Contact Form
+                        Sent via Housexpertz Contact Form
                     </footer>
                 </div>
             `,

@@ -15,7 +15,7 @@ const emailTemplate = (title: string, content: string, color: string = '#2563eb'
 <div style="font-family: 'Inter', Helvetica, Arial, sans-serif; background-color: #f8fafc; padding: 40px 20px;">
     <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 24px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
         <div style="background-color: ${color}; padding: 30px; text-align: center;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 900; letter-spacing: -1px; text-transform: uppercase;">Homexpertz Service Pro</h1>
+            <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 900; letter-spacing: -1px; text-transform: uppercase;">Housexpertz Service Pro</h1>
         </div>
         <div style="padding: 40px; color: #1e293b;">
             <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 20px; color: #0f172a;">${title}</h2>
@@ -24,7 +24,7 @@ const emailTemplate = (title: string, content: string, color: string = '#2563eb'
             <p style="font-size: 14px; color: #64748b; text-align: center;">Need help? Contact our 24/7 support or reply to this email.</p>
         </div>
         <div style="background-color: #0f172a; padding: 20px; text-align: center;">
-            <p style="color: #94a3b8; font-size: 12px; margin: 0; font-weight: bold; letter-spacing: 1px;">© 2026 Homexpertz SERVICE PRO | SECURE & INSTANT</p>
+            <p style="color: #94a3b8; font-size: 12px; margin: 0; font-weight: bold; letter-spacing: 1px;">© 2026 Housexpertz SERVICE PRO | SECURE & INSTANT</p>
         </div>
     </div>
 </div>
@@ -52,12 +52,12 @@ export const triggerOrderNotifications = async (order: any, partner?: any) => {
 
             // Emails
             await Promise.allSettled([
-                resend.emails.send({ from: 'Homexpertz Service <onboarding@resend.dev>', to: customerDetails.email, subject: `Confirmed: Professional Assigned for ${serviceName}`, html: htmlContent }),
-                resend.emails.send({ from: 'Homexpertz Service <onboarding@resend.dev>', to: partner.email, subject: `New Assignment: ${serviceName}`, html: htmlContent })
+                resend.emails.send({ from: 'Housexpertz Service <onboarding@resend.dev>', to: customerDetails.email, subject: `Confirmed: Professional Assigned for ${serviceName}`, html: htmlContent }),
+                resend.emails.send({ from: 'Housexpertz Service <onboarding@resend.dev>', to: partner.email, subject: `New Assignment: ${serviceName}`, html: htmlContent })
             ]);
 
             // WhatsApps
-            const customerWaMsg = `*Homexpertz PRO: Professional Assigned!* 🛠️\n\nHi *${customerDetails.name}*, your service for *${serviceName}* is confirmed.\n\n👤 *Expert:* ${partner.name}\n📞 *Contact:* ${partner.phone}\n🆔 *Order ID:* #${shortId}\n\nOur expert will reach your location shortly.`;
+            const customerWaMsg = `*Housexpertz PRO: Professional Assigned!* 🛠️\n\nHi *${customerDetails.name}*, your service for *${serviceName}* is confirmed.\n\n👤 *Expert:* ${partner.name}\n📞 *Contact:* ${partner.phone}\n🆔 *Order ID:* #${shortId}\n\nOur expert will reach your location shortly.`;
             const partnerWaMsg = `*NEW JOB ASSIGNED* 👷\n\nHi *${partner.name}*, you have a new task:\n\n📌 *Service:* ${serviceName}\n👤 *Client:* ${customerDetails.name}\n📍 *Address:* ${customerDetails.address}\n📞 *Client Phone:* ${customerDetails.phone}\n🆔 *Order ID:* #${shortId}`;
 
             sendWhatsAppMessage(formatWAHandle(customerDetails.phone), customerWaMsg).catch(e => console.log("WA Error Customer:", e));
@@ -75,10 +75,10 @@ export const triggerOrderNotifications = async (order: any, partner?: any) => {
 
             // Always send to Customer, only send to Partner if exists
             const emailRecipients = [
-                resend.emails.send({ from: 'Homexpertz Service <onboarding@resend.dev>', to: customerDetails.email, subject: `Service Done: ${serviceName}`, html: htmlContent })
+                resend.emails.send({ from: 'Housexpertz Service <onboarding@resend.dev>', to: customerDetails.email, subject: `Service Done: ${serviceName}`, html: htmlContent })
             ];
             if (partner?.email) {
-                emailRecipients.push(resend.emails.send({ from: 'Homexpertz Service <onboarding@resend.dev>', to: partner.email, subject: `Job Completed: ${serviceName}`, html: htmlContent }));
+                emailRecipients.push(resend.emails.send({ from: 'Housexpertz Service <onboarding@resend.dev>', to: partner.email, subject: `Job Completed: ${serviceName}`, html: htmlContent }));
             }
             await Promise.allSettled(emailRecipients);
 
@@ -104,10 +104,10 @@ export const triggerOrderNotifications = async (order: any, partner?: any) => {
 
             // Always send to Customer, only send to Partner if exists
             const emailRecipients = [
-                resend.emails.send({ from: 'Homexpertz Service <onboarding@resend.dev>', to: customerDetails.email, subject: `Cancelled: Order #${shortId}`, html: htmlContent })
+                resend.emails.send({ from: 'Housexpertz Service <onboarding@resend.dev>', to: customerDetails.email, subject: `Cancelled: Order #${shortId}`, html: htmlContent })
             ];
             if (partner?.email) {
-                emailRecipients.push(resend.emails.send({ from: 'Homexpertz Service <onboarding@resend.dev>', to: partner.email, subject: `Job Cancelled: ${serviceName}`, html: htmlContent }));
+                emailRecipients.push(resend.emails.send({ from: 'Housexpertz Service <onboarding@resend.dev>', to: partner.email, subject: `Job Cancelled: ${serviceName}`, html: htmlContent }));
             }
             await Promise.allSettled(emailRecipients);
 
