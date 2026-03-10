@@ -101,11 +101,11 @@ const ProfileSection = () => {
                     </div>
 
                     {/* Promotional Banner */}
-                    <div className="bg-linear-to-br from-gray-900 to-gray-500 p-8 rounded-[2.5rem] text-white flex justify-between items-center relative overflow-hidden">
+                    <div className="bg-linear-to-br promo-btn from-gray-900 to-gray-500 p-8 rounded-[2.5rem] text-white flex justify-between items-center relative overflow-hidden">
                         <div className="z-10">
                             <p className="text-xs text-red-400 font-bold uppercase tracking-widest mb-2 opacity-80">Plus Membership</p>
                             <h4 className="text-xl font-bold mb-4">Save 10% on every booking</h4>
-                            <Button className="bg-white text-gray-100 hover:bg-gray-100 px-6 py-2 rounded-xl font-bold text-sm">Renew Now</Button>
+                            <Button className=" text-gray-100 bg-blue-800 hover:bg-gray-800 px-6 py-2 rounded-xl font-bold text-sm">Renew Now</Button>
                         </div>
                         <Package className="w-32 h-32 absolute -right-4 -bottom-4 opacity-20 rotate-12" />
                     </div>
