@@ -119,7 +119,7 @@ const HeroSection = () => {
                 }
             `}</style>
 
-            <section className="relative pt-10 md:pt-28 lg:pt-26 pb-12 md:pb-20 px-4 md:px-6 bg-[#f9fafb] overflow-hidden min-h-screen gpu-render">
+            <section className="relative pt-10 md:pt-28 lg:pt-26 md:pb-20 px-4 md:px-6 bg-[#f9fafb] overflow-hidden min-h-screen gpu-render">
 
                 {/* Background Decorative - Using Cloudinary for background patterns if needed */}
                 <div className="absolute top-0 right-0 w-full md:w-1/2 h-full bg-gradient-to-l from-blue-50/60 to-transparent pointer-events-none" />
