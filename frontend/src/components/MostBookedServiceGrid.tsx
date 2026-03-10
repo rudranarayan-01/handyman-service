@@ -1,173 +1,208 @@
-import { useState, useEffect } from 'react';
-import { Star, ArrowRight, Flame } from 'lucide-react';
-import {
-    Carousel,
-    CarouselContent,
-    CarouselItem,
-    CarouselNext,
-    CarouselPrevious,
-} from "@/components/ui/carousel";
+import { useState, useEffect, useCallback } from 'react';
+import { Star, ArrowRight, Flame, ChevronLeft, ChevronRight } from 'lucide-react';
+import { motion } from 'framer-motion';
+import useEmblaCarousel from 'embla-carousel-react';
+import type { EmblaCarouselType } from 'embla-carousel';
 import api from '@/api/api';
 import { useNavigate } from 'react-router-dom';
-import { Button } from './ui/button';
+
+interface Service {
+    _id: string;
+    name: string;
+    category: string;
+    image: string;
+    price: number;
+    rating?: string;
+}
 
 const ServiceSkeleton = () => (
-    <div className="flex flex-col gap-3">
-        <div className="aspect-[3/4] w-full rounded-2xl md:rounded-3xl bg-gray-200 animate-pulse" />
-        <div className="space-y-2 px-1">
-            <div className="h-3 w-3/4 bg-gray-200 rounded-full animate-pulse" />
-            <div className="h-3 w-1/2 bg-gray-200 rounded-full animate-pulse" />
-        </div>
+    <div className="flex-[0_0_82%] sm:flex-[0_0_48%] lg:flex-[0_0_25%] pl-4 md:pl-6">
+        <div className="aspect-[4/5] w-full rounded-[2rem] bg-stone-100 animate-pulse border border-stone-200" />
     </div>
 );
 
-const ServiceCard = ({ service }: { service: any }) => {
+const ServiceCard = ({ service, index }: { service: Service; index: number }) => {
     const [loaded, setLoaded] = useState(false);
     const navigate = useNavigate();
 
-    const handleClick = () => {
+    const handleClick = useCallback(() => {
         if (!service.category) return;
         const slug = service.category.toLowerCase().trim().replace(/[\s]+/g, '-');
         navigate(`/categories/${slug}`);
-    };
+    }, [navigate, service.category]);
 
     return (
-        <div
+        <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "50px" }}
+            transition={{ duration: 0.4, delay: index * 0.05 }}
             onClick={handleClick}
-            /* transform-gpu and will-change are vital here */
-            className="cursor-pointer group/card flex flex-col transform-gpu will-change-transform"
+            className="group/card cursor-pointer relative h-full min-w-0 flex-[0_0_82%] sm:flex-[0_0_48%] lg:flex-[0_0_25%] pl-4 md:pl-6 transition-transform will-change-transform"
         >
-            <div className="relative aspect-[3/4] w-full rounded-2xl md:rounded-3xl overflow-hidden bg-gray-100 shadow-md">
-
-                {!loaded && <div className="absolute inset-0 bg-gray-200 animate-pulse z-10" />}
-
+            <div className="relative aspect-[4/5] w-full rounded-[2rem] overflow-hidden bg-stone-100 border border-stone-100 group-hover/card:border-stone-200 transition-all duration-500 transform-gpu group-hover/card:-translate-y-2 group-hover/card:shadow-xl">
+                
+                {/* Image Optimization */}
+                {!loaded && <div className="absolute inset-0 bg-stone-200 animate-pulse z-10" />}
                 <img
                     src={service.image}
                     alt={service.name}
                     onLoad={() => setLoaded(true)}
-                    className={`w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-105 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+                    loading="lazy"
+                    className={`w-full h-full object-cover transition-transform duration-1000 ease-out transform-gpu group-hover/card:scale-110 ${loaded ? 'opacity-100' : 'opacity-0'}`}
                 />
 
-                {/* Simplified Gradient for better mobile FPS */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent z-10" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-transparent opacity-80" />
 
-                <div className="absolute top-3 left-3 right-3 flex items-center justify-between z-20">
-                    <div className="flex items-center gap-1 bg-orange-500 px-2 py-1 rounded-lg">
-                        <Flame size={10} className="text-white fill-white" />
-                        <span className="text-[9px] font-black uppercase text-white tracking-wider">Hot</span>
+                {/* Badges */}
+                <div className="absolute top-5 left-5 z-20">
+                    <div className="bg-white/10 backdrop-blur-md border border-white/20 px-3 py-1.5 rounded-full flex items-center gap-1.5">
+                        <Flame size={12} className="text-orange-500 fill-orange-500" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-white">Trending</span>
                     </div>
-                    {service.oldPrice && (
-                        <div className="bg-green-600 px-2 py-1 rounded-lg">
-                            <span className="text-[9px] font-black text-white">
-                                {Math.round((1 - service.price / service.oldPrice) * 100)}% OFF
-                            </span>
-                        </div>
-                    )}
                 </div>
 
-                <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4 z-20">
-                    <h4 className="text-sm md:text-base font-bold text-white leading-tight line-clamp-2 mb-2">
+                {/* Content */}
+                <div className="absolute bottom-0 left-0 right-0 p-6 z-20">
+                    <h4 className="text-xl font-bold text-white mb-3 line-clamp-2 leading-tight tracking-tight">
                         {service.name}
                     </h4>
 
-                    <div className="flex items-center gap-1.5 mb-3">
-                        {/* Removed backdrop-blur-sm, replaced with solid semi-transparent color */}
-                        <div className="flex items-center gap-1 bg-white/20 px-2 py-0.5 rounded-full">
-                            <Star className="w-3 h-3 fill-yellow-400 text-yellow-400 border-none" />
-                            <span className="text-[11px] font-bold text-white">
-                                {service.rating || '4.8'}
-                            </span>
-                        </div>
-                        <span className="text-[10px] text-white/70 font-medium">({service.reviews || '1k'}+)</span>
-                    </div>
-
                     <div className="flex items-center justify-between">
-                        <div className="flex items-baseline gap-1.5">
-                            <span className="text-base md:text-lg font-black text-white">₹{service.price}</span>
-                            {service.oldPrice && (
-                                <span className="text-[11px] text-white/50 line-through">₹{service.oldPrice}</span>
-                            )}
+                        <div className="space-y-1">
+                            <div className="flex items-center gap-1">
+                                <Star size={12} className="fill-blue-500 text-blue-500" />
+                                <span className="text-xs font-semibold text-blue-100">{service.rating || '4.9'}</span>
+                            </div>
+                            <span className="text-2xl font-black text-white tracking-tighter">₹{service.price}</span>
                         </div>
-
-                        <Button size="sm" className="h-8 bg-white hover:text-white rounded-xl text-xs font-bold">
-                            Book
-                            <ArrowRight size={12} className="ml-1" />
-                        </Button>
+                        
+                        {/* Mobile Optimized Button - Shows on hover (Desktop) or tap (Mobile) */}
+                        <motion.div 
+                            whileTap={{ scale: 0.9 }}
+                            className="h-12 w-12 rounded-full bg-white flex items-center justify-center text-black opacity-0 group-hover/card:opacity-100 lg:scale-0 lg:group-hover/card:scale-100 transition-all duration-300 shadow-lg"
+                        >
+                            <ArrowRight size={20} />
+                        </motion.div>
                     </div>
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 };
 
 const MostBookedServiceGrid = () => {
-    const [services, setServices] = useState<any[]>([]);
+    const [services, setServices] = useState<Service[]>([]);
     const [loading, setLoading] = useState(true);
+    const [scrollProgress, setScrollProgress] = useState(0);
     const navigate = useNavigate();
 
+    const [emblaRef, emblaApi] = useEmblaCarousel({ 
+        align: 'start',
+        containScroll: 'trimSnaps',
+        dragFree: true,
+        skipSnaps: false
+    });
+
+    const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
+    const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
+
+    const onScroll = useCallback((api: EmblaCarouselType) => {
+        const progress = Math.max(0, Math.min(1, api.scrollProgress()));
+        setScrollProgress(progress * 100);
+    }, []);
+
     useEffect(() => {
-        const fetchTopServices = async () => {
+        if (!emblaApi) return;
+        emblaApi.on('scroll', onScroll);
+        emblaApi.on('reInit', onScroll);
+    }, [emblaApi, onScroll]);
+
+    useEffect(() => {
+        let isMounted = true;
+        (async () => {
             try {
                 const res = await api.get('/services/top-booked/');
-                setServices(res.data);
+                if (isMounted) setServices(res.data);
             } catch (error) {
-                console.error("Error fetching top services:", error);
+                console.error("API Error:", error);
             } finally {
-                setLoading(false);
+                if (isMounted) setLoading(false);
             }
-        };
-        fetchTopServices();
+        })();
+        return () => { isMounted = false; };
     }, []);
 
     return (
-        <section className="py-10 md:py-14 px-4 md:px-6 max-w-7xl mx-auto overflow-hidden">
-            {/* Header section remains unchanged */}
-            <div className="flex justify-between items-end mb-6 md:mb-8">
-                <div className="space-y-1">
-                    <div className="flex items-center gap-2 mb-1">
-                        <Flame size={14} className="text-orange-500 fill-orange-500" />
-                        <span className="text-[11px] font-black uppercase tracking-widest text-orange-500">Trending Now</span>
+        <section className="py-16 md:py-24 bg-white overflow-hidden">
+            <div className="max-w-[1440px] mx-auto px-5 md:px-12">
+                
+                <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-16">
+                    <div className="w-full md:w-auto">
+                        <div className="flex items-center gap-3 mb-4">
+                            <span className="h-[2px] w-8 bg-blue-600" />
+                            <span className="text-blue-600 font-bold text-[10px] uppercase tracking-[0.4em]">Curated Excellence</span>
+                        </div>
+                        <h2 className="text-5xl md:text-7xl font-black text-black tracking-tighter uppercase leading-[0.85]">
+                            Most Booked <br />
+                            <span className="text-blue-600">Services</span>
+                        </h2>
                     </div>
-                    <h2 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">Most Booked Services</h2>
-                    <p className="text-xs md:text-sm text-gray-400 font-medium hidden sm:block">Trusted by thousands of customers this month</p>
+
+                    <div className="flex flex-col items-end gap-6 w-full md:w-auto">
+                        <div className="hidden md:flex gap-3">
+                            <button onClick={scrollPrev} className="h-14 w-14 rounded-full border border-stone-200 flex items-center justify-center hover:bg-black hover:text-white transition-all transform active:scale-90">
+                                <ChevronLeft size={24} />
+                            </button>
+                            <button onClick={scrollNext} className="h-14 w-14 rounded-full border border-stone-200 flex items-center justify-center hover:bg-black hover:text-white transition-all transform active:scale-90">
+                                <ChevronRight size={24} />
+                            </button>
+                        </div>
+                        
+                        <button 
+                            onClick={() => navigate('/categories')}
+                            className="text-[11px] font-black uppercase tracking-[0.3em] text-black hover:text-blue-600 transition-colors py-2 active:scale-95"
+                        >
+                            View All Catalogue
+                        </button>
+                    </div>
                 </div>
-                <Button variant="outline"
-                    onClick={() => navigate('/categories')}
-                    className="flex items-center gap-1.5 text-[13px] font-black uppercase tracking-widest text-gray-400 hover:text-indigo-600 transition-colors group/all"
-                >
-                    <span className="hidden sm:inline">See All</span>
-                    <ArrowRight size={14} className="group-hover/all:translate-x-1 transition-transform" />
-                </Button>
-            </div>
 
-            <div className="relative">
-                <Carousel
-                    opts={{
-                        align: "start",
-                        dragFree: true,
-                        containScroll: "trimSnaps"
-                    }}
-                    className="w-full touch-pan-y no-tap-highlight"
-                >
-                    <CarouselContent className="-ml-3 md:-ml-4 gpu-accelerate">
-                        {loading
-                            ? [...Array(4)].map((_, i) => (
-                                <CarouselItem key={i} className="pl-3 md:pl-4 basis-[65%] sm:basis-[40%] md:basis-[28%] lg:basis-[22%] gpu-accelerate">
-                                    <ServiceSkeleton />
-                                </CarouselItem>
-                            ))
-                            : services.map((service) => (
-                                <CarouselItem key={service._id} className="pl-3 md:pl-4 basis-[65%] sm:basis-[40%] md:basis-[28%] lg:basis-[22%] gpu-accelerate">
-                                    <ServiceCard service={service} />
-                                </CarouselItem>
-                            ))
-                        }
-                    </CarouselContent>
+                {/* Carousel Area */}
+                <div className="relative -mx-4 md:-mx-6">
+                    <div className="overflow-hidden cursor-grab active:cursor-grabbing" ref={emblaRef}>
+                        <div className="flex touch-pan-y">
+                            {loading
+                                ? [...Array(4)].map((_, i) => <ServiceSkeleton key={i} />)
+                                : services.map((service, index) => (
+                                    <ServiceCard key={service._id} service={service} index={index} />
+                                ))
+                            }
+                        </div>
+                    </div>
+                </div>
 
-                    {/* FIXED BUTTONS HERE */}
-                    <CarouselPrevious className="flex -left-2 hover:bg-black hover:text-white md:-left-4 h-8 w-8 md:h-10 md:w-10" />
-                    <CarouselNext className="flex -right-2 md:-right-4 hover:bg-black hover:text-white h-8 w-8 md:h-10 md:w-10" />
-                </Carousel>
+                {/* Mobile Progress Bar & Navigation */}
+                <div className="mt-12 flex flex-col items-center gap-8 md:hidden">
+                    <div className="w-full max-w-[160px] h-[3px] bg-stone-100 rounded-full overflow-hidden">
+                        <motion.div 
+                            className="h-full bg-blue-600"
+                            animate={{ x: `${scrollProgress}%` }}
+                            transition={{ type: "spring", damping: 20, stiffness: 100 }}
+                            style={{ width: '40%' }}
+                        />
+                    </div>
+                    
+                    <div className="flex items-center gap-12">
+                        <button onClick={scrollPrev} className="text-stone-300 active:text-blue-600 transition-colors">
+                            <ChevronLeft size={36} strokeWidth={2.5} />
+                        </button>
+                        <button onClick={scrollNext} className="text-stone-300 active:text-blue-600 transition-colors">
+                            <ChevronRight size={36} strokeWidth={2.5} />
+                        </button>
+                    </div>
+                </div>
+
             </div>
         </section>
     );
