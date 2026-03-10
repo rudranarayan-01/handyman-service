@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
+import { sendContactEmail } from '../middleware/contact';
 
-// This only contains Booking confirmation
 
 
 const transporter = nodemailer.createTransport({
@@ -11,10 +11,41 @@ const transporter = nodemailer.createTransport({
     },
 });
 
+export const subscribeToNewsletter = async (email: string) => {
+    try {
+        const mailOptions = {
+            from: `"Housexpertz Service Pro" <${process.env.GMAIL_USER}>`,
+            to: email,
+            subject: "Welcome to the Housexpertz Newsletter!",
+            html: `
+            <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f7f9; padding: 40px 20px;">
+            <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 24px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);">
+            <div style="background-color: #0f172a; padding: 25px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 18px; font-weight: 900; letter-spacing: 3px; text-transform: uppercase;">Housexpertz Service Pro</h1>
+            </div>
+            <div style="background-color: #2563eb; padding: 40px 30px; text-align: center;">
+            <div style="background: rgba(255,255,255,0.2); width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
+            <span style="color: white; font-size: 30px;">✓</span>
+            </div>
+            </div>
+            </div>
+            </div>
+            `
+        };
+        
+        await transporter.sendMail(mailOptions);
+    } catch (error) {
+        console.error("Error sending newsletter email:", error);
+        throw new Error("Failed to send newsletter email");
+    }
+};
+
+
+// This only contains Booking confirmation
 export const sendOrderEmail = async (userEmail: string, orderDetails: any) => {
     try {
         const { _id, items, totalAmount, bookingDate } = orderDetails;
-
+        
         const fullOrderId = _id?.toString() || "PENDING";
         const displayId = fullOrderId.slice(-6).toUpperCase();
 

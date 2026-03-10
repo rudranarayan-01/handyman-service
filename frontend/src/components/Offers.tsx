@@ -92,7 +92,7 @@ const OfferCard = ({ offer }: { offer: typeof offers[0] }) => {
 
 const OfferSection = () => {
     return (
-        <section className="py-10 md:py-14 px-4 md:px-6 max-w-7xl mx-auto overflow-hidden">
+        <section className="py-10 md:py-14 px-4 md:px-6 max-w-360 mx-auto overflow-hidden">
             
             {/* Header */}
             <div className="flex items-center justify-between mb-6">

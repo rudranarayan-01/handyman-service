@@ -135,7 +135,7 @@ const MostBookedServiceGrid = () => {
 
     return (
         <section className="py-16 md:py-24 bg-white overflow-hidden">
-            <div className="max-w-[1440px] mx-auto px-5 md:px-12">
+            <div className="max-w-360 mx-auto px-5 md:px-12">
                 
                 <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-16">
                     <div className="w-full md:w-auto">

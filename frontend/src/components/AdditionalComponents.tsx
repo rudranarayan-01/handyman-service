@@ -93,7 +93,7 @@ const ProcessFlow: React.FC = () => {
     ]
 
     return (
-        <section className="py-16 md:py-24 px-4 md:px-6 bg-white rounded-[2.5rem] md:rounded-[4rem] my-10 max-w-7xl mx-auto shadow-sm border border-slate-50 flex flex-col items-center">
+        <section className="py-16 md:py-24 px-4 md:px-6 bg-white rounded-[2.5rem] md:rounded-[4rem] my-10 max-w-360 mx-auto shadow-sm border border-slate-50 flex flex-col items-center">
             {/* Header - Centered */}
             <div className="text-center mb-16 md:mb-20">
                 <h2 className="text-3xl md:text-4xl font-black text-slate-900 italic leading-none">Simple 3-Step Booking</h2>

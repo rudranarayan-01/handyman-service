@@ -118,7 +118,7 @@ const ServiceCarousel = () => {
     }, []);
 
     return (
-        <section className="py-12 px-4 md:py-16 md:px-6 max-w-7xl mx-auto overflow-hidden">
+        <section className="py-12 px-4 md:py-16 md:px-6 max-w-360 mx-auto overflow-hidden">
             <div className="flex items-end justify-between mb-8 md:mb-10">
                 <div className="space-y-2">
                     <div className="flex items-center gap-2">

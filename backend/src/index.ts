@@ -16,6 +16,7 @@ import providerRoutes from "./routes/providerRoutes"
 import offersRoutes from "./routes/offersRoutes"
 import { clerkMiddleware } from '@clerk/express';
 import { connectToWhatsApp, sendWhatsAppMessage } from './lib/whatsapp_setup';
+import { subscribeToNewsletter } from './lib/mail';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -59,6 +60,19 @@ app.get('/test-wa', async (req, res) => {
         res.send("Message Sent!");
     } catch (err) {
         res.status(500).send("Error");
+    }
+});
+
+app.post("/api/v1/subscribe", async (req, res) => {
+    const { email } = req.body;
+    if (!email) {
+        return res.status(400).json({ message: "Email is required" });
+    }
+    try {
+        await subscribeToNewsletter(email);
+        res.status(200).json({ message: "Subscription successful" });
+    } catch (error) {
+        res.status(500).json({ message: "Subscription failed" });
     }
 });
 
