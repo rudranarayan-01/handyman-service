@@ -150,7 +150,7 @@ const ProcessFlow: React.FC = () => {
 
 const HomePageExtraComponents: React.FC = () => {
     return (
-        <div className="space-y-6 md:space-y-10 pb-20 overflow-x-hidden">
+        <div className="space-y-6 md:space-y-10 overflow-x-hidden">
             <AnimatedBento />
             <Reviews />
             <ProcessFlow />
