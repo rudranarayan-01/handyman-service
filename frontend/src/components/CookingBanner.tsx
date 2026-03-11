@@ -59,7 +59,7 @@ const CookingBanner: React.FC<CookingPromoProps> = ({
                 .gpu-layer { transform: translateZ(0); backface-visibility: hidden; }
             `}</style>
 
-            <section className="py-8 md:py-12 px-4 md:px-6 max-w-7xl mx-auto overflow-hidden">
+            <section className="py-8 md:py-12 px-4 md:px-6 max-w-360 mx-auto overflow-hidden">
                 <div className={`
                     ${bgColor} w-full rounded-[2rem] md:rounded-[3rem] overflow-hidden
                     flex flex-col md:flex-row-reverse relative border border-orange-100/60

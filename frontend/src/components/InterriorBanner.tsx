@@ -2,7 +2,7 @@ import PromoCard from './PromoCard'
 
 const InterriorBanner = () => {
     return (
-        <section className="py-12 px-6 max-w-7xl mx-auto">
+        <section className="py-12 px-6 max-w-360 mx-auto">
             <PromoCard
                 title="Interior Design"
                 subtitle="Transform your space with our expert interior design services, blending functionality and aesthetics to create your dream environment."
