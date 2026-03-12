@@ -15,7 +15,7 @@ const AnimatedBento: React.FC = () => {
     const div1Ref = useRef<HTMLDivElement>(null);
 
     return (
-        <section className="py-12 px-4 md:px-6 max-w-[1200px] mx-auto bg-white overflow-hidden">
+        <section className="py-12 px-4 md:px-6 max-w-300 mx-auto bg-white overflow-hidden">
             {/* Header Area - Optimized for 360px+ */}
             <div className="w-full flex flex-col md:flex-row justify-between items-center mb-10 gap-6 text-center md:text-left">
                 <div className="space-y-2">

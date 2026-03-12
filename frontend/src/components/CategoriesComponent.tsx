@@ -4,10 +4,11 @@ import api from '@/api/api';
 import { Search, ArrowRight, ShieldCheck, ImageOff } from 'lucide-react';
 import { categoryMeta } from '@/constants/categories';
 
-// --- TYPES ---
+// --- UPDATED TYPES ---
 interface CategoryStat {
+  _id: string; // This is now the Category ID from the database
+  name: string; // Added: The human-readable name of the category
   categoryImage?: string;
-  _id: string; 
   count: number;
 }
 
@@ -20,6 +21,7 @@ const CategoryPage = () => {
   useEffect(() => {
     const fetchCategoryData = async () => {
       try {
+        // Ensure your backend endpoint is updated to return { _id, name, count }
         const res = await api.get('/services/category-stats');
         setStats(res.data || []);
       } catch (err) {
@@ -33,13 +35,13 @@ const CategoryPage = () => {
 
   const filteredStats = useMemo(() => {
     return stats.filter(stat =>
-      stat._id.toLowerCase().includes(searchQuery.toLowerCase())
+      // Now searching by stat.name instead of the ID
+      stat.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [stats, searchQuery]);
 
   return (
     <div className="min-h-screen bg-white">
-      {/* 1. INJECTED CSS ANIMATIONS - Ensures visibility immediately */}
       <style>{`
         @keyframes revealUp {
           0% { opacity: 0; transform: translateY(40px); }
@@ -112,28 +114,33 @@ const CategoryPage = () => {
 };
 
 // --- CARD SUB-COMPONENT ---
-const CategoryCard = ({ stat, index, navigate }: any) => {
+const CategoryCard = ({ stat, index, navigate }: { stat: CategoryStat, index: number, navigate: any }) => {
   const [hasError, setHasError] = useState(false);
-  const meta = categoryMeta[stat._id];
+  
+  // Use the category name to find metadata/icons
+  const meta = categoryMeta[stat.name];
   const Icon = meta?.icon || Search;
   const displayImage = stat.categoryImage || meta?.image;
-  const catSlug = stat._id.toLowerCase().replace(/\s+/g, '-');
+
+  // IMPORTANT: Navigate using the ID so the services list can filter correctly
+  // but keep the URL friendly by using the slug of the name
+  const catSlug = stat.name.toLowerCase().replace(/\s+/g, '-');
 
   return (
     <div
-      onClick={() => navigate(`/categories/${catSlug}`)}
+      onClick={() => navigate(`/categories/${catSlug}`, { state: { categoryId: stat._id } })}
       className="group relative aspect-[4/5] rounded-[2.5rem] overflow-hidden cursor-pointer bg-gray-100 animate-reveal hover:shadow-2xl transition-all duration-500"
       style={{ 
         opacity: 0, 
         animationDelay: `${0.1 * (index % 8)}s` 
       }}
     >
-      {/* IMAGE HANDLING (Fixes image_e956da.jpg layout shifts) */}
+      {/* IMAGE HANDLING */}
       {displayImage && !hasError ? (
         <img
           src={displayImage}
           onError={() => setHasError(true)}
-          alt={stat._id}
+          alt={stat.name}
           className="absolute inset-0 w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700 ease-out"
         />
       ) : (
@@ -155,7 +162,7 @@ const CategoryCard = ({ stat, index, navigate }: any) => {
 
         <div className="space-y-1">
           <h3 className="text-3xl font-black text-white leading-[0.9] tracking-tighter">
-            {stat._id}
+            {stat.name}
           </h3>
           <div className="flex items-center justify-between">
             <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest group-hover:text-white transition-colors">

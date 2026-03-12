@@ -13,31 +13,31 @@ export const categories = [
     {
         name: "Painting Services",
         image: "painting-services", // Matches your .jpg link
-        slug: "home-renovations"
+        slug: "home-renovation"
     },
     {
         name: "Cleaning & Pest Control",
         image: "cleaning", // Matches your .jpg link
-        slug: "cleaning-&-pest-control"
+        slug: "hygiene-&-deep-cleaning"
     },
     {
         name: "Plumbing Services",
         image: "plumbing", // Matches your .jpg link
-        slug: "appliance-repair"
+        slug: "master-plumbing-services"
     },
     {
         name: "Repairing and Maintenance",
         image: "ac-repair", // Matches your .jpg link
-        slug: "appliance-repair"
+        slug: "ac-&-cooling-solutions"
     },
     {
         name: "Women's Saloon",
         image: "makeup", // Matches your .jpg link
-        slug: "personal-grooming-"
+        slug: "personal-grooming-&-wellness"
     },
     {
         name: "Ayurvedic Massage",
         image: "home-massage-service", // This one is already working
-        slug: "personal-grooming-"
+        slug: "personal-grooming-&-wellness"
     },
 ];

@@ -4,28 +4,36 @@ import { fastAuth, isAdmin } from '../middleware/auth';
 
 const router = express.Router();
 
-// Get all partners (Admin only)
+/**
+ * 1. GET ALL PARTNERS (Admin Only)
+ * Updated: Populates the category details in specializations
+ */
 router.get('/all', async (req: Request, res: Response) => {
     try {
         const { status } = req.query;
         const filter = status ? { status: status as string } : {};
         
-        const providers = await Partner.find(filter).sort({ createdAt: -1 });
+        const providers = await Partner.find(filter)
+            .populate('specializations', 'name image') // Populates Category info
+            .sort({ createdAt: -1 });
+
         res.status(200).json(providers);
     } catch (error) {
         res.status(500).json({ message: "Error fetching providers", error });
     }
 });
 
-// Approve/Reject (Admin only)
-router.patch('/verify/:id', async (req, res) => {
+/**
+ * 2. APPROVE / REJECT (Admin Only)
+ * Updates both status string and boolean verification flag
+ */
+router.patch('/verify/:id', async (req: Request, res: Response) => {
     const { id } = req.params;
-    const { status } = req.body; // 'approved' or 'rejected'
+    const { status } = req.body; // Expecting 'approved' | 'rejected' | 'pending'
 
     try {
         const isVerified = status === 'approved';
         
-        // Update the partner in your database
         const updatedPartner = await Partner.findByIdAndUpdate(
             id,
             { 
@@ -33,7 +41,7 @@ router.patch('/verify/:id', async (req, res) => {
                 isVerified: isVerified 
             },
             { new: true }
-        );
+        ).populate('specializations', 'name');
 
         if (!updatedPartner) {
             return res.status(404).json({ message: "Partner not found" });
@@ -45,39 +53,55 @@ router.patch('/verify/:id', async (req, res) => {
     }
 });
 
-// Delete (Admin only)
-// Removed 'providers' from path because it's usually in the prefix
+/**
+ * 3. DELETE PARTNER (Admin Only)
+ */
 router.delete('/:id', isAdmin, async (req: Request, res: Response) => {
     try {
         const deletedPartner = await Partner.findByIdAndDelete(req.params.id);
-        if (!deletedPartner) return res.status(404).json({ message: "Partner not found" });
-        res.status(200).json({ message: "Partner deleted" });
+        if (!deletedPartner) {
+            return res.status(404).json({ message: "Partner not found" });
+        }
+        res.status(200).json({ message: "Partner deleted successfully" });
     } catch (error) {
-        res.status(500).json({ message: "Delete failed", error });
+        res.status(500).json({ message: "Delete operation failed", error });
     }
 });
 
-// Public Registration
+/**
+ * 4. PUBLIC REGISTRATION
+ * Updated: Logic to handle specializations as Category IDs
+ */
 router.post('/register', async (req: Request, res: Response) => {
     try {
         const { name, email, phone, serviceAreas, specializations } = req.body;
 
+        // Check for existing application
         const existing = await Partner.findOne({ email });
-        if (existing) return res.status(400).json({ message: "Email already registered" });
+        if (existing) {
+            return res.status(400).json({ message: "This email is already registered as a partner" });
+        }
 
+        // Create new application
+        // Note: 'specializations' should be an array of Category ObjectIds sent from frontend
         const newPartner = new Partner({
             name,
             email,
             phone,
             serviceAreas,
-            specializations,
-            status: 'pending'
+            specializations, // Store Category IDs
+            status: 'pending',
+            isVerified: false
         });
 
         await newPartner.save();
-        res.status(201).json({ message: "Application submitted successfully" });
+        res.status(201).json({ 
+            message: "Your partner application has been submitted and is under review.",
+            partnerId: newPartner._id 
+        });
     } catch (error) {
-        res.status(500).json({ message: "Registration failed", error });
+        console.error("Registration Error:", error);
+        res.status(500).json({ message: "Registration failed. Please check your details.", error });
     }
 });
 

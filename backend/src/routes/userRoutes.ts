@@ -1,6 +1,6 @@
 import express from 'express';
 import { User } from '../models/User';
-import { requireAuth } from '@clerk/express';
+// import { requireAuth } from '@clerk/express';
 
 const router = express.Router();
 

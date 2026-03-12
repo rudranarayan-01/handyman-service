@@ -23,6 +23,8 @@ const ServiceImageUpload = ({ value, onChange }: ServiceImageUploadProps) => {
         formData.append('file', file);
         formData.append('upload_preset', UPLOAD_PRESET);
 
+        formData.append('folder', 'services'); // Optional: Organize uploads in a "services" folder
+
         setIsUploading(true);
         setProgress(0);
 

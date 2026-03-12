@@ -6,10 +6,16 @@ import api from '@/api/api';
 import { Button } from '../ui/button';
 import ServiceImageUpload from './ServiceImageUpload';
 
+// --- INTERFACES ---
+interface Category {
+    _id: string;
+    name: string;
+}
+
 interface ServiceData {
     _id: string;
     name: string;
-    category: string;
+    category: Category | string; // Can be object (populated) or ID (unpopulated)
     price: number;
     description: string;
     image: string;
@@ -17,7 +23,7 @@ interface ServiceData {
     rating: number;
 }
 
-// --- SKELETON COMPONENT ---
+// --- SKELETON COMPONENT (Unchanged) ---
 const ServiceSkeleton = () => (
     <div className="space-y-12 animate-pulse">
         {[1, 2].map((section) => (
@@ -41,6 +47,7 @@ const ServiceSkeleton = () => (
 
 const ManageServices = () => {
     const [services, setServices] = useState<ServiceData[]>([]);
+    const [categories, setCategories] = useState<Category[]>([]); // New state for real categories
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
@@ -59,47 +66,79 @@ const ManageServices = () => {
         document.body.style.overflow = showModal ? 'hidden' : 'unset';
     }, [showModal]);
 
-    const fetchServices = async () => {
+    // --- FETCH DATA ---
+    const fetchData = async () => {
         try {
             setLoading(true);
             const token = await getToken();
-            const response = await api.get('/admin/services', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setServices(response.data);
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+
+            // Fetch both Services and the New Category list
+            const [servicesRes, categoriesRes] = await Promise.all([
+                api.get('/admin/services', config),
+                api.get('/categories', config)
+            ]);
+
+            setServices(servicesRes.data);
+            setCategories(categoriesRes.data);
         } catch (error) {
-            toast.error("Failed to fetch catalog");
+            toast.error("Failed to fetch catalog data");
         } finally {
             setLoading(false);
         }
     };
 
-    useEffect(() => { if (isLoaded && hasAccess) fetchServices(); }, [isLoaded, hasAccess]);
+    useEffect(() => { if (isLoaded && hasAccess) fetchData(); }, [isLoaded, hasAccess]);
 
-    // --- SEARCH & FILTER LOGIC ---
+    // --- SEARCH & GROUPING LOGIC ---
     const filteredServices = useMemo(() => {
-        return services.filter(s =>
-            s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            s.category.toLowerCase().includes(searchQuery.toLowerCase())
-        );
+        return services.filter(s => {
+            const catName = typeof s.category === 'object' ? s.category.name : '';
+            return s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                catName.toLowerCase().includes(searchQuery.toLowerCase());
+        });
     }, [services, searchQuery]);
 
-    const dynamicCategories = useMemo(() => {
-        return Array.from(new Set(filteredServices.map(s => s.category))).sort();
-    }, [filteredServices]);
+    // Group services by Category ID or Name for the sections
+    const groupedServices = useMemo(() => {
+        const groups: Record<string, ServiceData[]> = {};
+
+        filteredServices.forEach(s => {
+            let catName = 'Uncategorized';
+
+            if (typeof s.category === 'object' && s.category !== null) {
+                // If the backend already populated the object
+                catName = s.category.name;
+            } else if (typeof s.category === 'string') {
+                // If it's just an ID, find the name in our categories state
+                const matchedCategory = categories.find(c => c._id === s.category);
+                catName = matchedCategory ? matchedCategory.name : 'Uncategorized';
+            }
+
+            if (!groups[catName]) groups[catName] = [];
+            groups[catName].push(s);
+        });
+
+        // Sort alphabetically by category name
+        return Object.entries(groups).sort(([a], [b]) => a.localeCompare(b));
+    }, [filteredServices, categories]); // Added 'categories' as a dependency
 
     const handleOpenModal = (service?: ServiceData) => {
         if (service) {
             setEditingId(service._id);
             setFormData({
-                name: service.name, category: service.category, price: service.price.toString(),
-                description: service.description || '', image: service.image || '', duration: service.duration || ''
+                name: service.name,
+                category: typeof service.category === 'object' ? service.category._id : service.category,
+                price: service.price.toString(),
+                description: service.description || '',
+                image: service.image || '',
+                duration: service.duration || ''
             });
             setIsNewCategory(false);
         } else {
             setEditingId(null);
             setFormData({ name: '', category: '', price: '', description: '', image: '', duration: '' });
-            setIsNewCategory(services.length === 0);
+            setIsNewCategory(categories.length === 0);
         }
         setShowModal(true);
     };
@@ -122,16 +161,29 @@ const ManageServices = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const token = await getToken();
+
         const action = async () => {
+            let finalCategoryId = formData.category;
+
+            // If user typed a NEW category, we must create it first
+            if (isNewCategory) {
+                const catRes = await api.post('/categories/add', { name: formData.category }, { headers: { Authorization: `Bearer ${token}` } });
+                finalCategoryId = catRes.data._id;
+                setCategories(prev => [...prev, catRes.data]);
+            }
+
+            const payload = { ...formData, category: finalCategoryId };
+
             if (editingId) {
-                const res = await api.patch(`/admin/services/${editingId}`, formData, { headers: { Authorization: `Bearer ${token}` } });
+                const res = await api.patch(`/admin/services/${editingId}`, payload, { headers: { Authorization: `Bearer ${token}` } });
                 setServices(prev => prev.map(s => s._id === editingId ? res.data : s));
             } else {
-                const res = await api.post('/admin/services', formData, { headers: { Authorization: `Bearer ${token}` } });
+                const res = await api.post('/admin/services', payload, { headers: { Authorization: `Bearer ${token}` } });
                 setServices([res.data, ...services]);
             }
             setShowModal(false);
         };
+
         toast.promise(action(), { loading: 'Updating Database...', success: 'Catalog Updated!', error: 'Sync Error' });
     };
 
@@ -139,10 +191,7 @@ const ManageServices = () => {
 
     return (
         <div className="min-h-screen bg-slate-50/50 p-4 md:p-12">
-            <style>{`
-                .no-scrollbar::-webkit-scrollbar { display: none; }
-                .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-            `}</style>
+            <style>{`.no-scrollbar::-webkit-scrollbar { display: none; } .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }`}</style>
 
             <header className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10 md:mb-16">
                 <div>
@@ -154,7 +203,6 @@ const ManageServices = () => {
                 </div>
 
                 <div className="flex flex-col sm:flex-row w-full md:w-auto gap-4">
-                    {/* Search Bar */}
                     <div className="relative flex-1 sm:min-w-75">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                         <input
@@ -176,15 +224,15 @@ const ManageServices = () => {
                 {loading ? (
                     <ServiceSkeleton />
                 ) : filteredServices.length > 0 ? (
-                    dynamicCategories.map(cat => (
-                        <section key={cat} className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    groupedServices.map(([catName, catServices]) => (
+                        <section key={catName} className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                             <div className="flex items-baseline gap-4 mb-6 md:mb-8">
-                                <h2 className="text-lg md:text-xl font-black text-slate-800 tracking-tighter uppercase">{cat}</h2>
+                                <h2 className="text-lg md:text-xl font-black text-slate-800 tracking-tighter uppercase">{catName}</h2>
                                 <div className="h-0.5 grow bg-slate-100 rounded-full" />
                             </div>
 
                             <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-10">
-                                {filteredServices.filter(s => s.category === cat).map(service => (
+                                {catServices.map(service => (
                                     <div key={service._id} className="group relative bg-white rounded-[1.5rem] md:rounded-[2rem] p-2 md:p-3 border border-slate-100 hover:shadow-xl transition-all duration-500">
                                         <div className="relative h-28 md:h-44 w-full rounded-[1.2rem] md:rounded-[1.5rem] overflow-hidden bg-slate-50 mb-3">
                                             <img
@@ -233,7 +281,7 @@ const ManageServices = () => {
 
             {/* Modal */}
             {showModal && (
-                <div className="fixed inset-0 z-100 flex items-end md:items-center justify-center p-0 md:p-10">
+                <div className="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-0 md:p-10">
                     <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-md" onClick={() => setShowModal(false)} />
                     <div className="relative bg-white w-full max-w-2xl rounded-t-[2.5rem] md:rounded-[3rem] shadow-2xl flex flex-col max-h-[95vh] animate-in slide-in-from-bottom md:zoom-in-95 duration-300">
                         <div className="p-6 md:p-8 pb-4 flex justify-between items-center">
@@ -251,9 +299,14 @@ const ManageServices = () => {
                                     <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Category Control</label>
                                     {!isNewCategory ? (
                                         <div className="flex gap-2">
-                                            <select className="flex-1 p-4 bg-slate-50 rounded-2xl border-none ring-1 ring-slate-100 font-bold outline-none text-sm" value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })} required>
+                                            <select
+                                                className="flex-1 p-4 bg-slate-50 rounded-2xl border-none ring-1 ring-slate-100 font-bold outline-none text-sm"
+                                                value={formData.category}
+                                                onChange={e => setFormData({ ...formData, category: e.target.value })}
+                                                required
+                                            >
                                                 <option value="">Select Existing...</option>
-                                                {Array.from(new Set(services.map(s => s.category))).map(c => <option key={c} value={c}>{c}</option>)}
+                                                {categories.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
                                             </select>
                                             <Button type="button" onClick={() => setIsNewCategory(true)} className="px-4 bg-indigo-50 text-indigo-600 rounded-2xl font-bold text-xs uppercase">New</Button>
                                         </div>
@@ -278,8 +331,6 @@ const ManageServices = () => {
                                         <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Duration</label>
                                         <input placeholder="Ex: 45 Mins" className="w-full p-4 bg-slate-50 rounded-2xl border-none ring-1 ring-slate-100 font-bold outline-none" value={formData.duration} onChange={e => setFormData({ ...formData, duration: e.target.value })} />
                                     </div>
-                                    {/* Image  */}
-                                    {/* Replace the old Image URL div with this */}
                                     <div className="md:col-span-2">
                                         <ServiceImageUpload
                                             value={formData.image}
