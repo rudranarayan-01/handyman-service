@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import {
     ShieldCheck, Zap, ArrowRight, Star,
-    Calendar, Sparkles, User, Heart,
+    Calendar, Sparkles, User,
     Smartphone,
     CheckCircle2,
     MousePointer2,
