@@ -1,4 +1,6 @@
 import HomePageExtraComponents from "@/components/AdditionalComponents"
+// import SecondVideoFeature from "@/components/HeroSection/Video2"
+import SecondVideoFeature from "@/components/HeroSection/Video2"
 import CookingBanner from "@/components/CookingBanner"
 import FAQSection from "@/components/FAQ"
 import Footer from "@/components/Footer"
@@ -17,13 +19,15 @@ const Home = () => {
             <div
             >
                 <HeroSection />
+                {/* <HeroVideo/> */}
                 <CookingBanner />
                 <OfferSection />
                 <MostBookedServiceGrid />
                 <InterriorBanner />
                 <ServiceGrid />
                 <HomePageExtraComponents />
-                <FAQSection/>
+                <SecondVideoFeature />
+                <FAQSection />
                 <Footer />
             </div>
         </div>

@@ -27,6 +27,10 @@ const HeroSearch = () => {
         const fetchServices = async () => {
             try {
                 const res = await api.get('/services/allService');
+                // DEBUG HERE:
+                console.log("Type Check:", typeof res.data[0].name);
+                console.log("Sample Data:", res.data[0]);
+
                 setServices(res.data);
             } catch (err) {
                 console.error("Failed to load services", err);

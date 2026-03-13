@@ -15,14 +15,34 @@ router.get("/", async(req, res)=>{
     }
 })
 
+interface PopulatedCategory {
+  _id: string;
+  name: string;
+}
+
 // 1. Get all services (Populating Category Name)
 router.get('/allService', async (req, res) => {
     try {
         const services = await Service.find()
             .select('name category')
-            .populate('category', 'name'); // Replaces ID with { name: "..." }
-        res.json(services);
+            .populate('category', 'name')
+            .lean();
+
+        const flattenedServices = services.map(service => {
+            // 2. Cast the category to our interface
+            const category = service.category as unknown as PopulatedCategory;
+
+            return {
+                _id: service._id,
+                name: service.name,
+                // 3. Now 'name' will be recognized
+                category: category ? category.name : 'Uncategorized'
+            };
+        });
+
+        res.json(flattenedServices);
     } catch (err) {
+        console.error("Backend Error:", err);
         res.status(500).json({ error: "Failed to fetch services" });
     }
 });
