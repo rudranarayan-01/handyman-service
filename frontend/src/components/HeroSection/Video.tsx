@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Play, ShieldCheck, Star, Zap } from 'lucide-react';
+import { ShieldCheck, Star, Zap } from 'lucide-react';
 
 const HeroVideo = () => {
     return (
