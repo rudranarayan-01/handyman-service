@@ -136,7 +136,7 @@ const HeroSection = () => {
                                 <span className="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em]">Trusted by Millions</span>
                             </div>
 
-                            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-[900] text-slate-900 leading-[0.85] tracking-[-0.06em] uppercase">
+                            <h1 className="text-4xl sm:text-7xl lg:text-7xl font-black text-slate-900 leading-[0.85] tracking-[-0.06em] uppercase">
                                 Services at Your <br />
                                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500 italic">
                                     Doorstep,

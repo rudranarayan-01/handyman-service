@@ -56,8 +56,8 @@ const Header = () => {
                             <span className="text-white font-black text-sm md:text-xl">HS</span>
                         </div>
                         <div className="flex flex-col leading-none">
-                            <span className="font-black text-[14px] md:text-[18px] tracking-tighter text-black uppercase">Housexpertz</span>
-                            <span className="font-bold text-[8px] md:text-[10px] tracking-tight text-gray-400 uppercase">Service</span>
+                            <span className="font-black text-[16px] md:text-[18px] sm:[18px] tracking-tighter text-black uppercase">Housexpertz</span>
+                            <span className="font-bold text-[8px] md:text-[10px] sm:[14px] tracking-tight text-gray-400 uppercase">Service</span>
                         </div>
                     </Link>
 
