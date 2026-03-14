@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Star, ArrowRight, Flame, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import useEmblaCarousel from 'embla-carousel-react';
@@ -18,7 +18,7 @@ interface Service {
 
 const ServiceSkeleton = () => (
     <div className="flex-[0_0_85%] sm:flex-[0_0_48%] lg:flex-[0_0_25%] pl-4 md:pl-6">
-        <div className="aspect-4/5 w-full rounded-[2.5rem] bg-stone-100 animate-pulse border border-stone-200" />
+        <div className="aspect-[4/5] w-full rounded-[2.5rem] bg-stone-100 animate-pulse border border-stone-200" />
     </div>
 );
 
@@ -26,41 +26,27 @@ const ServiceCard = ({ service, index }: { service: Service; index: number }) =>
     const [loaded, setLoaded] = useState(false);
     const navigate = useNavigate();
 
-    
     const handleClick = useCallback(() => {
-    // 1. Check if category exists and is actually a string
-    if (typeof service.category !== 'string') {
-        console.warn(`Service ${service._id} has an invalid category:`, service.category);
-        return; 
-    }
-
-    const slug = service.category
-        .toLowerCase()
-        .trim()
-        .replace(/[\s]+/g, '-')
-        .replace(/-+/g, '-');
-        
-    navigate(`/categories/${slug}`);
-}, [navigate, service]);
+        if (!service.category || typeof service.category !== 'string') return;
+        const slug = service.category.toLowerCase().trim().replace(/[\s]+/g, '-');
+        navigate(`/categories/${slug}`);
+    }, [navigate, service.category]);
 
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "50px" }}
-            transition={{ duration: 0.4, delay: index * 0.05 }}
+        <div
             onClick={handleClick}
-            className="group/card cursor-pointer relative h-full min-w-0 flex-[0_0_85%] sm:flex-[0_0_48%] lg:flex-[0_0_25%] pl-4 md:pl-6 transform-gpu transition-transform active:scale-[0.97]"
+            className="group/card cursor-pointer relative h-full min-w-0 flex-[0_0_85%] sm:flex-[0_0_48%] lg:flex-[0_0_25%] pl-4 md:pl-6 transform-gpu transition-all duration-300"
         >
-            <div className="relative aspect-[4/5] w-full rounded-[2.5rem] overflow-hidden bg-stone-100 border border-stone-100 group-hover/card:border-stone-200 transition-all duration-500 group-hover/card:-translate-y-2 group-hover/card:shadow-2xl">
-
+            <div className="relative aspect-[4/5] w-full rounded-[2.5rem] overflow-hidden bg-stone-100 border border-stone-100 group-hover/card:border-stone-200 transition-all duration-500 group-hover/card:shadow-2xl group-hover/card:-translate-y-2">
+                
                 {!loaded && <div className="absolute inset-0 bg-stone-200 animate-pulse z-10" />}
+                
                 <img
                     src={service.image}
                     alt={service.name}
                     onLoad={() => setLoaded(true)}
                     loading="lazy"
-                    className={`w-full h-full object-cover transition-transform duration-1000 ease-out group-hover/card:scale-110 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+                    className={`w-full h-full object-cover transition-all duration-1000 ease-out group-hover/card:scale-110 ${loaded ? 'opacity-100' : 'opacity-0'}`}
                 />
 
                 <div className="absolute inset-0 bg-gradient-to-t from-black/100 via-black/20 to-transparent opacity-90" />
@@ -86,14 +72,13 @@ const ServiceCard = ({ service, index }: { service: Service; index: number }) =>
                             <span className="text-2xl font-black text-white tracking-tighter">₹{service.price}</span>
                         </div>
 
-                        {/* Always visible on Mobile, Hover-scale on Desktop */}
                         <div className="h-12 w-12 rounded-2xl bg-white flex items-center justify-center text-black shadow-lg lg:scale-0 lg:group-hover/card:scale-100 transition-all duration-300 transform-gpu">
                             <ArrowRight size={20} />
                         </div>
                     </div>
                 </div>
             </div>
-        </motion.div>
+        </div>
     );
 };
 
@@ -103,15 +88,22 @@ const MostBookedServiceGrid = () => {
     const [scrollProgress, setScrollProgress] = useState(0);
     const navigate = useNavigate();
 
+    // Enhanced Loop Logic: Clones the list if it's too short to ensure no "end-of-track" glitch
+    const displayServices = useMemo(() => {
+        if (services.length === 0) return [];
+        if (services.length < 8) return [...services, ...services, ...services]; 
+        return [...services, ...services];
+    }, [services]);
+
     const [emblaRef, emblaApi] = useEmblaCarousel(
         {
             align: 'start',
-            containScroll: 'trimSnaps',
-            dragFree: false, // Snap behavior is smoother on mobile
             loop: true,
-            skipSnaps: false
+            skipSnaps: false,
+            duration: 40, // Smoother scroll speed
+            containScroll: false // Set to false for infinite loop feel
         },
-        [Autoplay({ delay: 4000, stopOnInteraction: true })]
+        [Autoplay({ delay: 3500, stopOnInteraction: false, stopOnMouseEnter: true })]
     );
 
     const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
@@ -156,7 +148,7 @@ const MostBookedServiceGrid = () => {
                             <span className="h-[2px] w-8 bg-blue-600" />
                             <span className="text-blue-600 font-bold text-[10px] uppercase tracking-[0.4em]">Curated Excellence</span>
                         </div>
-                        <h2 className="text-5xl md:text-7xl font-black text-black tracking-tighter uppercase leading-[0.85]">
+                        <h2 className="text-3xl md:text-7xl font-black text-black tracking-tighter uppercase leading-[0.85]">
                             Most Booked <br />
                             <span className="text-blue-600">Services</span>
                         </h2>
@@ -180,36 +172,40 @@ const MostBookedServiceGrid = () => {
                     </div>
                 </div>
 
-                {/* Carousel Container */}
+                {/* Main Carousel Wrapper */}
                 <div className="relative -mx-5 md:-mx-12">
                     <div className="overflow-hidden cursor-grab active:cursor-grabbing touch-pan-y" ref={emblaRef}>
-                        <div className="flex will-change-transform">
+                        <div className="flex backface-hidden">
                             {loading
                                 ? [...Array(4)].map((_, i) => <ServiceSkeleton key={i} />)
-                                : services.map((service, index) => (
-                                    <ServiceCard key={service._id} service={service} index={index} />
+                                : displayServices.map((service, index) => (
+                                    <ServiceCard 
+                                        key={`${service._id}-${index}`} 
+                                        service={service} 
+                                        index={index} 
+                                    />
                                 ))
                             }
                         </div>
                     </div>
                 </div>
 
-                {/* Progress Bar & Mobile Controls */}
+                {/* Mobile Navigation */}
                 <div className="mt-12 flex flex-col items-center gap-10 md:hidden">
                     <div className="w-full max-w-[200px] h-[4px] bg-stone-100 rounded-full overflow-hidden">
                         <motion.div
                             className="h-full bg-blue-600 rounded-full"
                             animate={{ x: `${scrollProgress}%` }}
-                            transition={{ type: "spring", damping: 25, stiffness: 120 }}
-                            style={{ width: '35%' }}
+                            transition={{ type: "spring", damping: 30, stiffness: 150 }}
+                            style={{ width: '40%' }}
                         />
                     </div>
 
                     <div className="flex items-center gap-16">
-                        <button onClick={scrollPrev} className="text-stone-300 active:text-blue-600 p-2 transition-colors">
+                        <button onClick={scrollPrev} className="text-stone-400 active:text-blue-600 p-2 transition-colors">
                             <ChevronLeft size={44} strokeWidth={2.5} />
                         </button>
-                        <button onClick={scrollNext} className="text-stone-300 active:text-blue-600 p-2 transition-colors">
+                        <button onClick={scrollNext} className="text-stone-400 active:text-blue-600 p-2 transition-colors">
                             <ChevronRight size={44} strokeWidth={2.5} />
                         </button>
                     </div>

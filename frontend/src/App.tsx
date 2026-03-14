@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Home from './pages/Home';
 import Profile from './pages/Profile';
 import OrderHistoryPage from './pages/OrderHistoryPage';
@@ -26,38 +26,38 @@ import ProviderPage from './pages/ProviderPage';
 function App() {
   useUserSync()
   return (
-    <>
-    <Toaster position="top-right" richColors/>
-    <CartProvider>
-      <Router>
-        <ScrollToTop/>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/admin" element={<AdminProtect><AdminPannel /></AdminProtect>} />
-          <Route path="/admin/orders/:orderId" element={<AdminProtect><ManageOrderDetails /></AdminProtect>} />
-          
-          <Route path="/categories" element={<CategoriesPage />} />
-          <Route path="/categories/:categoryId" element={<ShoppingPage />} />
-          <Route path='/blogs' element={<BlogPage/> } />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/providers" element={<ProviderPage />} />
-          {/* <Route path="/about" element={<AboutPage />} /> */}
+    <div className="App select-none">
+      <Toaster position="top-right" richColors />
+      <CartProvider>
+        <Router>
+          <ScrollToTop />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/admin" element={<AdminProtect><AdminPannel /></AdminProtect>} />
+            <Route path="/admin/orders/:orderId" element={<AdminProtect><ManageOrderDetails /></AdminProtect>} />
 
-          <Route path="/order-history" element={<ProtectedRoutes><OrderHistoryPage /></ProtectedRoutes>} />
-          <Route path="/order-history/:id" element={<ProtectedRoutes><OrderDetailsPage /></ProtectedRoutes>} />
-          <Route path="/booking-success" element={<ProtectedRoutes><BookingSuccess /></ProtectedRoutes>} />
-          <Route path="/profile" element={<ProtectedRoutes><Profile/></ProtectedRoutes>} />
-          <Route path="/profile-settings" element={<ProtectedRoutes><Profile /></ProtectedRoutes>} />
-          <Route path="/edit-address" element={<ProtectedRoutes><AddressPage /></ProtectedRoutes>} />
-          <Route path="/settings" element={<ProtectedRoutes><SettingPage /></ProtectedRoutes>} />
-          <Route path="/privacy" element={<ProtectedRoutes><PrivaryPage /></ProtectedRoutes>} />
-          <Route path="/shopping-cart" element={<ProtectedRoutes><CheckoutPage /></ProtectedRoutes>} />
+            <Route path="/categories" element={<CategoriesPage />} />
+            <Route path="/categories/:categoryId" element={<ShoppingPage />} />
+            <Route path='/blogs' element={<BlogPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/providers" element={<ProviderPage />} />
+            {/* <Route path="/about" element={<AboutPage />} /> */}
 
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Router>
-    </CartProvider>
-    </>
+            <Route path="/order-history" element={<ProtectedRoutes><OrderHistoryPage /></ProtectedRoutes>} />
+            <Route path="/order-history/:id" element={<ProtectedRoutes><OrderDetailsPage /></ProtectedRoutes>} />
+            <Route path="/booking-success" element={<ProtectedRoutes><BookingSuccess /></ProtectedRoutes>} />
+            <Route path="/profile" element={<ProtectedRoutes><Profile /></ProtectedRoutes>} />
+            <Route path="/profile-settings" element={<ProtectedRoutes><Profile /></ProtectedRoutes>} />
+            <Route path="/edit-address" element={<ProtectedRoutes><AddressPage /></ProtectedRoutes>} />
+            <Route path="/settings" element={<ProtectedRoutes><SettingPage /></ProtectedRoutes>} />
+            <Route path="/privacy" element={<ProtectedRoutes><PrivaryPage /></ProtectedRoutes>} />
+            <Route path="/shopping-cart" element={<ProtectedRoutes><CheckoutPage /></ProtectedRoutes>} />
+
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Router>
+      </CartProvider>
+    </div>
   );
 }
 
