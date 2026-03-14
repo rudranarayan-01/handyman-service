@@ -1,9 +1,15 @@
 import axios from 'axios';
 
+const getBaseURL = () => {
+    const url = import.meta.env.VITE_API_URL;
+    if (!url) return 'http://localhost:5000/api/v1';
+    
+    // Safety check: ensure it starts with http
+    return url.startsWith('http') ? url : `https://${url}`;
+};
+
 const api = axios.create({
-    // It checks if VITE_API_URL exists (on Render), otherwise falls back to local
-    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1',
-    // baseURL:  'http://localhost:5000/api/v1',
+    baseURL: getBaseURL(),
     withCredentials: true,
     headers: {
         'Content-Type': 'application/json',

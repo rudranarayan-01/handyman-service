@@ -117,11 +117,18 @@ const ServiceCarousel = () => {
     useEffect(() => {
         const fetchServices = async () => {
             try {
-                // Hits the endpoint we discussed that groups services under appliance care
                 const { data } = await api.get('/services/category/essential-appliance-care');
-                setServices(data);
+
+                // CHECK: Is data an array? If not, is there an array inside it?
+                // This is the safety net that fixes line 173
+                const validatedData = Array.isArray(data)
+                    ? data
+                    : (data?.services || []);
+
+                setServices(validatedData);
             } catch (error) {
                 console.error("Fetch error:", error);
+                setServices([]); // Reset to empty array on error to prevent crash
             } finally {
                 setIsLoading(false);
             }
@@ -180,7 +187,7 @@ const ServiceCarousel = () => {
 
                 <div className="flex justify-between items-center mt-8 md:mt-0">
                     <CarouselPrevious className="static translate-y-0 h-10 w-10 md:absolute md:-left-5 md:top-1/2 md:-translate-y-1/2 bg-white shadow-md border-none hover:bg-indigo-600 hover:text-white transition-all" />
-                    
+
                     {/* Progress Dots for Mobile */}
                     <div className="flex gap-1.5 md:hidden">
                         {[0, 1, 2].map((i) => (

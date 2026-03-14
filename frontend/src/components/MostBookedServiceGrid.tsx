@@ -41,7 +41,7 @@ const ServiceCard = ({ service, index }: { service: Service; index: number }) =>
             className="group/card cursor-pointer relative h-full min-w-0 flex-[0_0_82%] sm:flex-[0_0_48%] lg:flex-[0_0_25%] pl-4 md:pl-6 transition-transform will-change-transform"
         >
             <div className="relative aspect-[4/5] w-full rounded-[2rem] overflow-hidden bg-stone-100 border border-stone-100 group-hover/card:border-stone-200 transition-all duration-500 transform-gpu group-hover/card:-translate-y-2 group-hover/card:shadow-xl">
-                
+
                 {/* Image Optimization */}
                 {!loaded && <div className="absolute inset-0 bg-stone-200 animate-pulse z-10" />}
                 <img
@@ -76,9 +76,9 @@ const ServiceCard = ({ service, index }: { service: Service; index: number }) =>
                             </div>
                             <span className="text-2xl font-black text-white tracking-tighter">₹{service.price}</span>
                         </div>
-                        
+
                         {/* Mobile Optimized Button - Shows on hover (Desktop) or tap (Mobile) */}
-                        <motion.div 
+                        <motion.div
                             whileTap={{ scale: 0.9 }}
                             className="h-12 w-12 rounded-full bg-white flex items-center justify-center text-black opacity-0 group-hover/card:opacity-100 lg:scale-0 lg:group-hover/card:scale-100 transition-all duration-300 shadow-lg"
                         >
@@ -97,7 +97,7 @@ const MostBookedServiceGrid = () => {
     const [scrollProgress, setScrollProgress] = useState(0);
     const navigate = useNavigate();
 
-    const [emblaRef, emblaApi] = useEmblaCarousel({ 
+    const [emblaRef, emblaApi] = useEmblaCarousel({
         align: 'start',
         containScroll: 'trimSnaps',
         dragFree: true,
@@ -123,9 +123,18 @@ const MostBookedServiceGrid = () => {
         (async () => {
             try {
                 const res = await api.get('/services/top-booked/');
-                if (isMounted) setServices(res.data);
+                if (isMounted) {
+                    // FIX: Check if res.data is the array or if it's inside a property
+                    // Most common fix for "map is not a function"
+                    const fetchedData = Array.isArray(res.data)
+                        ? res.data
+                        : (res.data?.services || []);
+
+                    setServices(fetchedData);
+                }
             } catch (error) {
                 console.error("API Error:", error);
+                if (isMounted) setServices([]); // Fallback to empty array on error
             } finally {
                 if (isMounted) setLoading(false);
             }
@@ -136,7 +145,7 @@ const MostBookedServiceGrid = () => {
     return (
         <section className="py-16 md:py-24 bg-white overflow-hidden">
             <div className="max-w-360 mx-auto px-5 md:px-12">
-                
+
                 <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-16">
                     <div className="w-full md:w-auto">
                         <div className="flex items-center gap-3 mb-4">
@@ -158,8 +167,8 @@ const MostBookedServiceGrid = () => {
                                 <ChevronRight size={24} />
                             </button>
                         </div>
-                        
-                        <button 
+
+                        <button
                             onClick={() => navigate('/categories')}
                             className="text-[11px] font-black uppercase tracking-[0.3em] text-black hover:text-blue-600 transition-colors py-2 active:scale-95"
                         >
@@ -174,7 +183,8 @@ const MostBookedServiceGrid = () => {
                         <div className="flex touch-pan-y">
                             {loading
                                 ? [...Array(4)].map((_, i) => <ServiceSkeleton key={i} />)
-                                : services.map((service, index) => (
+                                // 2. Add defensive check: Array.isArray
+                                : (Array.isArray(services) ? services : []).map((service, index) => (
                                     <ServiceCard key={service._id} service={service} index={index} />
                                 ))
                             }
@@ -185,14 +195,14 @@ const MostBookedServiceGrid = () => {
                 {/* Mobile Progress Bar & Navigation */}
                 <div className="mt-12 flex flex-col items-center gap-8 md:hidden">
                     <div className="w-full max-w-[160px] h-[3px] bg-stone-100 rounded-full overflow-hidden">
-                        <motion.div 
+                        <motion.div
                             className="h-full bg-blue-600"
                             animate={{ x: `${scrollProgress}%` }}
                             transition={{ type: "spring", damping: 20, stiffness: 100 }}
                             style={{ width: '40%' }}
                         />
                     </div>
-                    
+
                     <div className="flex items-center gap-12">
                         <button onClick={scrollPrev} className="text-stone-300 active:text-blue-600 transition-colors">
                             <ChevronLeft size={36} strokeWidth={2.5} />

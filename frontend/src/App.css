@@ -1,19 +1,41 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;700;900&display=swap');
 
 :root {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
-body {
-  font-family: 'Inter', sans-serif;
+/* This ensures that even if Tailwind classes are used, 
+   the actual rendered font is Inter */
+html, body, #root, * {
+  font-family: 'Inter', sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 * {
+  font-family: 'Inter', sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+}
+
+@layer utilities {
+  .font-black {
+    font-weight: 900 !important;
+  }
+  
+  /* This fixes the 'Redefined' text scale on mobile */
+  .tracking-tighter {
+    letter-spacing: -0.05em !important;
+  }
+}
+
+/* Mobile-specific headline fix */
+@media (max-width: 768px) {
+  h2 {
+    line-height: 0.9 !important;
+    letter-spacing: -0.04em !important;
+  }
 }
 
 /* Premium Promo Button Utility */
