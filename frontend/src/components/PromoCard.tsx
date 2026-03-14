@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ArrowRight } from 'lucide-react';
 
 interface PromoCardProps {
@@ -11,31 +11,24 @@ interface PromoCardProps {
     btnBg?: string;
 }
 
-// ── Image with skeleton loader ──
-const PromoImage = ({ src, alt }: { src: string; alt: string; btnBg: string }) => {
+const PromoImage = ({ src, alt }: { src: string; alt: string }) => {
     const [loaded, setLoaded] = useState(false);
 
     return (
-        <div className="relative w-full min-h-55 sm:min-h-70 md:min-h-80 rounded-[2rem] overflow-hidden shadow-2xl ring-4 ring-white/20 group-hover:rotate-1 transition-transform duration-700">
-            {/* Skeleton */}
+        <div className="relative w-full min-h-55 sm:min-h-70 md:min-h-80 rounded-[2rem] overflow-hidden shadow-2xl ring-4 ring-white/20 transform-gpu transition-transform duration-700 group-hover:rotate-1">
             {!loaded && (
-                <div className="absolute inset-0 shimmer-promo" />
+                <div className="absolute inset-0 bg-slate-200 animate-pulse" />
             )}
-
-            {/* Image */}
             <img
                 src={src}
                 alt={alt}
                 loading="eager"
-                fetchPriority="high"
                 onLoad={() => setLoaded(true)}
-                className={`w-full h-full object-cover transition-all duration-700 group-hover:scale-110
+                className={`w-full h-full object-cover transition-all duration-1000 ease-out group-hover:scale-105 transform-gpu
                     ${loaded ? 'opacity-100' : 'opacity-0'}
                 `}
             />
-
-            {/* Overlay */}
-            <div className="absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-60" />
         </div>
     );
 };
@@ -46,113 +39,81 @@ const PromoCard: React.FC<PromoCardProps> = ({
     btnText,
     image,
     bgColor,
-    textColor = "text-black",
-    btnBg = "bg-[#5c4033]"
+    textColor = "text-slate-900",
+    btnBg = "bg-slate-900"
 }) => {
+    const [isVisible, setIsVisible] = useState(false);
+    const cardRef = useRef(null);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => { if (entry.isIntersecting) setIsVisible(true); },
+            { threshold: 0.1 }
+        );
+        if (cardRef.current) observer.observe(cardRef.current);
+        return () => observer.disconnect();
+    }, []);
+
     return (
-        <>
-            <style>{`
-                @keyframes shimmerPromo {
-                    0%   { background-position: -600px 0; }
-                    100% { background-position: 600px 0; }
-                }
-                .shimmer-promo {
-                    background: linear-gradient(90deg, #e8e8e8 25%, #d8d8d8 50%, #e8e8e8 75%);
-                    background-size: 600px 100%;
-                    animation: shimmerPromo 1.5s ease-in-out infinite;
-                }
+        <div 
+            ref={cardRef}
+            className={`
+                ${bgColor} w-full rounded-[2.5rem] overflow-hidden
+                flex flex-col md:flex-row relative border border-white/10
+                group transition-all duration-500 transform-gpu
+                hover:shadow-[0_40px_100px_-20px_rgba(0,0,0,0.2)]
+            `}
+        >
+            {/* Optimized Decorative Orbs */}
+            <div className="absolute top-0 left-0 w-64 h-64 bg-white/30 rounded-full blur-[100px] pointer-events-none animate-pulse-slow" />
+            <div className="absolute bottom-0 right-0 w-48 h-48 bg-black/5 rounded-full blur-[80px] pointer-events-none" />
 
-                @keyframes promoFadeUp {
-                    from { opacity: 0; transform: translateY(18px); }
-                    to   { opacity: 1; transform: translateY(0); }
-                }
-                .promo-fade-1 { animation: promoFadeUp 0.5s ease forwards 0.1s; opacity: 0; }
-                .promo-fade-2 { animation: promoFadeUp 0.5s ease forwards 0.25s; opacity: 0; }
-                .promo-fade-3 { animation: promoFadeUp 0.5s ease forwards 0.4s; opacity: 0; }
-                .promo-fade-4 { animation: promoFadeUp 0.5s ease forwards 0.55s; opacity: 0; }
+            {/* ── Left: Content ── */}
+            <div className={`flex-1 p-8 sm:p-12 md:p-14 lg:p-16 flex flex-col justify-center items-start z-10 transition-all duration-1000 transform-gpu ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+                
+                <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-black tracking-tighter mb-4 leading-[1.05] drop-shadow-sm ${textColor}`}>
+                    {title}
+                </h2>
 
-                @keyframes promoOrb {
-                    0%, 100% { transform: scale(1); opacity: 0.25; }
-                    50%       { transform: scale(1.3); opacity: 0.4; }
-                }
-                .promo-orb { animation: promoOrb 5s ease-in-out infinite; }
+                <p className={`text-base md:text-lg font-bold opacity-80 mb-8 md:mb-10 max-w-md leading-relaxed ${textColor}`}>
+                    {subtitle}
+                </p>
 
-                @keyframes promoBtnShimmer {
-                    0%   { transform: translateX(-100%) skewX(-15deg); }
-                    100% { transform: translateX(250%) skewX(-15deg); }
-                }
-                .promo-btn {
-                    transition: all 0.3s ease;
-                }
-                .promo-btn:hover {
-                    transform: translateY(-2px);
-                    filter: brightness(1.15);
-                    box-shadow: 0 12px 35px rgba(0,0,0,0.25);
-                }
-                .promo-btn:active { transform: scale(0.96); }
-                .promo-btn::after {
-                    content: '';
-                    position: absolute;
-                    inset: 0;
-                    width: 35%;
-                    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
-                    animation: promoBtnShimmer 2.5s ease-in-out infinite;
-                }
-            `}</style>
+                <button className={`
+                    ${btnBg} text-white
+                    relative overflow-hidden
+                    px-8 md:px-12 py-4 md:py-5
+                    rounded-2xl font-black text-[11px] md:text-xs
+                    uppercase tracking-[0.2em]
+                    shadow-2xl transition-all duration-300
+                    hover:-translate-y-1 hover:brightness-110 active:scale-95
+                    flex items-center gap-3 group/btn
+                `}>
+                    <span className="relative z-10">{btnText}</span>
+                    <ArrowRight
+                        size={18}
+                        className="relative z-10 group-hover/btn:translate-x-1.5 transition-transform duration-300"
+                    />
+                    {/* Glossy Button Shine */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                </button>
+            </div>
 
-            <div className={`
-                ${bgColor} w-full rounded-[2rem] md:rounded-[2.5rem] overflow-hidden
-                flex flex-col md:flex-row
-                relative border border-gray-100/50
-                group transition-all duration-500
-                hover:shadow-[0_30px_80px_-15px_rgba(0,0,0,0.15)]
-            `}>
-
-                {/* Decorative orbs */}
-                <div className="promo-orb absolute top-8 left-8 w-36 h-36 bg-white/20 rounded-full blur-3xl pointer-events-none" />
-                <div className="promo-orb absolute bottom-8 right-8 w-28 h-28 bg-white/15 rounded-full blur-2xl pointer-events-none" style={{ animationDelay: '2.5s' }} />
-
-                {/* ── Left: Content ── */}
-                <div className={`flex-1 p-7 sm:p-10 md:p-12 lg:p-14 flex flex-col justify-center items-start ${textColor} z-10`}>
-
-                    <h2 className="promo-fade-1 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black tracking-tight mb-3 leading-[1.1]">
-                        {title}
-                    </h2>
-
-                    <p className="promo-fade-2 text-base md:text-lg font-medium opacity-75 mb-8 md:mb-10 max-w-md leading-relaxed">
-                        {subtitle}
-                    </p>
-
-                    <div className="promo-fade-3">
-                        <button className={`
-                            promo-btn
-                            ${btnBg} text-white
-                            relative overflow-hidden
-                            px-8 md:px-10 py-3.5 md:py-4
-                            rounded-xl md:rounded-2xl
-                            font-black text-xs md:text-sm
-                            uppercase tracking-widest
-                            shadow-xl shadow-black/10
-                            flex items-center gap-3
-                            group/btn
-                        `}>
-                            <span className="relative z-10">{btnText}</span>
-                            <ArrowRight
-                                size={16}
-                                className="relative z-10 group-hover/btn:translate-x-1 transition-transform duration-200"
-                            />
-                        </button>
-                    </div>
-                </div>
-
-                {/* ── Right: Image ── */}
-                <div className="promo-fade-4 flex-1 p-5 sm:p-7 md:p-8 flex items-center justify-center">
-                    <div className="w-full">
-                        <PromoImage src={image} alt={title} btnBg={btnBg} />
-                    </div>
+            {/* ── Right: Image ── */}
+            <div className={`flex-1 p-6 sm:p-8 md:p-10 flex items-center justify-center transition-all duration-1000 delay-200 transform-gpu ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
+                <div className="w-full max-w-[500px]">
+                    <PromoImage src={image} alt={title} />
                 </div>
             </div>
-        </>
+
+            <style>{`
+                @keyframes pulse-slow {
+                    0%, 100% { opacity: 0.3; transform: scale(1); }
+                    50% { opacity: 0.5; transform: scale(1.1); }
+                }
+                .animate-pulse-slow { animation: pulse-slow 8s ease-in-out infinite; }
+            `}</style>
+        </div>
     );
 };
 

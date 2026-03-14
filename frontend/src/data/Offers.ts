@@ -13,7 +13,7 @@ export const offers = [
         desc: "Starts from ₹499",
         btnText: "Book now",
         bgColor: "bg-[#EA9F9F]",
-        textColor: "text-white",
+        textColor: "text-gray-900",
         image: "/images/MedicalServices/medical-checkup.jpg",
         category: "Medical Emergencies"
     },
@@ -31,7 +31,7 @@ export const offers = [
         desc: "Starts from ₹499",
         btnText: "Book now",
         bgColor: "bg-[#9EBEEA]",
-        textColor: "text-white",
+        textColor: "text-red",
         image: "/images/Repairing/electrician.jpg",
         category: "Repairing and Maintenance"
     },
