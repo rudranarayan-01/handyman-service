@@ -22,7 +22,7 @@ const ServiceSkeleton = () => (
     </div>
 );
 
-const ServiceCard = ({ service, index }: { service: Service; index: number }) => {
+const ServiceCard = ({ service }: { service: Service; index: number }) => {
     const [loaded, setLoaded] = useState(false);
     const navigate = useNavigate();
 
