@@ -83,7 +83,7 @@ router.delete('/users/:clerkId', fastAuth, isAdmin, async (req, res) => {
 
 
 // Order Management 
-router.get('/orders', async (req, res) => {
+router.get('/orders', fastAuth, isAdmin, async (req, res) => {
     try {
         const orders = await Order.aggregate([
             { $sort: { createdAt: -1 } },
@@ -123,9 +123,6 @@ router.get('/orders/:orderId',  async (req: any, res: any) => {
         res.status(500).json({ error: "Fetch failed", details: err.message });
     }
 });
-
-
-
 
 // Get Eligible partner for service
 router.get('/partners/eligible',  async (req, res) => {
@@ -252,8 +249,6 @@ router.patch('/services/:id', fastAuth, isAdmin, async (req, res) => {
     }
 });
 
-
-
 // DELETE Service
 router.delete('/services/:id', fastAuth, isAdmin, async (req, res) => {
     try {
@@ -359,9 +354,6 @@ router.patch('/partners/:id', async (req, res) => {
         res.status(400).json({ error: error });
     }
 });
-
-
-
 
 
 ///////// DASHBOARD ////////////////

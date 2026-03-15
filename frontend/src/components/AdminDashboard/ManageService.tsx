@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useAuth, useUser } from '@clerk/clerk-react';
-import { Plus, Edit3, Trash2, X, Star, Search, PackageOpen } from 'lucide-react';
+import { Plus, Edit3, Trash2, X, Star, Search, PackageOpen, Globe } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/api/api';
 import { Button } from '../ui/button';
@@ -15,15 +15,20 @@ interface Category {
 interface ServiceData {
     _id: string;
     name: string;
-    category: Category | string; // Can be object (populated) or ID (unpopulated)
+    category: Category | string;
     price: number;
     description: string;
     image: string;
     duration: string;
     rating: number;
+    slug?: string;
+    seo?: {
+        metaTitle: string;
+        metaDescription: string;
+        keywords: string[];
+    };
 }
 
-// --- SKELETON COMPONENT (Unchanged) ---
 const ServiceSkeleton = () => (
     <div className="space-y-12 animate-pulse">
         {[1, 2].map((section) => (
@@ -32,7 +37,7 @@ const ServiceSkeleton = () => (
                 <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-10">
                     {[1, 2, 3, 4].map((i) => (
                         <div key={i} className="bg-white rounded-[1.5rem] md:rounded-[2rem] p-3 border border-slate-100">
-                            <div className="h-24 md:h-40 bg-slate-100 rounded-[1rem] md:rounded-[1.5rem] mb-4" />
+                            <div className="h-24 md:h-40 bg-slate-100 rounded-3xl md:rounded-[1.5rem] mb-4" />
                             <div className="space-y-2 px-2">
                                 <div className="h-4 w-3/4 bg-slate-100 rounded" />
                                 <div className="h-3 w-1/2 bg-slate-100 rounded" />
@@ -47,7 +52,7 @@ const ServiceSkeleton = () => (
 
 const ManageServices = () => {
     const [services, setServices] = useState<ServiceData[]>([]);
-    const [categories, setCategories] = useState<Category[]>([]); // New state for real categories
+    const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
@@ -55,7 +60,16 @@ const ManageServices = () => {
     const [searchQuery, setSearchQuery] = useState("");
 
     const [formData, setFormData] = useState({
-        name: '', category: '', price: '', description: '', image: '', duration: ''
+        name: '', 
+        category: '', 
+        price: '', 
+        description: '', 
+        image: '', 
+        duration: '',
+        slug: '',
+        metaTitle: '',
+        metaDescription: '',
+        keywords: '' // Stored as string for the input, converted to array on submit
     });
 
     const { getToken } = useAuth();
@@ -66,14 +80,12 @@ const ManageServices = () => {
         document.body.style.overflow = showModal ? 'hidden' : 'unset';
     }, [showModal]);
 
-    // --- FETCH DATA ---
     const fetchData = async () => {
         try {
             setLoading(true);
             const token = await getToken();
             const config = { headers: { Authorization: `Bearer ${token}` } };
 
-            // Fetch both Services and the New Category list
             const [servicesRes, categoriesRes] = await Promise.all([
                 api.get('/admin/services', config),
                 api.get('/categories', config)
@@ -90,7 +102,6 @@ const ManageServices = () => {
 
     useEffect(() => { if (isLoaded && hasAccess) fetchData(); }, [isLoaded, hasAccess]);
 
-    // --- SEARCH & GROUPING LOGIC ---
     const filteredServices = useMemo(() => {
         return services.filter(s => {
             const catName = typeof s.category === 'object' ? s.category.name : '';
@@ -99,29 +110,21 @@ const ManageServices = () => {
         });
     }, [services, searchQuery]);
 
-    // Group services by Category ID or Name for the sections
     const groupedServices = useMemo(() => {
         const groups: Record<string, ServiceData[]> = {};
-
         filteredServices.forEach(s => {
             let catName = 'Uncategorized';
-
             if (typeof s.category === 'object' && s.category !== null) {
-                // If the backend already populated the object
                 catName = s.category.name;
             } else if (typeof s.category === 'string') {
-                // If it's just an ID, find the name in our categories state
                 const matchedCategory = categories.find(c => c._id === s.category);
                 catName = matchedCategory ? matchedCategory.name : 'Uncategorized';
             }
-
             if (!groups[catName]) groups[catName] = [];
             groups[catName].push(s);
         });
-
-        // Sort alphabetically by category name
         return Object.entries(groups).sort(([a], [b]) => a.localeCompare(b));
-    }, [filteredServices, categories]); // Added 'categories' as a dependency
+    }, [filteredServices, categories]);
 
     const handleOpenModal = (service?: ServiceData) => {
         if (service) {
@@ -132,12 +135,16 @@ const ManageServices = () => {
                 price: service.price.toString(),
                 description: service.description || '',
                 image: service.image || '',
-                duration: service.duration || ''
+                duration: service.duration || '',
+                slug: service.slug || '',
+                metaTitle: service.seo?.metaTitle || '',
+                metaDescription: service.seo?.metaDescription || '',
+                keywords: service.seo?.keywords?.join(', ') || ''
             });
             setIsNewCategory(false);
         } else {
             setEditingId(null);
-            setFormData({ name: '', category: '', price: '', description: '', image: '', duration: '' });
+            setFormData({ name: '', category: '', price: '', description: '', image: '', duration: '', slug: '', metaTitle: '', metaDescription: '', keywords: '' });
             setIsNewCategory(categories.length === 0);
         }
         setShowModal(true);
@@ -165,14 +172,26 @@ const ManageServices = () => {
         const action = async () => {
             let finalCategoryId = formData.category;
 
-            // If user typed a NEW category, we must create it first
             if (isNewCategory) {
                 const catRes = await api.post('/categories/add', { name: formData.category }, { headers: { Authorization: `Bearer ${token}` } });
                 finalCategoryId = catRes.data._id;
                 setCategories(prev => [...prev, catRes.data]);
             }
 
-            const payload = { ...formData, category: finalCategoryId };
+            const payload = {
+                name: formData.name,
+                category: finalCategoryId,
+                price: formData.price,
+                description: formData.description,
+                image: formData.image,
+                duration: formData.duration,
+                slug: formData.slug,
+                seo: {
+                    metaTitle: formData.metaTitle,
+                    metaDescription: formData.metaDescription,
+                    keywords: formData.keywords.split(',').map(k => k.trim()).filter(k => k !== "")
+                }
+            };
 
             if (editingId) {
                 const res = await api.patch(`/admin/services/${editingId}`, payload, { headers: { Authorization: `Bearer ${token}` } });
@@ -295,6 +314,7 @@ const ManageServices = () => {
 
                         <div className="flex-1 overflow-y-auto no-scrollbar p-6 md:p-8 pt-0">
                             <form onSubmit={handleSubmit} id="service-form" className="space-y-6">
+                                {/* Category Section */}
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Category Control</label>
                                     {!isNewCategory ? (
@@ -318,6 +338,7 @@ const ManageServices = () => {
                                     )}
                                 </div>
 
+                                {/* Main Info Grid */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                                     <div className="md:col-span-2">
                                         <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Service Title</label>
@@ -340,6 +361,32 @@ const ManageServices = () => {
                                     <div className="md:col-span-2">
                                         <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Description</label>
                                         <textarea rows={3} className="w-full p-4 bg-slate-50 rounded-2xl border-none ring-1 ring-slate-100 font-medium outline-none text-sm" value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} />
+                                    </div>
+
+                                    {/* SEO SECTION */}
+                                    <div className="md:col-span-2 pt-4">
+                                        <div className="flex items-center gap-2 mb-4">
+                                            <Globe size={16} className="text-indigo-500" />
+                                            <h3 className="text-sm font-black text-slate-800 uppercase tracking-tight">SEO & Discovery</h3>
+                                        </div>
+                                        <div className="space-y-4 bg-slate-50/50 p-4 rounded-3xl border border-slate-100">
+                                            <div>
+                                                <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Custom Slug (URL)</label>
+                                                <input placeholder="service-url-path" className="w-full p-3 bg-white rounded-xl border-none ring-1 ring-slate-100 font-bold text-sm outline-none" value={formData.slug} onChange={e => setFormData({ ...formData, slug: e.target.value })} />
+                                            </div>
+                                            <div>
+                                                <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Meta Title</label>
+                                                <input placeholder="SEO Title for Google..." className="w-full p-3 bg-white rounded-xl border-none ring-1 ring-slate-100 font-bold text-sm outline-none" value={formData.metaTitle} onChange={e => setFormData({ ...formData, metaTitle: e.target.value })} />
+                                            </div>
+                                            <div>
+                                                <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Meta Description</label>
+                                                <textarea placeholder="Brief summary for search results..." rows={2} className="w-full p-3 bg-white rounded-xl border-none ring-1 ring-slate-100 font-medium text-sm outline-none" value={formData.metaDescription} onChange={e => setFormData({ ...formData, metaDescription: e.target.value })} />
+                                            </div>
+                                            <div>
+                                                <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Keywords (Comma Separated)</label>
+                                                <input placeholder="repair, ac, cleaning..." className="w-full p-3 bg-white rounded-xl border-none ring-1 ring-slate-100 font-bold text-sm outline-none" value={formData.keywords} onChange={e => setFormData({ ...formData, keywords: e.target.value })} />
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </form>

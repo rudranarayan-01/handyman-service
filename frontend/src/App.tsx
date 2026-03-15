@@ -21,6 +21,13 @@ import AdminProtect from './components/routes/AdminRoute';
 import ProtectedRoutes from './components/routes/protectedRoutes';
 import ScrollToTop from './components/ScrollToTop';
 import ProviderPage from './pages/ProviderPage';
+import DashboardStats from './components/AdminDashboard/DashboardStats';
+import ManageCategories from './components/AdminDashboard/ManageCategories';
+import ManageServices from './components/AdminDashboard/ManageService';
+import UserDirectory from './components/AdminDashboard/UserDirectory';
+import AdminOrders from './components/AdminDashboard/AdminOrders';
+import PartnerManagement from './components/AdminDashboard/PartnerManagement';
+import OfferList from './components/AdminDashboard/OfferList';
 
 
 function App() {
@@ -33,7 +40,17 @@ function App() {
           <ScrollToTop />
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/admin" element={<AdminProtect><AdminPannel /></AdminProtect>} />
+            <Route path="/admin" element={<AdminProtect><AdminPannel /></AdminProtect>} >
+              {/* Child Routes - They appear in the <Outlet /> */}
+              <Route index element={<DashboardStats />} /> {/* This is the default /admin */}
+              <Route path="categories" element={<ManageCategories />} />
+              <Route path="services" element={<ManageServices />} />
+              <Route path="users" element={<UserDirectory />} />
+              <Route path="orders" element={<AdminOrders />} />
+              <Route path="partners" element={<PartnerManagement />} />
+              <Route path="offers" element={<OfferList />} />
+              {/* <Route path="settings" element={<AdminSettings />} /> */}
+            </Route>
             <Route path="/admin/orders/:orderId" element={<AdminProtect><ManageOrderDetails /></AdminProtect>} />
 
             <Route path="/categories" element={<CategoriesPage />} />

@@ -72,7 +72,8 @@ const ManageOrderDetails = () => {
             try {
                 const res = await api.get(`/admin/orders/${orderId}`, await authGet());
                 setOrder(res.data);
-            } catch { toast.error("Order not found"); navigate('/admin'); }
+            } catch { toast.error("Order not found"); 
+                navigate('/admin/orders'); }
             finally { setLoading(false); }
         })();
     }, [orderId]);
@@ -116,7 +117,8 @@ const ManageOrderDetails = () => {
         action: { label: "Delete", onClick: async () => {
             try {
                 await api.delete(`/admin/orders/${orderId}`, await authGet());
-                toast.success("Deleted"); navigate('/admin');
+                toast.success("Deleted"); 
+                navigate('/admin/orders');
             } catch { toast.error("Delete failed"); }
         }},
         cancel: { label: "Cancel", onClick: () => toast.dismiss() },
@@ -237,7 +239,7 @@ const ManageOrderDetails = () => {
 
                     {/* Top bar */}
                     <div className="mb-8">
-                        <button onClick={() => navigate('/admin')}
+                        <button onClick={() => navigate('/admin/orders')}
                             className="flex items-center gap-1.5 text-indigo-600 hover:text-indigo-800 font-bold text-xs uppercase tracking-widest mb-4 transition-colors group">
                             <ChevronLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" />
                             Back to Dashboard

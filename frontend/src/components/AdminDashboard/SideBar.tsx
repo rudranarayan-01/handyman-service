@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 
-// --- SIDEBAR SKELETON ---
 export const SidebarItemSkeleton = () => (
     <div className="w-full flex items-center gap-4 p-4 rounded-2xl bg-slate-200/50 animate-pulse mb-2">
         <div className="w-5 h-5 bg-slate-300 rounded-md" />
@@ -8,16 +7,15 @@ export const SidebarItemSkeleton = () => (
     </div>
 );
 
-const SidebarItem = ({ id, label, icon, activeTab, setActiveTab, url = "#", onItemClick }: any) => {
+const SidebarItem = ({ id, label, icon, activeTab, url, onItemClick }: any) => {
     const isActive = activeTab === id;
 
-    const handleClick = () => {
-        setActiveTab(id);
-        if (onItemClick) onItemClick(); 
-    };
-
     return (
-        <Link to={url} onClick={handleClick} className="relative group block no-underline">
+        <Link 
+            to={url} 
+            onClick={onItemClick} 
+            className="relative group block no-underline outline-none"
+        >
             <div className={`
                 relative w-full flex items-center gap-4 p-4 rounded-2xl transition-all duration-500 font-black text-sm overflow-hidden
                 ${isActive 
@@ -28,7 +26,6 @@ const SidebarItem = ({ id, label, icon, activeTab, setActiveTab, url = "#", onIt
                 {isActive && (
                     <div className="absolute inset-0 z-0">
                         <div className="absolute inset-0 bg-white" />
-                        {/* Mesh Animation */}
                         <div className="absolute inset-0 opacity-40 bg-[length:200%_200%] bg-gradient-to-r from-indigo-200 via-purple-100 to-indigo-200 animate-mesh-slow" />
                     </div>
                 )}
