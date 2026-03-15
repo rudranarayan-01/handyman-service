@@ -26,7 +26,7 @@ const SidebarItem = ({ id, label, icon, activeTab, url, onItemClick }: any) => {
                 {isActive && (
                     <div className="absolute inset-0 z-0">
                         <div className="absolute inset-0 bg-white" />
-                        <div className="absolute inset-0 opacity-40 bg-[length:200%_200%] bg-gradient-to-r from-indigo-200 via-purple-100 to-indigo-200 animate-mesh-slow" />
+                        <div className="absolute inset-0 opacity-40 bg-size-[200%_200%] bg-linear-to-r from-indigo-200 via-purple-100 to-indigo-200 animate-mesh-slow" />
                     </div>
                 )}
 

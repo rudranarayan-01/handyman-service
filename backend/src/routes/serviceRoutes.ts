@@ -32,8 +32,16 @@ router.get("/detail/:slug", async (req, res) => {
     }
 });
 
-router.get
+router.get ("/allService", async (req, res) => {
+    try {
+        const services = await Service.find().select('name')
+        res.json(services);
+    } catch (error) {
+        res.status(500).json({ error: "Failed to fetch services" });
+    }
+});
 
+//  fetch services by category slug
 router.get('/category/:categorySlug', async (req, res) => {
     try {
         const { categorySlug } = req.params;
