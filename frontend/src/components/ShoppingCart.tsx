@@ -71,7 +71,7 @@ const ShoppingCart = () => {
         <div className="min-h-screen flex flex-col items-center justify-center bg-[#F8FAFC]">
             <div className="w-24 h-24 bg-white shadow-sm rounded-full flex items-center justify-center mb-6"><ShoppingBag className="w-10 h-10 text-slate-300" /></div>
             <h2 className="text-2xl font-black text-slate-900 mb-2">Your Cart is Empty!</h2>
-            <Button onClick={() => navigate('/categories')} className="bg-blue-600 rounded-2xl font-bold px-10 py-6">Explore Services</Button>
+            <Button onClick={() => navigate('/categories')} className="text-white cursor-pointerrounded-2xl font-bold px-10 py-6">Explore Services</Button>
         </div>
     );
 
