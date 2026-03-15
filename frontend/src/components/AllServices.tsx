@@ -1,34 +1,35 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { Star, Plus, ShieldCheck, Loader2, Info, Clock, CheckCircle2 } from 'lucide-react';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
+import { Star, ShieldCheck, Loader2, Clock, ChevronRight, Sparkles } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
-import { Button } from './ui/button';
 import api from '@/api/api';
 import BackNavigation from './BackNavigation';
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
 
 const AllServices = () => {
-    const { categoryId } = useParams();
-    const { addToCart, cartItems, totalAmount } = useCart();
+    const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
+    const categorySlug = searchParams.get('category');
+    const { cartItems, totalAmount } = useCart();
 
     const [services, setServices] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
-    const pageTitle = categoryId?.replace(/-/g, ' ');
+    const pageTitle = categorySlug?.replace(/-/g, ' ');
 
     useEffect(() => {
         const fetchServices = async () => {
-            if (!categoryId) return;
+            if (!categorySlug) return;
             setLoading(true);
             try {
-                const res = await api.get(`/services/category/${categoryId}`);
-                setServices(res.data);
+                const res = await api.get(`/services/category/slug/${categorySlug}`);
+
+                // --- FIX: Robust Data Extraction ---
+                // Check if res.data is the array, or if it's inside an object property
+                const fetchedData = Array.isArray(res.data)
+                    ? res.data
+                    : (res.data.services || res.data.data || []);
+
+                setServices(fetchedData);
             } catch (err) {
                 console.error("Fetch error", err);
                 setServices([]);
@@ -37,7 +38,20 @@ const AllServices = () => {
             }
         };
         fetchServices();
-    }, [categoryId]);
+    }, [categorySlug]);
+
+    const handleViewDetails = (service: any) => {
+        if (!categorySlug || (!service.slug && !service.name)) {
+            console.error("Missing navigation data", { categorySlug, service });
+            return;
+        }
+
+        const sSlug = service.slug || service.name.toLowerCase().replace(/\s+/g, '-');
+        const targetUrl = `/service-details?category=${categorySlug}&service=${sSlug}`;
+
+        console.log("Redirecting to:", targetUrl); // Check your browser console!
+        navigate(targetUrl);
+    };
 
     return (
         <div className="min-h-screen bg-[#F9FBFF] pb-32 mt-20 font-sans">
@@ -45,12 +59,14 @@ const AllServices = () => {
 
             <main className="max-w-6xl mx-auto px-6 pt-8">
                 {/* Header Section */}
-                <div className="mb-10">
-                    <div className="flex items-center gap-2 mb-2">
-                        <ShieldCheck className="w-4 h-4 text-emerald-500" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600">Verified Professional Services</span>
+                <div className="mb-12">
+                    <div className="flex items-center gap-2 mb-3">
+                        <div className="p-1.5 bg-emerald-100 rounded-lg">
+                            <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                        </div>
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600">Premium Quality Guaranteed</span>
                     </div>
-                    <h1 className="text-3xl md:text-5xl font-black text-gray-900 capitalize tracking-tighter leading-none">
+                    <h1 className="text-4xl md:text-6xl font-black text-gray-900 capitalize tracking-tighter leading-none">
                         {pageTitle}
                     </h1>
                 </div>
@@ -58,126 +74,77 @@ const AllServices = () => {
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-24 gap-4">
                         <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
-                        <p className="text-gray-400 font-bold text-sm tracking-widest uppercase animate-pulse">Loading Services...</p>
+                        <p className="text-gray-400 font-bold text-sm tracking-widest uppercase animate-pulse">Loading Catalog...</p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        {services.length > 0 ? (
-                            services.map((service) => {
-                                const isItemInCart = cartItems.some((item: { _id: any; }) => item._id === service._id);
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        {services && services.length > 0 ? (
+                            services.map((service) => (
+                                <div
+                                    key={service._id || service.id}
+                                    onClick={() => handleViewDetails(service)}
+                                    className="group bg-white rounded-[2.5rem] border border-gray-100 p-5 flex gap-6 hover:shadow-[0_30px_60px_rgba(0,0,0,0.06)] transition-all duration-500 cursor-pointer relative overflow-hidden"
+                                >
+                                    <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <Sparkles className="text-blue-200 w-5 h-5" />
+                                    </div>
 
-                                return (
-                                    <div key={service._id} className="group bg-white rounded-[2.5rem] border border-gray-100 p-6 flex flex-col sm:flex-row gap-8 hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] transition-all duration-500 relative">
+                                    {/* Image */}
+                                    <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-[1.8rem] overflow-hidden bg-gray-50 shrink-0">
+                                        <img
+                                            src={service.image || '/placeholder-service.jpg'}
+                                            alt={service.name}
+                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
+                                        />
+                                    </div>
 
-                                        {/* PLAIN INFO ICON - RIGHT TOP */}
-                                        <div className="absolute top-6 right-8">
-                                            <Dialog>
-                                                <DialogTrigger asChild>
-                                                    <Info className="w-5 h-5 text-gray-500 hover:text-blue-600 cursor-pointer transition-colors" />
-                                                </DialogTrigger>
-                                                <DialogContent className="max-w-md rounded-[2.5rem] border-none p-10 shadow-2xl [&>button]:text-gray-100 [&>button]:hover:text-red-500 [&>button]:transition-colors">
-                                                    <DialogHeader>
-                                                        <DialogTitle className="text-2xl font-black text-gray-900 tracking-tight">{service.name}</DialogTitle>
-                                                    </DialogHeader>
-
-                                                    <div className="space-y-5 ">
-                                                        <div className="flex items-center gap-4 bg-gray-50/50 px-5 rounded-2xl border border-gray-100">
-                                                            <div className="flex items-center gap-2">
-                                                                <Clock className="w-4 h-4 text-blue-500" />
-                                                                <span className="text-xs font-black text-gray-600">45-60 MINS</span>
-                                                            </div>
-                                                            <div className="flex items-center gap-2">
-                                                                <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
-                                                                <span className="text-xs font-black text-gray-600">4.8 RATING</span>
-                                                            </div>
-                                                        </div>
-
-                                                        <div>
-                                                            <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">About Service</h4>
-                                                            <p className="text-gray-500 text-sm font-medium leading-relaxed">
-                                                                {service.description || "Top-rated professional service including deep inspection, repair, and genuine spare parts replacement for maximum efficiency."}
-                                                            </p>
-                                                        </div>
-
-                                                        <div className="space-y-4">
-                                                            <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400">Housexpertz Promise</h4>
-                                                            {['Verified Professional', '30-Day Warranty', 'Safety First Protocol'].map((item) => (
-                                                                <div key={item} className="flex items-center gap-3">
-                                                                    <div className="w-5 h-5 bg-emerald-50 rounded-full flex items-center justify-center">
-                                                                        <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-                                                                    </div>
-                                                                    <span className="text-sm font-bold text-gray-700">{item}</span>
-                                                                </div>
-                                                            ))}
-                                                        </div>
-
-                                                        <Button
-                                                            onClick={() => addToCart(service)}
-                                                            disabled={isItemInCart}
-                                                            className="w-full py-8 rounded-[1.5rem] text-white font-black text-xs uppercase tracking-[0.2em] shadow-lg active:scale-95 transition-all"
-                                                        >
-                                                            {isItemInCart ? "Already Added" : `Book Now - ₹${service.price}`}
-                                                        </Button>
-                                                    </div>
-                                                </DialogContent>
-                                            </Dialog>
-                                        </div>
-
-                                        {/* Image Container */}
-                                        <div className="relative w-full sm:w-44 h-44 rounded-[2rem] overflow-hidden bg-gray-50 shrink-0">
-                                            <img
-                                                src={service.image}
-                                                alt={service.name}
-                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
-                                            />
-                                        </div>
-
-                                        {/* Details Container */}
-                                        <div className="flex-1 flex flex-col justify-between py-1">
-                                            <div className="space-y-1">
-                                                <h3 className="text-xl font-black text-gray-900 tracking-tight leading-tight">{service.name}</h3>
-                                                <div className="flex items-center gap-4">
-                                                    <div className="flex items-center gap-1 text-amber-500">
-                                                        <Star className="w-3 h-3 fill-current" />
-                                                        <span className="text-xs font-black">4.8</span>
-                                                    </div>
-                                                    <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest leading-none mt-0.5">100+ Booked</span>
+                                    {/* Details */}
+                                    <div className="flex-1 flex flex-col justify-center py-1">
+                                        <div className="space-y-2">
+                                            <div className="flex items-center gap-2">
+                                                <div className="flex items-center gap-1 text-amber-500">
+                                                    <Star className="w-3 h-3 fill-current" />
+                                                    <span className="text-[10px] font-black">{service.rating || '4.8'}</span>
+                                                </div>
+                                                <span className="h-1 w-1 bg-gray-200 rounded-full"></span>
+                                                <div className="flex items-center gap-1 text-gray-400">
+                                                    <Clock className="w-3 h-3" />
+                                                    <span className="text-[10px] font-black uppercase tracking-tighter">
+                                                        {service.duration || '45-60 min'}
+                                                    </span>
                                                 </div>
                                             </div>
 
-                                            <div className="flex items-center justify-between mt-auto pt-6">
-                                                <div className="space-y-0.5">
-                                                    <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest block">Price</span>
-                                                    <span className="text-3xl font-black text-gray-900 tracking-tighter">₹{service.price}</span>
-                                                </div>
-                                                <Button
-                                                    onClick={() => addToCart(service)}
-                                                    disabled={isItemInCart}
-                                                    className={`rounded-2xl font-black px-10 py-7 transition-all border-none ${isItemInCart
-                                                            ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-100'
-                                                            : 'bg-gray-900 text-white hover:bg-blue-600 shadow-xl shadow-gray-100'
-                                                        }`}
-                                                >
-                                                    {isItemInCart ? "Added" : "Add"} <Plus className="ml-2 w-4 h-4" />
-                                                </Button>
+                                            <h3 className="text-xl md:text-2xl font-black text-gray-900 tracking-tight leading-tight group-hover:text-blue-600 transition-colors">
+                                                {service.name}
+                                            </h3>
+
+                                            <p className="text-gray-400 text-xs font-medium line-clamp-2 leading-relaxed max-w-[250px]">
+                                                {service.description || "Expert professional service with verified quality check."}
+                                            </p>
+                                        </div>
+
+                                        <div className="mt-4">
+                                            <div className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-blue-600 group-hover:gap-4 transition-all">
+                                                View Details <ChevronRight size={14} />
                                             </div>
                                         </div>
                                     </div>
-                                );
-                            })
+                                </div>
+                            ))
                         ) : (
-                            <div className="col-span-full py-32 text-center">
+                            <div className="col-span-full py-32 text-center bg-white rounded-[3rem] border-2 border-dashed border-gray-100">
                                 <p className="text-gray-300 font-black text-xl uppercase tracking-[0.2em]">No services found</p>
-                                <Link to="/categories" className="text-blue-600 font-bold text-sm underline mt-4 inline-block">Explore Categories</Link>
+                                <Link to="/" className="text-blue-600 font-bold text-sm underline mt-4 inline-block">Explore other categories</Link>
                             </div>
                         )}
                     </div>
                 )}
             </main>
 
-            {/* STICKY CART - REDESIGNED */}
+            {/* Sticky Cart UI */}
             {cartItems.length > 0 && (
-                <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-100 w-[95%] max-w-md">
+                <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-md">
                     <div className="bg-gray-900/95 backdrop-blur-xl rounded-[2rem] p-3 pl-6 flex items-center justify-between shadow-[0_30px_60px_rgba(0,0,0,0.3)] border border-white/5">
                         <div className="flex flex-col">
                             <span className="text-white font-black text-xl tracking-tighter leading-none">₹{totalAmount}</span>

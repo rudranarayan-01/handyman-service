@@ -117,7 +117,7 @@ const ServiceCarousel = () => {
     useEffect(() => {
         const fetchServices = async () => {
             try {
-                const { data } = await api.get('/services/category/essential-appliance-care');
+                const { data } = await api.get('/services/category/slug/essential-appliance-care');
 
                 // CHECK: Is data an array? If not, is there an array inside it?
                 // This is the safety net that fixes line 173

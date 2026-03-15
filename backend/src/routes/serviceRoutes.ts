@@ -16,22 +16,6 @@ router.get("/", async (req, res) => {
     }
 });
 
-router.get("/detail/:slug", async (req, res) => {
-    try {
-        const { slug } = req.params;
-        const service = await Service.findOne({ slug })
-            .populate('category', 'name slug seo'); // Get category SEO for breadcrumbs
-
-        if (!service) {
-            return res.status(404).json({ message: "Service not found" });
-        }
-
-        res.json(service);
-    } catch (error) {
-        res.status(500).json({ error: "Internal server error" });
-    }
-});
-
 router.get ("/allService", async (req, res) => {
     try {
         const services = await Service.find().select('name')
@@ -41,8 +25,26 @@ router.get ("/allService", async (req, res) => {
     }
 });
 
+
+router.get('/details/:slug', async (req, res) => {
+    try {
+        const { slug } = req.params;
+        
+        // Find the service in your database using the slug
+        const service = await Service.findOne({ slug: slug });
+
+        if (!service) {
+            return res.status(404).json({ message: "Service not found" });
+        }
+
+        res.status(200).json(service);
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error: error });
+    }
+});
+
 //  fetch services by category slug
-router.get('/category/:categorySlug', async (req, res) => {
+router.get('/category/slug/:categorySlug', async (req, res) => {
     try {
         const { categorySlug } = req.params;
 

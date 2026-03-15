@@ -225,27 +225,74 @@ router.get('/services', fastAuth, async (req, res) => {
     }
 });
 
+// Helper function to keep logic consistent
+const slugify = (text: string) => {
+    return text
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w\s-]/g, '') // Remove special characters
+        .replace(/\s+/g, '-')      // Replace spaces with dashes
+        .replace(/-+/g, '-');      // Prevent double dashes
+};
+
 router.post('/services', fastAuth, isAdmin, async (req, res) => {
     try {
-        const newService = new Service(req.body);
+        const { name } = req.body;
+
+        if (!name) {
+            return res.status(400).json({ error: "Service name is required" });
+        }
+
+        // Generate the slug manually from the name
+        const slug = slugify(name);
+
+        // Create the service object by merging the generated slug with the rest of the body
+        const newService = new Service({
+            ...req.body,
+            slug: slug
+        });
+
         await newService.save();
         res.status(201).json(newService);
-    } catch (err) {
-        res.status(500).json({ error: "Failed to create service" });
+    } catch (err: any) {
+        // Handle duplicate slug error specifically
+        if (err.code === 11000) {
+            return res.status(400).json({ error: "A service with this name/slug already exists" });
+        }
+        res.status(500).json({ error: "Failed to create service", details: err.message });
     }
 });
 
 // UPDATE Service
 router.patch('/services/:id', fastAuth, isAdmin, async (req, res) => {
     try {
+        const updates = { ...req.body };
+
+        if (updates.name) {
+            updates.slug = updates.name
+                .toLowerCase()
+                .trim()
+                .replace(/[^\w\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-');
+        }
+
         const updatedService = await Service.findByIdAndUpdate(
             req.params.id,
-            req.body,
-            { new: true }
+            updates, // Use the modified updates object
+            { new: true, runValidators: true }
         );
+
+        if (!updatedService) {
+            return res.status(404).json({ error: "Service not found" });
+        }
+
         res.status(200).json(updatedService);
-    } catch (err) {
-        res.status(500).json({ error: "Update failed" });
+    } catch (err: any) {
+        if (err.code === 11000) {
+            return res.status(400).json({ error: "Another service already uses this name/slug" });
+        }
+        res.status(500).json({ error: "Update failed", details: err.message });
     }
 });
 

@@ -16,7 +16,7 @@ const HeroSearch = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
     const [dropUp, setDropUp] = useState(false);
-    const [activeIndex, setActiveIndex] = useState(-1); // ✅ keyboard nav index
+    const [activeIndex, setActiveIndex] = useState(-1); 
     const dropdownRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const listRef = useRef<HTMLDivElement>(null);

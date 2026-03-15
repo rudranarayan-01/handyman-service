@@ -2,7 +2,7 @@ import AllServices from "@/components/AllServices"
 import Footer from "@/components/Footer"
 import Header from "@/components/Header"
 
-const ShoppingPage = () => {
+const ServiceList = () => {
   return (
     <div>
         <Header/>
@@ -12,4 +12,4 @@ const ShoppingPage = () => {
   )
 }
 
-export default ShoppingPage
+export default ServiceList

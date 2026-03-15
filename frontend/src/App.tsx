@@ -4,7 +4,6 @@ import Profile from './pages/Profile';
 import OrderHistoryPage from './pages/OrderHistoryPage';
 import ContactPage from './pages/ContactPage';
 import CategoriesPage from './pages/CategoriesGrid';
-import ShoppingPage from './pages/ShoppingPage';
 import CheckoutPage from './pages/CheckoutPage';
 import { CartProvider } from './context/CartContext';
 import BookingSuccess from './components/BookingSuccess';
@@ -29,10 +28,12 @@ import AdminOrders from './components/AdminDashboard/AdminOrders';
 import PartnerManagement from './components/AdminDashboard/PartnerManagement';
 import OfferList from './components/AdminDashboard/OfferList';
 import AdminSettings from './components/AdminDashboard/AdminSettings';
-
+import ServiceList from './pages/ServiceList';
+import ServiceDetailPage from './components/ServiceDetail';
 
 function App() {
-  useUserSync()
+  useUserSync();
+
   return (
     <div className="App select-none">
       <Toaster position="top-right" richColors />
@@ -40,10 +41,12 @@ function App() {
         <Router>
           <ScrollToTop />
           <Routes>
+            {/* PUBLIC ROUTES */}
             <Route path="/" element={<Home />} />
+            
+            {/* ADMIN ROUTES */}
             <Route path="/admin" element={<AdminProtect><AdminPannel /></AdminProtect>} >
-              {/* Child Routes - They appear in the <Outlet /> */}
-              <Route index element={<DashboardStats />} /> {/* This is the default /admin */}
+              <Route index element={<DashboardStats />} />
               <Route path="categories" element={<ManageCategories />} />
               <Route path="services" element={<ManageServices />} />
               <Route path="users" element={<UserDirectory />} />
@@ -54,13 +57,15 @@ function App() {
             </Route>
             <Route path="/admin/orders/:orderId" element={<AdminProtect><ManageOrderDetails /></AdminProtect>} />
 
+            {/* SERVICES & CATEGORIES */}
             <Route path="/categories" element={<CategoriesPage />} />
-            <Route path="/categories/:categoryId" element={<ShoppingPage />} />
+            <Route path="/services" element={<ServiceList />} />
+            <Route path="/service-details" element={<ServiceDetailPage />} />
             <Route path='/blogs' element={<BlogPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/providers" element={<ProviderPage />} />
-            {/* <Route path="/about" element={<AboutPage />} /> */}
 
+            {/* PROTECTED USER ROUTES */}
             <Route path="/order-history" element={<ProtectedRoutes><OrderHistoryPage /></ProtectedRoutes>} />
             <Route path="/order-history/:id" element={<ProtectedRoutes><OrderDetailsPage /></ProtectedRoutes>} />
             <Route path="/booking-success" element={<ProtectedRoutes><BookingSuccess /></ProtectedRoutes>} />
@@ -71,6 +76,7 @@ function App() {
             <Route path="/privacy" element={<ProtectedRoutes><PrivaryPage /></ProtectedRoutes>} />
             <Route path="/shopping-cart" element={<ProtectedRoutes><CheckoutPage /></ProtectedRoutes>} />
 
+            {/* 404 REDIRECT */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Router>
