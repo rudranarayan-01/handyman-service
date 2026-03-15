@@ -28,6 +28,7 @@ import UserDirectory from './components/AdminDashboard/UserDirectory';
 import AdminOrders from './components/AdminDashboard/AdminOrders';
 import PartnerManagement from './components/AdminDashboard/PartnerManagement';
 import OfferList from './components/AdminDashboard/OfferList';
+import AdminSettings from './components/AdminDashboard/AdminSettings';
 
 
 function App() {
@@ -49,7 +50,7 @@ function App() {
               <Route path="orders" element={<AdminOrders />} />
               <Route path="partners" element={<PartnerManagement />} />
               <Route path="offers" element={<OfferList />} />
-              {/* <Route path="settings" element={<AdminSettings />} /> */}
+              <Route path="settings" element={<AdminSettings />} />
             </Route>
             <Route path="/admin/orders/:orderId" element={<AdminProtect><ManageOrderDetails /></AdminProtect>} />
 

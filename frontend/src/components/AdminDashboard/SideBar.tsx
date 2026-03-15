@@ -33,7 +33,7 @@ const SidebarItem = ({ id, label, icon, activeTab, url, onItemClick }: any) => {
                 <span className={`relative z-10 transition-transform duration-300 ${isActive ? 'scale-110 text-indigo-600' : 'group-hover:translate-x-1'}`}>
                     {icon}
                 </span>
-                <span className="relative z-10 uppercase tracking-widest text-[10px]">
+                <span className="relative z-10 uppercase tracking-widest text-[12px]">
                     {label}
                 </span>
             </div>
