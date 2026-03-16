@@ -30,7 +30,8 @@
     "resend": "^6.9.1",
     "svix": "^1.84.1",
     "twilio": "^5.12.2",
-    "whatsapp-web.js": "^1.34.6"
+    "whatsapp-web.js": "^1.34.6",
+    "xmlbuilder2": "^4.0.3"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",

@@ -18,6 +18,7 @@ import offersRoutes from "./routes/offersRoutes"
 import { clerkMiddleware } from '@clerk/express';
 import { connectToWhatsApp, sendWhatsAppMessage } from './lib/whatsapp_setup';
 import { subscribeToNewsletter } from './lib/mail';
+import { generateSitemap } from './controllers/sitemapControllers';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -49,6 +50,7 @@ app.use("/api/v1/admin", adminRoutes)
 app.use("/api/v1/partners", providerRoutes)
 app.use("/api/v1/offers", offersRoutes)
 app.use("/api/v1", contactRoutes)
+app.get('/sitemap',generateSitemap);
 
 
 app.get('/', (req, res) => {

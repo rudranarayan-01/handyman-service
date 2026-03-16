@@ -91,7 +91,8 @@ router.get('/category-stats', async (req, res) => {
                     count: 1,
                     name: "$details.name",
                     slug: "$details.slug", // Critical for linking from stats to actual pages
-                    categoryImage: "$details.image"
+                    categoryImage: "$details.image",
+                    description: "$details.description"
                 }
             }
         ]);
