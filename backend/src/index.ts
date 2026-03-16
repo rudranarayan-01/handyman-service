@@ -50,7 +50,7 @@ app.use("/api/v1/admin", adminRoutes)
 app.use("/api/v1/partners", providerRoutes)
 app.use("/api/v1/offers", offersRoutes)
 app.use("/api/v1", contactRoutes)
-app.get('/sitemap',generateSitemap);
+app.get('/api/v1/sitemap',generateSitemap);
 
 
 app.get('/', (req, res) => {
