@@ -1,34 +1,42 @@
 import { useEffect, useState } from 'react';
-import { Link, useSearchParams, useNavigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async'; // SEO CRITICAL
+import { Link, useParams, useNavigate, useLocation } from 'react-router-dom'; // Changed useSearchParams to useParams
+import { Helmet } from 'react-helmet-async'; 
 import { Star, ShieldCheck, Loader2, Clock, ChevronRight, Sparkles } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion'; // For smooth transitions
+import { motion, AnimatePresence } from 'framer-motion'; 
 import { useCart } from '@/context/CartContext';
 import api from '@/api/api';
 import BackNavigation from './BackNavigation';
 
 const AllServices = () => {
-    const [searchParams] = useSearchParams();
+    // 1. Grab the slug from the URL path /services/:categorySlug
+    const { categorySlug } = useParams<{ categorySlug: string }>(); 
     const navigate = useNavigate();
-    const categorySlug = searchParams.get('category');
+    const location = useLocation();
     const { cartItems, totalAmount } = useCart();
 
     const [services, setServices] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
+    // Clean up title for display
     const pageTitle = categorySlug?.replace(/-/g, ' ');
 
     useEffect(() => {
         const fetchServices = async () => {
+            // Ensure we have a slug before making the API call
             if (!categorySlug) return;
+            
             setLoading(true);
             try {
+                // 2. Fetching using the slug-based endpoint
                 const res = await api.get(`/services/category/slug/${categorySlug}`);
+                
                 const fetchedData = Array.isArray(res.data)
                     ? res.data
                     : (res.data.services || res.data.data || []);
+                
                 setServices(fetchedData);
             } catch (err) {
+                console.error("Error fetching services:", err);
                 setServices([]);
             } finally {
                 setLoading(false);
@@ -39,19 +47,23 @@ const AllServices = () => {
 
     const handleViewDetails = (service: any) => {
         if (!categorySlug || (!service.slug && !service.name)) return;
+        
+        // Use service.slug if available, otherwise fallback to name-slug
         const sSlug = service.slug || service.name.toLowerCase().replace(/\s+/g, '-');
-        navigate(`/service-details?category=${categorySlug}&service=${sSlug}`);
+        
+        // 3. Navigate to the new SEO Detail Path: /service/:serviceSlug
+        navigate(`/service/detail/${sSlug}`);
     };
 
     return (
         <div className="min-h-screen bg-[#F9FBFF] pb-32 mt-20 font-sans">
-            {/* --- SEO SECTION --- */}
             <Helmet>
                 <title>{`Best ${pageTitle} Services | Quality Guaranteed`}</title>
                 <meta name="description" content={`Book professional ${pageTitle} services. Expert quality, transparent pricing, and verified professionals at your doorstep.`} />
                 <meta property="og:title" content={`Premium ${pageTitle} Services Catalog`} />
                 <meta property="og:type" content="website" />
-                <link rel="canonical" href={window.location.href} />
+                {/* Canonical should reflect the clean URL */}
+                <link rel="canonical" href={`${window.location.origin}/services/${categorySlug}`} />
             </Helmet>
 
             <BackNavigation />
@@ -107,7 +119,6 @@ const AllServices = () => {
                                             <Sparkles className="text-blue-300 w-5 h-5 animate-pulse" />
                                         </div>
 
-                                        {/* Semantic Image for SEO */}
                                         <figure className="relative w-32 h-32 md:w-44 md:h-44 rounded-[2.2rem] overflow-hidden bg-gray-50 shrink-0 shadow-inner">
                                             <img
                                                 src={service.image || '/placeholder-service.jpg'}
@@ -117,7 +128,6 @@ const AllServices = () => {
                                             />
                                         </figure>
 
-                                        {/* Details */}
                                         <div className="flex-1 flex flex-col justify-center py-2">
                                             <div className="space-y-3">
                                                 <div className="flex items-center gap-2">
@@ -157,7 +167,7 @@ const AllServices = () => {
                             ) : (
                                 <div className="col-span-full py-32 text-center bg-white rounded-[3.5rem] border-2 border-dashed border-gray-100">
                                     <p className="text-gray-300 font-black text-xl uppercase tracking-[0.2em]">No services found</p>
-                                    <Link to="/" className="text-blue-600 font-bold text-sm underline mt-4 inline-block hover:text-blue-800 transition-colors">
+                                    <Link to="/categories" className="text-blue-600 font-bold text-sm underline mt-4 inline-block hover:text-blue-800 transition-colors">
                                         Explore other categories
                                     </Link>
                                 </div>
@@ -167,7 +177,7 @@ const AllServices = () => {
                 )}
             </main>
 
-            {/* Sticky Cart UI with smoother feel */}
+            {/* Sticky Cart UI */}
             <AnimatePresence>
                 {cartItems.length > 0 && (
                     <motion.div 

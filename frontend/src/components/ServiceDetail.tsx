@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom'; // Changed useSearchParams to useParams
 import { Helmet } from 'react-helmet-async';
 import { CheckCircle2, Clock, Star, ShieldCheck, ArrowLeft, ShoppingBag, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,13 +8,11 @@ import { motion } from 'framer-motion';
 import api from '@/api/api';
 
 const ServiceDetailPage = () => {
-    const [searchParams] = useSearchParams();
+    // 1. Get the slug directly from the URL path: /service/:serviceSlug
+    const { serviceSlug } = useParams<{ serviceSlug: string }>(); 
     const navigate = useNavigate();
     const { addToCart, cartItems } = useCart();
     
-    const serviceSlug = searchParams.get('service'); 
-    const categorySlug = searchParams.get('category');
-
     const [service, setService] = useState<any>(null);
     const [loading, setLoading] = useState(true);
 
@@ -23,6 +21,7 @@ const ServiceDetailPage = () => {
             if (!serviceSlug) return;
             setLoading(true);
             try {
+                // Fetch details using the slug
                 const res = await api.get(`/services/details/${serviceSlug}`);
                 const data = res.data.service || res.data.data || res.data;
                 setService(data);
@@ -89,20 +88,18 @@ const ServiceDetailPage = () => {
 
     return (
         <div className="min-h-screen bg-white pb-20">
-            {/* --- SEO HELMET SECTION --- */}
             <Helmet>
                 <title>{service.seo?.metaTitle || `${service.name} | Professional Home Service`}</title>
                 <meta name="description" content={service.seo?.metaDescription || service.description} />
                 <meta name="keywords" content={service.seo?.keywords?.join(', ')} />
+                <link rel="canonical" href={window.location.href} />
                 
-                {/* Open Graph / Social Media */}
                 <meta property="og:title" content={service.seo?.metaTitle || service.name} />
                 <meta property="og:description" content={service.seo?.metaDescription || service.description} />
                 <meta property="og:image" content={service.image} />
                 <meta property="og:url" content={window.location.href} />
                 <meta property="og:type" content="website" />
 
-                {/* Structured Data Script */}
                 {jsonLd && (
                     <script type="application/ld+json">
                         {JSON.stringify(jsonLd)}
@@ -110,7 +107,6 @@ const ServiceDetailPage = () => {
                 )}
             </Helmet>
 
-            {/* HERO IMAGE SECTION */}
             <div className="relative h-[45vh] md:h-[65vh] w-full overflow-hidden">
                 <motion.img 
                     initial={{ scale: 1.1 }}
@@ -130,7 +126,6 @@ const ServiceDetailPage = () => {
                 </button>
             </div>
 
-            {/* CONTENT SECTION */}
             <motion.div 
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -142,7 +137,8 @@ const ServiceDetailPage = () => {
                         <div className="space-y-5">
                             <div className="flex items-center gap-3">
                                 <span className="px-5 py-1.5 bg-blue-600 text-white rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-blue-100">
-                                    {categorySlug?.replace(/-/g, ' ') || 'Service'}
+                                    {/* Using service.category name if available for better display */}
+                                    {service.category?.name || 'Professional Service'}
                                 </span>
                                 <div className="flex items-center gap-1.5 text-amber-500 bg-amber-50 px-3 py-1 rounded-full border border-amber-100">
                                     <Star size={14} fill="currentColor" />
@@ -161,6 +157,7 @@ const ServiceDetailPage = () => {
                         </div>
                     </div>
 
+                    {/* Stats Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-12 border-y border-gray-100 py-12">
                         {[
                             { icon: Clock, label: 'Duration', val: service.duration, bg: 'bg-emerald-50', text: 'text-emerald-600' },
@@ -179,11 +176,12 @@ const ServiceDetailPage = () => {
                         ))}
                     </div>
 
+                    {/* Description and Features */}
                     <div className="space-y-8">
                         <div>
                             <h3 className="text-xs font-black text-blue-600 uppercase tracking-[0.3em] mb-4">The Excellence Standard</h3>
                             <p className="text-gray-500 text-lg leading-relaxed font-medium">
-                                {service.description || "Precision-driven execution using high-quality materials and modern techniques to ensure your complete satisfaction."}
+                                {service.description || "Precision-driven execution using high-quality materials to ensure satisfaction."}
                             </p>
                         </div>
                         
@@ -197,6 +195,7 @@ const ServiceDetailPage = () => {
                         </div>
                     </div>
 
+                    {/* Add to Cart Button */}
                     <div className="mt-14">
                         <Button 
                             onClick={() => addToCart(service)}

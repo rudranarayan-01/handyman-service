@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
 
-# Direct link to your dynamic sitemap
 Sitemap: https://api.housexpertz.in/api/v1/sitemap

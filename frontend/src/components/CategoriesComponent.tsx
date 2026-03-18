@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async'; // SEO
+import { Helmet } from 'react-helmet-async'; 
 import api from '@/api/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ArrowRight, ShieldCheck, ImageOff, Sparkles } from 'lucide-react';
@@ -11,7 +11,7 @@ interface CategoryStat {
   name: string;
   categoryImage?: string;
   count: number;
-  description?: string; // Included for SEO Schema
+  description?: string; 
   slug?: string;
 }
 
@@ -41,24 +41,31 @@ const CategoryPage = () => {
     );
   }, [stats, searchQuery]);
 
-  // --- SEO STRUCTURED DATA ---
+  // --- FIXED SEO STRUCTURED DATA ---
+  // We now use the clean slug-based URL to match your App.tsx routes
   const listSchema = useMemo(() => ({
     "@context": "https://schema.org",
     "@type": "ItemList",
+    "name": "HouseXpertz Service Categories",
     "itemListElement": stats.map((cat, index) => ({
       "@type": "ListItem",
       "position": index + 1,
-      "name": cat.name,
-      "url": `${window.location.origin}/services?category=${cat.name.toLowerCase().replace(/\s+/g, '-')}`
+      "url": `${window.location.origin}/services/${cat.name.toLowerCase().replace(/\s+/g, '-')}`,
+      "name": cat.name
     }))
   }), [stats]);
 
   return (
     <div className="min-h-screen bg-slate-50/50">
       <Helmet>
-        <title>Professional Home Services | Expert Solutions at Your Doorstep</title>
-        <meta name="description" content="Explore our wide range of professional home services. From cleaning to repairs, find verified experts for every need." />
-        <meta name="keywords" content="home services, professional repairs, cleaning services, maintenance, verified experts" />
+        {/* Optimized Title & Description for CTR */}
+        <title>All Service Categories | HouseXpertz Professional Home Solutions</title>
+        <meta name="description" content="Browse our professional home service categories. From AC repair to deep cleaning, find the right expert for your home maintenance needs today." />
+        <meta name="keywords" content="home service categories, professional cleaning, AC maintenance, plumbing services, electrician near me" />
+        
+        {/* Canonical Link helps prevent duplicate content issues */}
+        <link rel="canonical" href={`${window.location.origin}/categories`} />
+
         <script type="application/ld+json">
           {JSON.stringify(listSchema)}
         </script>
@@ -150,16 +157,18 @@ const CategoryPage = () => {
   );
 };
 
-// --- OPTIMIZED CARD COMPONENT ---
 const CategoryCard = memo(({ stat, index, navigate }: { stat: CategoryStat, index: number, navigate: any }) => {
   const [hasError, setHasError] = useState(false);
   const meta = categoryMeta[stat.name];
   const Icon = meta?.icon || Sparkles;
   const displayImage = stat.categoryImage || meta?.image;
+  
+  // Clean Slug creation
   const catSlug = stat.name.toLowerCase().replace(/\s+/g, '-');
 
   const handleNavigation = () => {
-    navigate(`/services?category=${catSlug}`);
+    // Navigating to the new SEO path
+    navigate(`/services/${catSlug}`);
   };
 
   return (
@@ -170,20 +179,19 @@ const CategoryCard = memo(({ stat, index, navigate }: { stat: CategoryStat, inde
       exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
       transition={{ 
         duration: 0.5, 
-        delay: Math.min(index * 0.05, 0.3), // Cap delay for many items
+        delay: Math.min(index * 0.05, 0.3), 
         ease: [0.215, 0.61, 0.355, 1] 
       }}
       onClick={handleNavigation}
       className="group relative aspect-[3/4] md:aspect-[4/5] rounded-[2rem] md:rounded-[3rem] overflow-hidden cursor-pointer bg-white shadow-lg hover:shadow-2xl transition-all duration-700 active:scale-[0.98] touch-manipulation"
     >
-      {/* IMAGE WITH SMOOTH TRANSITION */}
       <div className="absolute inset-0 overflow-hidden bg-slate-200">
         {displayImage && !hasError ? (
           <img
             src={displayImage}
             loading="lazy"
             onError={() => setHasError(true)}
-            alt={`${stat.name} services`}
+            alt={`${stat.name} home services`} // Improved alt text for SEO
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[1.5s] ease-out"
           />
         ) : (
@@ -193,12 +201,9 @@ const CategoryCard = memo(({ stat, index, navigate }: { stat: CategoryStat, inde
         )}
       </div>
 
-      {/* GRADIENT OVERLAY */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500" />
 
-      {/* CONTENT */}
       <div className="absolute inset-0 p-5 md:p-10 flex flex-col justify-end">
-        {/* ICON - Desktop Only */}
         <div className="mb-4 transform translate-y-6 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 hidden sm:block">
           <div className="w-12 h-12 bg-white/10 backdrop-blur-xl rounded-2xl flex items-center justify-center border border-white/20 group-hover:bg-blue-600 group-hover:border-blue-400 group-hover:shadow-xl group-hover:shadow-blue-500/40 transition-all">
             <Icon className="text-white w-6 h-6" />
@@ -213,7 +218,7 @@ const CategoryCard = memo(({ stat, index, navigate }: { stat: CategoryStat, inde
           <div className="flex items-center justify-between">
             <div className="px-3 py-1 bg-white/10 backdrop-blur-md rounded-full border border-white/10 group-hover:bg-blue-600/30 group-hover:border-blue-400/50 transition-all">
                 <p className="text-[8px] md:text-[10px] font-black text-gray-200 uppercase tracking-widest">
-                  {stat.count} Services
+                  {stat.count} Services Available
                 </p>
             </div>
             
@@ -230,7 +235,6 @@ const CategoryCard = memo(({ stat, index, navigate }: { stat: CategoryStat, inde
   );
 });
 
-// Setting display names for memoized components
 CategoryCard.displayName = "CategoryCard";
 
 export default CategoryPage;

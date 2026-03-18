@@ -5,49 +5,47 @@ import { Service } from "../models/Service";
 
 export const generateSitemap = async (req: Request, res: Response) => {
     try {
-        const baseUrl = 'https://housexpertz.in'; // Replace with your actual domain
+        const baseUrl = 'https://housexpertz.in';
 
-        // 1. Fetch all data concurrently for speed
+        // 1. Fetch data
         const [categories, services] = await Promise.all([
             Category.find({}, 'slug updatedAt').lean(),
-            Service.find({}, 'slug updatedAt').populate('category', 'slug').lean()
+            Service.find({}, 'slug updatedAt').lean()
         ]);
 
-        // 2. Initialize the XML structure
+        // 2. Initialize XML
         const root = create({ version: '1.0', encoding: 'UTF-8' })
             .ele('urlset', { xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9' });
 
-        // 3. Add Static Pages (Home, etc.)
-        root.ele('url')
-            .ele('loc').txt(`${baseUrl}/`).up()
-            .ele('lastmod').txt(new Date().toISOString()).up()
-            .ele('priority').txt('1.0').up();
+        // 3. Static Pages
+        const staticPages = ['', '/categories', '/contact', '/blogs', '/providers'];
+        staticPages.forEach(path => {
+            root.ele('url')
+                .ele('loc').txt(`${baseUrl}${path}`).up()
+                .ele('lastmod').txt(new Date().toISOString()).up()
+                .ele('priority').txt(path === '' ? '1.0' : '0.7').up();
+        });
 
-        // 4. Add Category Pages
+        // 4. Category Pages (Updated to match /services/:categorySlug)
         categories.forEach((cat: any) => {
             root.ele('url')
-                .ele('loc').txt(`${baseUrl}/all-services?category=${cat.slug}`).up()
+                .ele('loc').txt(`${baseUrl}/services/${cat.slug}`).up()
                 .ele('lastmod').txt(new Date(cat.updatedAt).toISOString()).up()
                 .ele('changefreq').txt('weekly').up()
                 .ele('priority').txt('0.8').up();
         });
 
-        // 5. Add Service Detail Pages
+        // 5. Service Detail Pages (Updated to match /service/:serviceSlug)
         services.forEach((service: any) => {
-            // Ensure we have the category slug for the URL if needed
-            const catSlug = (service.category as any)?.slug || 'general';
-            
             root.ele('url')
-                .ele('loc').txt(`${baseUrl}/service-details?category=${catSlug}&service=${service.slug}`).up()
+                .ele('loc').txt(`${baseUrl}/service/detail/${service.slug}`).up()
                 .ele('lastmod').txt(new Date(service.updatedAt).toISOString()).up()
                 .ele('changefreq').txt('monthly').up()
-                .ele('priority').txt('0.6').up();
+                .ele('priority').txt('0.9').up(); // Boosted priority for individual services
         });
 
-        // 6. Convert to XML string
         const xml = root.end({ prettyPrint: true });
 
-        // 7. Send Response with XML Header
         res.header('Content-Type', 'application/xml');
         res.status(200).send(xml);
 
