@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams, useNavigate, useLocation } from 'react-router-dom'; // Changed useSearchParams to useParams
+import { Link, useParams, useNavigate } from 'react-router-dom'; // Changed useSearchParams to useParams
 import { Helmet } from 'react-helmet-async'; 
 import { Star, ShieldCheck, Loader2, Clock, ChevronRight, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion'; 
