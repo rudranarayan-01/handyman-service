@@ -1,19 +1,58 @@
 import { useEffect, useState, useMemo } from 'react';
-import { useParams, useNavigate } from 'react-router-dom'; // Changed useSearchParams to useParams
+import { useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { CheckCircle2, Clock, Star, ShieldCheck, ArrowLeft, ShoppingBag, Sparkles } from 'lucide-react';
+import { 
+    CheckCircle2, Clock, ShieldCheck, ArrowLeft, Zap, 
+    Award, Check, StarIcon, Shield, 
+    Info, HardHat, Sparkles, TrendingUp, 
+    ShieldIcon
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/context/CartContext';
-import { motion } from 'framer-motion';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import api from '@/api/api';
 
+// --- SUB-COMPONENTS ---
+
+const DetailSkeleton = () => (
+    <div className="min-h-screen bg-white">
+        <div className="h-[50vh] w-full bg-slate-100 animate-pulse" />
+        <div className="max-w-6xl mx-auto px-6 -mt-32 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div className="lg:col-span-8 space-y-8">
+                <div className="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-100 space-y-6">
+                    <div className="h-6 w-24 bg-slate-100 rounded animate-pulse" />
+                    <div className="h-16 w-3/4 bg-slate-100 rounded-2xl animate-pulse" />
+                    <div className="h-24 w-full bg-slate-50 rounded-2xl animate-pulse" />
+                    <div className="grid grid-cols-4 gap-4">
+                        {[1, 2, 3, 4].map((i) => <div key={i} className="h-20 bg-slate-50 rounded-3xl animate-pulse" />)}
+                    </div>
+                </div>
+            </div>
+            <div className="lg:col-span-4 h-96 bg-slate-100 rounded-[2.5rem] animate-pulse" />
+        </div>
+    </div>
+);
+
+// --- MAIN COMPONENT ---
+
+interface Service {
+    _id: string;
+    name: string;
+    description: string;
+    price: number;
+    image?: string;
+    duration: string;
+    warranty?: string;
+    rating?: string;
+    category?: { name: string };
+    features?: string[];
+}
+
 const ServiceDetailPage = () => {
-    // 1. Get the slug directly from the URL path: /service/:serviceSlug
     const { serviceSlug } = useParams<{ serviceSlug: string }>(); 
     const navigate = useNavigate();
     const { addToCart, cartItems } = useCart();
-    
-    const [service, setService] = useState<any>(null);
+    const [service, setService] = useState<Service | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -21,199 +60,229 @@ const ServiceDetailPage = () => {
             if (!serviceSlug) return;
             setLoading(true);
             try {
-                // Fetch details using the slug
                 const res = await api.get(`/services/details/${serviceSlug}`);
+                // Adaptive data mapping
                 const data = res.data.service || res.data.data || res.data;
                 setService(data);
             } catch (err) {
-                console.error("Error fetching service details", err);
+                console.error("Fetch error:", err);
                 setService(null);
             } finally {
                 setLoading(false);
             }
         };
         fetchDetail();
+        window.scrollTo(0, 0);
     }, [serviceSlug]);
 
-    // --- SEO: Structured Data (JSON-LD) ---
-    const jsonLd = useMemo(() => {
-        if (!service) return null;
-        return {
-            "@context": "https://schema.org/",
-            "@type": "Product",
-            "name": service.name,
-            "image": service.image,
-            "description": service.seo?.metaDescription || service.description,
-            "brand": {
-                "@type": "Brand",
-                "name": "YourBrandName" 
-            },
-            "offers": {
-                "@type": "Offer",
-                "url": window.location.href,
-                "priceCurrency": "INR",
-                "price": service.price,
-                "availability": "https://schema.org/InStock",
-                "itemCondition": "https://schema.org/NewCondition"
-            },
-            "aggregateRating": {
-                "@type": "AggregateRating",
-                "ratingValue": service.rating || "4.8",
-                "bestRating": "5",
-                "worstRating": "1",
-                "ratingCount": service.reviewsCount || "1200"
-            }
-        };
-    }, [service]);
+    const isItemInCart = useMemo(() => 
+        cartItems.some((item: any) => item._id === service?._id), 
+    [cartItems, service]);
 
-    if (loading) {
-        return (
-            <div className="h-screen flex flex-col items-center justify-center gap-4 bg-white">
-                <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                <p className="font-black uppercase tracking-widest text-gray-400 animate-pulse">Loading Details...</p>
+    if (loading) return <DetailSkeleton />;
+
+    if (!service) return (
+        <div className="h-screen flex flex-col items-center justify-center gap-6 bg-slate-50">
+            <div className="p-6 bg-white rounded-full shadow-xl">
+                <Zap size={48} className="text-blue-500 fill-blue-500" />
             </div>
-        );
-    }
-
-    if (!service) {
-        return (
-            <div className="h-screen flex flex-col items-center justify-center gap-6">
-                <p className="text-xl font-bold text-gray-400 uppercase tracking-widest">Service not found</p>
-                <Button onClick={() => navigate(-1)} className="rounded-full px-8">Go Back</Button>
+            <div className="text-center">
+                <h3 className="text-2xl font-black text-slate-900">Service Not Found</h3>
+                <p className="text-slate-500 mt-2">The link might be broken or the service was moved.</p>
             </div>
-        );
-    }
-
-    const isItemInCart = cartItems.some((item: any) => item._id === service._id);
+            <Button onClick={() => navigate(-1)} variant="outline" className="rounded-2xl px-8 h-14 font-bold border-2">
+                Return to Directory
+            </Button>
+        </div>
+    );
 
     return (
-        <div className="min-h-screen bg-white pb-20">
+        <div className="min-h-screen bg-[#F8FAFC] pb-24 md:pb-32 font-sans selection:bg-blue-100 selection:text-blue-900">
             <Helmet>
-                <title>{service.seo?.metaTitle || `${service.name} | Professional Home Service`}</title>
-                <meta name="description" content={service.seo?.metaDescription || service.description} />
-                <meta name="keywords" content={service.seo?.keywords?.join(', ')} />
-                <link rel="canonical" href={window.location.href} />
-                
-                <meta property="og:title" content={service.seo?.metaTitle || service.name} />
-                <meta property="og:description" content={service.seo?.metaDescription || service.description} />
-                <meta property="og:image" content={service.image} />
-                <meta property="og:url" content={window.location.href} />
-                <meta property="og:type" content="website" />
-
-                {jsonLd && (
-                    <script type="application/ld+json">
-                        {JSON.stringify(jsonLd)}
-                    </script>
-                )}
+                <title>{service.name} | HouseXpertz</title>
+                <meta name="description" content={service.description} />
             </Helmet>
 
-            <div className="relative h-[45vh] md:h-[65vh] w-full overflow-hidden">
-                <motion.img 
-                    initial={{ scale: 1.1 }}
-                    animate={{ scale: 1 }}
-                    transition={{ duration: 1.5, ease: "easeOut" }}
-                    src={service.image || '/placeholder-service.jpg'} 
-                    alt={service.name} 
-                    className="w-full h-full object-cover" 
+            {/* --- HERO SECTION --- */}
+            <div className="relative h-[40vh] md:h-[65vh] w-full overflow-hidden bg-slate-900">
+                <img 
+                    src={service.image || '/placeholder.jpg'} 
+                    className="w-full h-full object-cover opacity-70 transition-transform duration-1000 hover:scale-110" 
+                    alt={service.name}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#F8FAFC] via-transparent to-black/40" />
                 
                 <button 
                     onClick={() => navigate(-1)}
-                    className="absolute top-10 left-6 p-3 bg-white/10 backdrop-blur-md rounded-full text-white border border-white/20 hover:bg-white hover:text-black transition-all z-20"
+                    className="absolute top-6 left-6 p-4 bg-white/10 backdrop-blur-xl rounded-2xl text-white border border-white/20 hover:bg-white hover:text-black transition-all duration-300 z-20 shadow-2xl"
                 >
-                    <ArrowLeft size={24} />
+                    <ArrowLeft size={22} />
                 </button>
             </div>
 
-            <motion.div 
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                className="max-w-4xl mx-auto px-6 -mt-24 relative z-10"
-            >
-                <div className="bg-white rounded-[3.5rem] p-8 md:p-14 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] border border-gray-50">
-                    <div className="flex flex-col md:flex-row justify-between items-start gap-8">
-                        <div className="space-y-5">
-                            <div className="flex items-center gap-3">
-                                <span className="px-5 py-1.5 bg-blue-600 text-white rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-blue-100">
-                                    {/* Using service.category name if available for better display */}
-                                    {service.category?.name || 'Professional Service'}
+            {/* --- CONTENT LAYOUT --- */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 md:-mt-40 relative z-10">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                    
+                    {/* LEFT COLUMN: PRIMARY INFO */}
+                    <div className="lg:col-span-8 space-y-8">
+                        <section className="bg-white rounded-[2.5rem] p-6 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100">
+                            <div className="flex flex-wrap items-center gap-3 mb-8">
+                                <span className="px-4 py-1.5 bg-blue-600 text-[10px] font-black text-white rounded-lg uppercase tracking-[0.2em]">
+                                    {service.category?.name || 'PREMIUM'}
                                 </span>
-                                <div className="flex items-center gap-1.5 text-amber-500 bg-amber-50 px-3 py-1 rounded-full border border-amber-100">
-                                    <Star size={14} fill="currentColor" />
-                                    <span className="text-xs font-black text-amber-700">
-                                        {service.rating || '4.8'} ({service.reviewsCount || '1.2k'})
-                                    </span>
+                                <div className="flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-600 rounded-lg border border-amber-100">
+                                    <StarIcon size={14} fill="currentColor" />
+                                    <span className="text-sm font-black">{service.rating || '4.9'}</span>
                                 </div>
                             </div>
-                            <h1 className="text-5xl md:text-7xl font-black text-gray-900 tracking-tighter leading-[0.85]">
+
+                            <h1 className="text-4xl md:text-7xl font-black text-slate-900 tracking-tight leading-[1.05] mb-8">
                                 {service.name}
                             </h1>
-                        </div>
-                        <div className="bg-slate-50 p-6 md:p-8 rounded-[2.5rem] border border-slate-100 text-right min-w-[180px]">
-                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Price starting at</p>
-                            <p className="text-5xl font-black text-gray-900 tracking-tighter">₹{service.price}</p>
-                        </div>
+                            
+                            <p className="text-slate-500 text-lg md:text-2xl leading-relaxed font-medium max-w-3xl">
+                                {service.description}
+                            </p>
+
+                            {/* BENTO STATS GRID */}
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12">
+                                {[
+                                    { icon: Clock, label: 'Duration', val: service.duration, col: 'text-emerald-600', bg: 'bg-emerald-50/50' },
+                                    { icon: ShieldCheck, label: 'Warranty', val: service.warranty || '30 Days', col: 'text-blue-600', bg: 'bg-blue-50/50' },
+                                    { icon: Award, label: 'Rank', val: 'Top 1%', col: 'text-purple-600', bg: 'bg-purple-50/50' },
+                                    { icon: HardHat, label: 'Expert', val: 'Verified', col: 'text-orange-600', bg: 'bg-orange-50/50' },
+                                ].map((item, idx) => (
+                                    <div key={idx} className={`${item.bg} p-6 rounded-[2rem] border border-white shadow-sm transition-all hover:shadow-md hover:scale-[1.02]`}>
+                                        <item.icon className={`${item.col} mb-4`} size={24} />
+                                        <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest mb-1">{item.label}</p>
+                                        <p className="text-sm font-black text-slate-800 uppercase tracking-tight">{item.val}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+
+                        {/* FEATURES SECTION */}
+                        <section className="bg-white rounded-[2.5rem] p-8 md:p-12 border border-slate-100 shadow-sm">
+                            <div className="flex items-center gap-4 mb-10">
+                                <div className="p-3 bg-blue-50 rounded-2xl text-blue-600">
+                                    <Sparkles size={24} />
+                                </div>
+                                <h3 className="text-2xl font-black text-slate-900 tracking-tight">Standard Inclusions</h3>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {(service.features || ["Fully Background Verified", "Professional Equipment Included", "Post-Service Cleanup", "Safety-First Protocol"]).map((feat, i) => (
+                                    <div key={i} className="flex items-center gap-4 p-6 bg-slate-50/80 rounded-3xl border border-transparent hover:border-blue-100 hover:bg-white transition-all group">
+                                        <div className="shrink-0 w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                            <Check size={14} className="text-white" strokeWidth={4} />
+                                        </div>
+                                        <span className="font-bold text-slate-700">{feat}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
                     </div>
 
-                    {/* Stats Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-12 border-y border-gray-100 py-12">
-                        {[
-                            { icon: Clock, label: 'Duration', val: service.duration, bg: 'bg-emerald-50', text: 'text-emerald-600' },
-                            { icon: ShieldCheck, label: 'Warranty', val: service.warranty || '30 Days', bg: 'bg-blue-50', text: 'text-blue-600' },
-                            { icon: Sparkles, label: 'Safety', val: 'Masks & Sanitize', bg: 'bg-purple-50', text: 'text-purple-600' }
-                        ].map((stat, i) => (
-                            <div key={i} className="flex items-center gap-4 group">
-                                <div className={`p-4 ${stat.bg} rounded-2xl ${stat.text} group-hover:scale-110 transition-transform duration-300`}>
-                                    <stat.icon size={26} />
-                                </div>
+                    {/* RIGHT COLUMN: STICKY BOOKING CARD */}
+                    <div className="lg:col-span-4 lg:sticky lg:top-8 space-y-6">
+                        <div className="bg-white rounded-[2.5rem] p-8 shadow-[0_20px_60px_rgba(0,0,0,0.06)] border border-slate-200">
+                            <div className="flex justify-between items-start mb-8">
                                 <div>
-                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{stat.label}</p>
-                                    <p className="font-bold text-gray-900 text-lg tracking-tight">{stat.val}</p>
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Standard Price</p>
+                                    <h2 className="text-5xl font-black text-slate-900 tracking-tighter">₹{service.price}</h2>
+                                </div>
+                                <div className="bg-emerald-50 text-emerald-600 p-2 rounded-xl border border-emerald-100">
+                                    <TrendingUp size={20} />
                                 </div>
                             </div>
-                        ))}
-                    </div>
 
-                    {/* Description and Features */}
-                    <div className="space-y-8">
-                        <div>
-                            <h3 className="text-xs font-black text-blue-600 uppercase tracking-[0.3em] mb-4">The Excellence Standard</h3>
-                            <p className="text-gray-500 text-lg leading-relaxed font-medium">
-                                {service.description || "Precision-driven execution using high-quality materials to ensure satisfaction."}
-                            </p>
-                        </div>
-                        
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            {(service.features || ["Expert Professional", "Transparent Pricing", "Genuine Spare Parts", "Premium Post-Service Clean"]).map((item: string) => (
-                                <div key={item} className="flex items-center gap-3 p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
-                                    <CheckCircle2 size={18} className="text-emerald-500 shrink-0" />
-                                    <span className="text-sm font-bold text-gray-700">{item}</span>
+                            <Button 
+                                onClick={() => addToCart(service)}
+                                disabled={isItemInCart}
+                                className={`w-full h-20 rounded-[1.5rem] font-black text-lg uppercase tracking-widest transition-all shadow-xl active:scale-95 ${
+                                    isItemInCart 
+                                    ? 'bg-emerald-500 hover:bg-emerald-500 cursor-default' 
+                                    : 'bg-slate-900 hover:bg-blue-600 text-white'
+                                }`}
+                            >
+                                {isItemInCart ? (
+                                    <span className="flex items-center gap-3">In Your Bag <CheckCircle2 /></span>
+                                ) : (
+                                    <span className="flex items-center gap-3">Reserve Now <Shield size={20} /></span>
+                                )}
+                            </Button>
+
+                            <div className="mt-8 pt-8 border-t border-slate-100 space-y-4">
+                                <div className="flex items-center gap-4 text-slate-400">
+                                    <ShieldIcon size={18} className="text-blue-500" />
+                                    <span className="text-xs font-bold uppercase tracking-tight">100% Satisfaction Guarantee</span>
                                 </div>
-                            ))}
+                                <div className="flex items-center gap-4 text-slate-400">
+                                    <Info size={18} className="text-blue-500" />
+                                    <span className="text-xs font-bold uppercase tracking-tight">Free Cancellation up to 2hrs</span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    {/* Add to Cart Button */}
-                    <div className="mt-14">
-                        <Button 
-                            onClick={() => addToCart(service)}
-                            disabled={isItemInCart}
-                            className={`w-full py-10 rounded-[2.5rem] font-black uppercase tracking-[0.2em] text-md transition-all shadow-2xl active:scale-95 ${
-                                isItemInCart 
-                                ? 'bg-emerald-500 text-white cursor-not-allowed' 
-                                : 'bg-gray-900 text-white hover:bg-blue-600 hover:shadow-blue-200'
-                            }`}
-                        >
-                            <span className="flex items-center gap-3">
-                                {isItemInCart ? "Successfully Added" : "Confirm & Add to Cart"} 
-                                <ShoppingBag className={`w-6 h-6 ${isItemInCart ? 'animate-bounce' : ''}`} />
-                            </span>
-                        </Button>
+                        {/* TRUST PROMISE */}
+                        <div className="bg-slate-950 text-white rounded-[2.5rem] p-8 relative overflow-hidden shadow-2xl group">
+                            <div className="relative z-10">
+                                <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center mb-6 border border-white/10 group-hover:rotate-12 transition-transform">
+                                    <ShieldCheck className="text-blue-400" size={24} />
+                                </div>
+                                <h4 className="font-black text-2xl mb-3 tracking-tight">The HouseXpertz Promise</h4>
+                                <p className="text-slate-400 text-sm leading-relaxed font-medium">
+                                    Professionalism isn't just a word for us—it's the standard. Every pro is vetted through a 5-step background check.
+                                </p>
+                            </div>
+                            <Zap className="absolute -right-6 -bottom-6 text-white/5 transition-colors group-hover:text-blue-500/10" size={160} />
+                        </div>
                     </div>
                 </div>
-            </motion.div>
+
+                {/* FAQ & HELP */}
+                <div className="max-w-4xl mx-auto mt-24">
+                    <div className="flex flex-col items-center text-center mb-16 space-y-4">
+                        <div className="w-16 h-1 bg-blue-600 rounded-full" />
+                        <h2 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">Service FAQ</h2>
+                        <p className="text-slate-500 font-medium">Everything you need to know before booking</p>
+                    </div>
+                    
+                    <Accordion type="single" collapsible className="w-full space-y-4">
+                        {[
+                            { q: "What if I am not satisfied with the quality?", a: "We offer a 7-day service warranty. If anything isn't up to mark, we'll send a senior professional to fix it at zero cost." },
+                            { q: "Do I need to provide tools or supplies?", a: "No. Our experts arrive fully equipped with professional-grade tools and industry-standard supplies." },
+                            { q: "Are the prices fixed?", a: "Yes, the price you see is the final price. No hidden 'convenience' or 'travel' fees will be added at checkout." }
+                        ].map((faq, i) => (
+                            <AccordionItem key={i} value={`item-${i}`} className="border border-slate-200 rounded-[2rem] px-8 bg-white shadow-sm overflow-hidden">
+                                <AccordionTrigger className="hover:no-underline font-black text-slate-800 py-7 text-left text-lg">
+                                    {faq.q}
+                                </AccordionTrigger>
+                                <AccordionContent className="text-slate-500 font-medium text-base pb-8 leading-relaxed">
+                                    {faq.a}
+                                </AccordionContent>
+                            </AccordionItem>
+                        ))}
+                    </Accordion>
+                </div>
+            </div>
+            
+            {/* MOBILE FLOATING ACTION BAR */}
+            <div className="lg:hidden fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-2xl border-t border-slate-100 z-[100] flex items-center justify-between shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
+               <div className="pl-2">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Total</p>
+                  <p className="text-2xl font-black text-slate-900 leading-none tracking-tighter">₹{service.price}</p>
+               </div>
+               <Button 
+                    onClick={() => addToCart(service)}
+                    disabled={isItemInCart}
+                    className={`h-14 px-10 rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg active:scale-95 transition-all ${
+                        isItemInCart ? 'bg-emerald-500' : 'bg-slate-900'
+                    }`}
+                >
+                    {isItemInCart ? "Added" : "Book Now"}
+                </Button>
+            </div>
         </div>
     );
 };

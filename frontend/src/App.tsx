@@ -32,7 +32,7 @@ import PartnerManagement from './components/AdminDashboard/PartnerManagement';
 import OfferList from './components/AdminDashboard/OfferList';
 import AdminSettings from './components/AdminDashboard/AdminSettings';
 import ServiceList from './pages/ServiceList';
-import ServiceDetailPage from './components/ServiceDetail';
+import ServiceDetail from './pages/ServiceDetailPage';
 
 function App() {
   useUserSync();
@@ -55,7 +55,7 @@ function App() {
               <Route path="/services/:categorySlug" element={<ServiceList />} />
               
               {/* Dynamic Service Route: e.g., /service/detail/split-ac-gas-leak-fix */}
-              <Route path="/service/detail/:serviceSlug" element={<ServiceDetailPage />} />
+              <Route path="/service/detail/:serviceSlug" element={<ServiceDetail />} />
               
               <Route path='/blogs' element={<BlogPage />} />
               <Route path="/contact" element={<ContactPage />} />
