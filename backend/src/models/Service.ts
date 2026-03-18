@@ -1,6 +1,5 @@
 import mongoose, { Document, Schema, model } from 'mongoose';
 
-// Interface for TypeScript
 export interface IService extends Document {
     name: string;
     slug: string;
@@ -21,27 +20,16 @@ export interface IService extends Document {
 }
 
 const serviceSchema = new Schema<IService>({
-    name: { 
-        type: String, 
-        required: true,
-        trim: true 
-    },
+    name: { type: String, required: true, trim: true },
     slug: { 
         type: String, 
         unique: true, 
         lowercase: true, 
         trim: true,
-        required: true // Keeping required since we will provide it manually
-    },
-    category: { 
-        type: Schema.Types.ObjectId, 
-        ref: 'Category', 
         required: true 
     },
-    price: { 
-        type: Number, 
-        required: true 
-    },
+    category: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
+    price: { type: Number, required: true },
     description: { type: String },
     image: { type: String }, 
     rating: { type: Number, default: 4.8 },
@@ -54,7 +42,20 @@ const serviceSchema = new Schema<IService>({
     }
 }, { timestamps: true });
 
-// Index for fast lookups by slug
+
+// ✅ FIXED PRE SAVE HOOK (NO next, NO TYPE ERROR)
+serviceSchema.pre('save', async function () {
+    if (this.isModified('name')) {
+        this.slug = this.name
+            .toLowerCase()
+            .trim()
+            .replace(/[^\w\s-]/g, '') 
+            .replace(/\s+/g, '-');
+    }
+});
+
+
+// Optional: ensure slug uniqueness index
 serviceSchema.index({ slug: 1 });
 
 export const Service = model<IService>('Service', serviceSchema);
