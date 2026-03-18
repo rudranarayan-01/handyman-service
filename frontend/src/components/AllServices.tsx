@@ -11,7 +11,7 @@ const AllServices = () => {
     // 1. Grab the slug from the URL path /services/:categorySlug
     const { categorySlug } = useParams<{ categorySlug: string }>(); 
     const navigate = useNavigate();
-    const location = useLocation();
+    // const location = useLocation();
     const { cartItems, totalAmount } = useCart();
 
     const [services, setServices] = useState<any[]>([]);
