@@ -102,6 +102,52 @@ router.get('/category-stats', async (req, res) => {
     }
 });
 
+router.get('/related/:slug',async (req, res) => {
+  try {
+        const { slug } = req.params;
+
+        // 1. Find the current service to get its category
+        const currentService = await Service.findOne({ slug });
+
+        if (!currentService) {
+            return res.status(440).json({ success: false, message: "Service not found" });
+        }
+
+        // 2. Find services in the same category (excluding current)
+        let related = await Service.find({
+            category: currentService.category,
+            _id: { $ne: currentService._id }
+        })
+        .limit(3)
+        .populate('category', 'name');
+
+        // 3. "Heavy" Logic: If category is thin, pull top-rated global services
+        if (related.length < 3) {
+            const fillCount = 3 - related.length;
+            const fallback = await Service.find({
+                _id: { $ne: currentService._id, $nin: related.map(r => r._id) }
+            })
+            .sort({ rating: -1 }) // Get best rated ones
+            .limit(fillCount)
+            .populate('category', 'name');
+
+            related = [...related, ...fallback];
+        }
+
+        res.status(200).json({
+            success: true,
+            count: related.length,
+            data: related
+        });
+    } catch (error) {
+        console.error("Related Services Error:", error);
+        res.status(500).json({ success: false, message: "Server Error" });
+    }
+});
+
+
+
+
 router.get('/top-booked', async (req, res) => {
     try {
         const topBookedData = await Order.aggregate([

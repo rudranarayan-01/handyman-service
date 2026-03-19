@@ -18,7 +18,7 @@ export const categories = [
     {
         name: "Cleaning & Pest Control",
         image: "cleaning", // Matches your .jpg link
-        slug: "hygiene-&-deep-cleaning"
+        slug: "hygiene-and-deep-cleaning"
     },
     {
         name: "Plumbing Services",
@@ -28,16 +28,16 @@ export const categories = [
     {
         name: "Repairing and Maintenance",
         image: "ac-repair", // Matches your .jpg link
-        slug: "ac-&-cooling-solutions"
+        slug: "ac-and-cooling-solutions"
     },
     {
         name: "Women's Saloon",
         image: "makeup", // Matches your .jpg link
-        slug: "personal-grooming-&-wellness"
+        slug: "personal-grooming"
     },
     {
         name: "Ayurvedic Massage",
         image: "home-massage-service", // This one is already working
-        slug: "personal-grooming-&-wellness"
+        slug: "personal-grooming"
     },
 ];

@@ -10,7 +10,7 @@ const CategoryCard = ({ cat }: { cat: typeof categories[0] }) => {
 
     return (
         <Link
-            to={`/categories/${cat.slug}`}
+            to={`/services/${cat.slug}`}
             className="group flex flex-col items-center cursor-pointer transform-gpu"
         >
             <div className="relative rounded-2xl w-full aspect-square mb-3 overflow-hidden shadow-md bg-white border border-slate-100 transition-all duration-300 group-hover:shadow-xl group-hover:border-blue-100">
