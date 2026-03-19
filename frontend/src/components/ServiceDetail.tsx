@@ -4,9 +4,9 @@ import { Helmet } from 'react-helmet-async';
 import {
     CheckCircle2, Clock, ShieldCheck, ArrowLeft, Zap,
     Award, Check, StarIcon, Shield,
-    Info, HardHat, Sparkles, TrendingUp,
+    HardHat, Sparkles, TrendingUp,
     Copy, Lock, Gift, Tag, MessageSquare,
-    ChevronRight, Users, Verified
+    ChevronRight, Verified
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/context/CartContext';
