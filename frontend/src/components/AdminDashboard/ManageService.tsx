@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useAuth, useUser } from '@clerk/clerk-react';
-import { Plus, Edit3, Trash2, X, Star, Search, PackageOpen, Globe, Layers, IndianRupee } from 'lucide-react';
+import { Plus, Edit3, Trash2, X, Star, Search, PackageOpen, Globe, IndianRupee } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/api/api';
 import { Button } from '../ui/button';
