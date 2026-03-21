@@ -33,7 +33,6 @@ const DashboardSkeleton = () => (
 export const AdminDashboard = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { user, isLoaded } = useUser();
-    const { signOut } = useClerk();
     
     const navigate = useNavigate();
     const location = useLocation();
