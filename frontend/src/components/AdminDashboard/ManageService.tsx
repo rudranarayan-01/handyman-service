@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useAuth, useUser } from '@clerk/clerk-react';
-import { Plus, Edit3, Trash2, X, Star, Search, PackageOpen, Globe } from 'lucide-react';
+import { Plus, Edit3, Trash2, X, Star, Search, PackageOpen, Globe, Layers, IndianRupee } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/api/api';
 import { Button } from '../ui/button';
@@ -12,11 +12,20 @@ interface Category {
     name: string;
 }
 
+interface Variant {
+    title: string;
+    price: number;
+    originalPrice?: number;
+}
+
 interface ServiceData {
     _id: string;
     name: string;
     category: Category | string;
-    price: number;
+    basePrice: number; // Updated from price
+    pricingType: 'fixed' | 'variant' | 'quantity' | 'distance';
+    unitName?: string;
+    variants: Variant[];
     description: string;
     image: string;
     duration: string;
@@ -60,16 +69,19 @@ const ManageServices = () => {
     const [searchQuery, setSearchQuery] = useState("");
 
     const [formData, setFormData] = useState({
-        name: '', 
-        category: '', 
-        price: '', 
-        description: '', 
-        image: '', 
+        name: '',
+        category: '',
+        basePrice: '',
+        pricingType: 'fixed',
+        unitName: '',
+        variants: [] as Variant[],
+        description: '',
+        image: '',
         duration: '',
         slug: '',
         metaTitle: '',
         metaDescription: '',
-        keywords: '' // Stored as string for the input, converted to array on submit
+        keywords: ''
     });
 
     const { getToken } = useAuth();
@@ -85,12 +97,10 @@ const ManageServices = () => {
             setLoading(true);
             const token = await getToken();
             const config = { headers: { Authorization: `Bearer ${token}` } };
-
             const [servicesRes, categoriesRes] = await Promise.all([
                 api.get('/admin/services', config),
                 api.get('/categories', config)
             ]);
-
             setServices(servicesRes.data);
             setCategories(categoriesRes.data);
         } catch (error) {
@@ -132,7 +142,10 @@ const ManageServices = () => {
             setFormData({
                 name: service.name,
                 category: typeof service.category === 'object' ? service.category._id : service.category,
-                price: service.price.toString(),
+                basePrice: service.basePrice?.toString() || '',
+                pricingType: service.pricingType || 'fixed',
+                unitName: service.unitName || '',
+                variants: service.variants || [],
                 description: service.description || '',
                 image: service.image || '',
                 duration: service.duration || '',
@@ -144,10 +157,34 @@ const ManageServices = () => {
             setIsNewCategory(false);
         } else {
             setEditingId(null);
-            setFormData({ name: '', category: '', price: '', description: '', image: '', duration: '', slug: '', metaTitle: '', metaDescription: '', keywords: '' });
+            setFormData({
+                name: '', category: '', basePrice: '', pricingType: 'fixed', unitName: '',
+                variants: [], description: '', image: '', duration: '', slug: '',
+                metaTitle: '', metaDescription: '', keywords: ''
+            });
             setIsNewCategory(categories.length === 0);
         }
         setShowModal(true);
+    };
+
+    const handleAddVariant = () => {
+        setFormData({
+            ...formData,
+            variants: [...formData.variants, { title: '', price: 0 }]
+        });
+    };
+
+    const handleVariantChange = (index: number, field: keyof Variant, value: any) => {
+        const updated = [...formData.variants];
+        updated[index] = { ...updated[index], [field]: value };
+        setFormData({ ...formData, variants: updated });
+    };
+
+    const handleRemoveVariant = (index: number) => {
+        setFormData({
+            ...formData,
+            variants: formData.variants.filter((_, i) => i !== index)
+        });
     };
 
     const handleDelete = async (id: string, name: string) => {
@@ -171,7 +208,6 @@ const ManageServices = () => {
 
         const action = async () => {
             let finalCategoryId = formData.category;
-
             if (isNewCategory) {
                 const catRes = await api.post('/categories/add', { name: formData.category }, { headers: { Authorization: `Bearer ${token}` } });
                 finalCategoryId = catRes.data._id;
@@ -179,13 +215,9 @@ const ManageServices = () => {
             }
 
             const payload = {
-                name: formData.name,
+                ...formData,
                 category: finalCategoryId,
-                price: formData.price,
-                description: formData.description,
-                image: formData.image,
-                duration: formData.duration,
-                slug: formData.slug,
+                basePrice: Number(formData.basePrice),
                 seo: {
                     metaTitle: formData.metaTitle,
                     metaDescription: formData.metaDescription,
@@ -260,7 +292,9 @@ const ManageServices = () => {
                                                 alt={service.name}
                                             />
                                             <div className="absolute bottom-2 left-2 px-2 md:px-3 py-1 bg-white/90 backdrop-blur-md rounded-lg md:rounded-xl shadow-sm">
-                                                <span className="text-indigo-600 font-black text-[10px] md:text-sm">₹{service.price}</span>
+                                                <span className="text-indigo-600 font-black text-[10px] md:text-sm">
+                                                    {service.pricingType !== 'fixed' && "From "}₹{service.basePrice}
+                                                </span>
                                             </div>
 
                                             <div className="absolute top-2 right-2 flex flex-col gap-1.5 md:gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all">
@@ -302,7 +336,7 @@ const ManageServices = () => {
             {showModal && (
                 <div className="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-0 md:p-10">
                     <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-md" onClick={() => setShowModal(false)} />
-                    <div className="relative bg-white w-full max-w-2xl rounded-t-[2.5rem] md:rounded-[3rem] shadow-2xl flex flex-col max-h-[95vh] animate-in slide-in-from-bottom md:zoom-in-95 duration-300">
+                    <div className="relative bg-white w-full max-w-2xl rounded-t-[2.5rem] md:rounded-[3rem] shadow-2xl flex flex-col max-h-[90vh] animate-in slide-in-from-bottom md:zoom-in-95 duration-300">
                         <div className="p-6 md:p-8 pb-4 flex justify-between items-center">
                             <h2 className="text-2xl md:text-3xl font-black text-slate-900">
                                 {editingId ? 'Edit Service' : 'New Entry'}
@@ -313,7 +347,7 @@ const ManageServices = () => {
                         </div>
 
                         <div className="flex-1 overflow-y-auto no-scrollbar p-6 md:p-8 pt-0">
-                            <form onSubmit={handleSubmit} id="service-form" className="space-y-6">
+                            <form onSubmit={handleSubmit} id="service-form" className="space-y-8">
                                 {/* Category Section */}
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Category Control</label>
@@ -336,31 +370,90 @@ const ManageServices = () => {
                                             <Button type="button" onClick={() => setIsNewCategory(false)} className="px-4 bg-slate-100 text-slate-600 rounded-2xl font-bold text-xs uppercase">Back</Button>
                                         </div>
                                     )}
+                                     <div className="md:col-span-2">
+                                        <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Service Title</label>
+                                        <input required className="w-full p-4 bg-slate-50 rounded-2xl ring-1 ring-slate-100 font-bold focus:ring-2 focus:ring-indigo-500 outline-none" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
+                                    </div>
                                 </div>
 
-                                {/* Main Info Grid */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                                    <div className="md:col-span-2">
-                                        <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Service Title</label>
-                                        <input required className="w-full p-4 bg-slate-50 rounded-2xl border-none ring-1 ring-slate-100 font-bold focus:ring-2 focus:ring-indigo-500 outline-none" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
+                                {/* Pricing Strategy Section */}
+                                <div className="space-y-4 p-4 md:p-6 bg-slate-50 rounded-[2rem] border border-slate-100">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <IndianRupee size={16} className="text-indigo-500" />
+                                        <h3 className="text-sm font-black text-slate-800 uppercase tracking-tight">Pricing Architecture</h3>
                                     </div>
-                                    <div>
-                                        <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Price (INR)</label>
-                                        <input type="number" required className="w-full p-4 bg-slate-50 rounded-2xl border-none ring-1 ring-slate-100 font-bold outline-none" value={formData.price} onChange={e => setFormData({ ...formData, price: e.target.value })} />
+                                    
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Base Price (INR)</label>
+                                            <input type="number" required className="w-full p-4 bg-white rounded-2xl ring-1 ring-slate-200 font-bold outline-none" value={formData.basePrice} onChange={e => setFormData({ ...formData, basePrice: e.target.value })} />
+                                        </div>
+                                        <div>
+                                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Pricing Model</label>
+                                            <select className="w-full p-4 bg-white rounded-2xl ring-1 ring-slate-200 font-bold outline-none" value={formData.pricingType} onChange={e => setFormData({ ...formData, pricingType: e.target.value as any })}>
+                                                <option value="fixed">Fixed Rate</option>
+                                                <option value="variant">Variants (Types)</option>
+                                                <option value="quantity">Quantity Based</option>
+                                                <option value="distance">Distance Based</option>
+                                            </select>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Duration</label>
-                                        <input placeholder="Ex: 45 Mins" className="w-full p-4 bg-slate-50 rounded-2xl border-none ring-1 ring-slate-100 font-bold outline-none" value={formData.duration} onChange={e => setFormData({ ...formData, duration: e.target.value })} />
-                                    </div>
+
+                                    {(formData.pricingType !== 'fixed') && (
+                                        <div className="space-y-3 pt-4 border-t border-slate-200 animate-in fade-in zoom-in-95">
+                                            <div className="flex justify-between items-center px-1">
+                                                <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Active Options / Tiers</label>
+                                                <Button type="button" onClick={handleAddVariant} className="h-8 px-3 bg-indigo-600 text-white rounded-lg text-[10px] font-black uppercase flex items-center gap-1">
+                                                    <Plus size={12} /> Add Variant
+                                                </Button>
+                                            </div>
+                                            
+                                            <div className="space-y-2">
+                                                {formData.variants.map((v, i) => (
+                                                    <div key={i} className="flex gap-2 items-center bg-white p-2 rounded-xl shadow-sm border border-slate-100">
+                                                        <input 
+                                                            placeholder="Title (e.g. 2 Bathrooms)" 
+                                                            className="flex-1 bg-slate-50 p-2 border-2 border-slate-300 rounded-lg text-xs font-bold outline-none" 
+                                                            value={v.title} 
+                                                            onChange={e => handleVariantChange(i, 'title', e.target.value)}
+                                                        />
+                                                        <input 
+                                                            type="number" 
+                                                            placeholder="Price" 
+                                                            className="w-24 bg-slate-50 p-2 border-2 border-slate-300 rounded-lg text-xs font-bold outline-none" 
+                                                            value={v.price} 
+                                                            onChange={e => handleVariantChange(i, 'price', Number(e.target.value))}
+                                                        />
+                                                        <button type="button" onClick={() => handleRemoveVariant(i)} className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg">
+                                                            <X size={14} />
+                                                        </button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* General Info Grid */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                   
                                     <div className="md:col-span-2">
                                         <ServiceImageUpload
                                             value={formData.image}
                                             onChange={(url) => setFormData({ ...formData, image: url })}
                                         />
                                     </div>
+                                    <div>
+                                        <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Display Duration</label>
+                                        <input placeholder="Ex: 45 Mins" className="w-full p-4 bg-slate-50 rounded-2xl ring-1 ring-slate-100 font-bold outline-none" value={formData.duration} onChange={e => setFormData({ ...formData, duration: e.target.value })} />
+                                    </div>
+                                    <div>
+                                        <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Unit Name (Optional)</label>
+                                        <input placeholder="Ex: KM, Person, Room" className="w-full p-4 bg-slate-50 rounded-2xl ring-1 ring-slate-100 font-bold outline-none" value={formData.unitName} onChange={e => setFormData({ ...formData, unitName: e.target.value })} />
+                                    </div>
                                     <div className="md:col-span-2">
                                         <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Description</label>
-                                        <textarea rows={3} className="w-full p-4 bg-slate-50 rounded-2xl border-none ring-1 ring-slate-100 font-medium outline-none text-sm" value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} />
+                                        <textarea rows={3} className="w-full p-4 bg-slate-50 rounded-2xl ring-1 ring-slate-100 font-medium outline-none text-sm" value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} />
                                     </div>
 
                                     {/* SEO SECTION */}
@@ -372,19 +465,15 @@ const ManageServices = () => {
                                         <div className="space-y-4 bg-slate-50/50 p-4 rounded-3xl border border-slate-100">
                                             <div>
                                                 <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Custom Slug (URL)</label>
-                                                <input placeholder="service-url-path" className="w-full p-3 bg-white rounded-xl border-none ring-1 ring-slate-100 font-bold text-sm outline-none" value={formData.slug} onChange={e => setFormData({ ...formData, slug: e.target.value })} />
+                                                <input placeholder="service-url-path" className="w-full p-3 bg-white rounded-xl ring-1 ring-slate-100 font-bold text-sm outline-none" value={formData.slug} onChange={e => setFormData({ ...formData, slug: e.target.value })} />
                                             </div>
                                             <div>
                                                 <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Meta Title</label>
-                                                <input placeholder="SEO Title for Google..." className="w-full p-3 bg-white rounded-xl border-none ring-1 ring-slate-100 font-bold text-sm outline-none" value={formData.metaTitle} onChange={e => setFormData({ ...formData, metaTitle: e.target.value })} />
-                                            </div>
-                                            <div>
-                                                <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Meta Description</label>
-                                                <textarea placeholder="Brief summary for search results..." rows={2} className="w-full p-3 bg-white rounded-xl border-none ring-1 ring-slate-100 font-medium text-sm outline-none" value={formData.metaDescription} onChange={e => setFormData({ ...formData, metaDescription: e.target.value })} />
+                                                <input placeholder="SEO Title for Google..." className="w-full p-3 bg-white rounded-xl ring-1 ring-slate-100 font-bold text-sm outline-none" value={formData.metaTitle} onChange={e => setFormData({ ...formData, metaTitle: e.target.value })} />
                                             </div>
                                             <div>
                                                 <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Keywords (Comma Separated)</label>
-                                                <input placeholder="repair, ac, cleaning..." className="w-full p-3 bg-white rounded-xl border-none ring-1 ring-slate-100 font-bold text-sm outline-none" value={formData.keywords} onChange={e => setFormData({ ...formData, keywords: e.target.value })} />
+                                                <input placeholder="repair, ac, cleaning..." className="w-full p-3 bg-white rounded-xl ring-1 ring-slate-100 font-bold text-sm outline-none" value={formData.keywords} onChange={e => setFormData({ ...formData, keywords: e.target.value })} />
                                             </div>
                                         </div>
                                     </div>
@@ -393,7 +482,7 @@ const ManageServices = () => {
                         </div>
 
                         <div className="p-6 md:p-8 border-t border-slate-50">
-                            <Button form="service-form" type="submit" className="w-full py-4 md:py-6 bg-slate-900 text-white rounded-2xl md:rounded-3xl font-black text-lg md:text-xl hover:bg-indigo-600 transition-all">
+                            <Button form="service-form" type="submit" className="w-full py-4 md:py-6 bg-slate-900 text-white rounded-2xl md:rounded-3xl font-black text-lg md:text-xl hover:bg-indigo-600 transition-all shadow-xl">
                                 {editingId ? 'Save Changes' : 'Confirm Entry'}
                             </Button>
                         </div>

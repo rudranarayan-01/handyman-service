@@ -12,8 +12,9 @@ interface Service {
     name: string;
     category: string;
     image: string;
-    price: number;
+    basePrice: number;
     rating?: string;
+    variants?: { price: number }[];
 }
 
 const ServiceSkeleton = () => (
@@ -69,7 +70,7 @@ const ServiceCard = ({ service }: { service: Service; index: number }) => {
                                 <Star size={12} className="fill-blue-500 text-blue-500" />
                                 <span className="text-xs font-bold text-blue-100">{service.rating || '4.9'}</span>
                             </div>
-                            <span className="text-2xl font-black text-white tracking-tighter">₹{service.price}</span>
+                            <span className="text-2xl font-black text-yellow-400 tracking-tighter">Starts from ₹{service.basePrice || service.variants?.[0]?.price}</span>
                         </div>
 
                         <div className="h-12 w-12 rounded-2xl bg-white flex items-center justify-center text-black shadow-lg lg:scale-0 lg:group-hover/card:scale-100 transition-all duration-300 transform-gpu">

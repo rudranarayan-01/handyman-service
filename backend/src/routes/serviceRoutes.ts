@@ -5,10 +5,12 @@ import { Category } from '../models/Categories';
 
 const router = express.Router();
 
+// 1. Fetch all services (for listing pages)
 router.get("/", async (req, res) => {
     try {
         const services = await Service.find()
-            .select('name slug price rating image seo')
+            // Updated to select basePrice and pricingType
+            .select('name slug basePrice pricingType unitName rating image seo')
             .populate('category', 'name slug');
         res.json(services);
     } catch (error) {
@@ -16,22 +18,23 @@ router.get("/", async (req, res) => {
     }
 });
 
+// 2. Simple list for search/dropdowns
 router.get ("/allService", async (req, res) => {
     try {
-        const services = await Service.find().select('name')
+        const services = await Service.find().select('name slug');
         res.json(services);
     } catch (error) {
         res.status(500).json({ error: "Failed to fetch services" });
     }
 });
 
-
+// 3. Detailed Service (including all variants)
 router.get('/details/:slug', async (req, res) => {
     try {
         const { slug } = req.params;
         
-        // Find the service in your database using the slug
-        const service = await Service.findOne({ slug: slug });
+        const service = await Service.findOne({ slug: slug })
+            .populate('category', 'name slug');
 
         if (!service) {
             return res.status(404).json({ message: "Service not found" });
@@ -43,12 +46,11 @@ router.get('/details/:slug', async (req, res) => {
     }
 });
 
-//  fetch services by category slug
+// 4. Fetch services by category slug
 router.get('/category/slug/:categorySlug', async (req, res) => {
     try {
         const { categorySlug } = req.params;
 
-        // Step 1: Find the category by its unique slug
         const categoryDoc = await Category.findOne({ slug: categorySlug });
 
         if (!categoryDoc) {
@@ -57,11 +59,9 @@ router.get('/category/slug/:categorySlug', async (req, res) => {
             });
         }
 
-        // Step 2: Fetch services linked to this ID
         const services = await Service.find({ category: categoryDoc._id })
-            .select('name slug price image rating seo');
+            .select('name slug basePrice pricingType unitName image rating seo');
 
-        // Step 3: Return services AND the category metadata (for the page header/SEO)
         res.json({
             category: categoryDoc,
             services: services
@@ -72,6 +72,7 @@ router.get('/category/slug/:categorySlug', async (req, res) => {
     }
 });
 
+// 5. Category Stats (Aggregated)
 router.get('/category-stats', async (req, res) => {
     try {
         const stats = await Service.aggregate([
@@ -90,7 +91,7 @@ router.get('/category-stats', async (req, res) => {
                     _id: 1,
                     count: 1,
                     name: "$details.name",
-                    slug: "$details.slug", // Critical for linking from stats to actual pages
+                    slug: "$details.slug",
                     categoryImage: "$details.image",
                     description: "$details.description"
                 }
@@ -102,32 +103,32 @@ router.get('/category-stats', async (req, res) => {
     }
 });
 
-router.get('/related/:slug',async (req, res) => {
+// 6. Related Services (Logic-based fallback)
+router.get('/related/:slug', async (req, res) => {
   try {
         const { slug } = req.params;
 
-        // 1. Find the current service to get its category
         const currentService = await Service.findOne({ slug });
 
         if (!currentService) {
             return res.status(440).json({ success: false, message: "Service not found" });
         }
 
-        // 2. Find services in the same category (excluding current)
         let related = await Service.find({
             category: currentService.category,
             _id: { $ne: currentService._id }
         })
+        .select('name slug basePrice pricingType image rating') // Select new fields
         .limit(3)
         .populate('category', 'name');
 
-        // 3. "Heavy" Logic: If category is thin, pull top-rated global services
         if (related.length < 3) {
             const fillCount = 3 - related.length;
             const fallback = await Service.find({
                 _id: { $ne: currentService._id, $nin: related.map(r => r._id) }
             })
-            .sort({ rating: -1 }) // Get best rated ones
+            .select('name slug basePrice pricingType image rating')
+            .sort({ rating: -1 })
             .limit(fillCount)
             .populate('category', 'name');
 
@@ -145,9 +146,7 @@ router.get('/related/:slug',async (req, res) => {
     }
 });
 
-
-
-
+// 7. Top Booked Services (Aggregation with new schema fields)
 router.get('/top-booked', async (req, res) => {
     try {
         const topBookedData = await Order.aggregate([
@@ -169,7 +168,8 @@ router.get('/top-booked', async (req, res) => {
                     _id: "$serviceDetails._id",
                     name: "$serviceDetails.name",
                     slug: "$serviceDetails.slug",
-                    price: "$serviceDetails.price",
+                    basePrice: "$serviceDetails.basePrice", // Updated
+                    pricingType: "$serviceDetails.pricingType", // Updated
                     image: "$serviceDetails.image",
                     rating: "$serviceDetails.rating",
                     bookingCount: 1
@@ -181,7 +181,7 @@ router.get('/top-booked', async (req, res) => {
             const fallback = await Service.find()
                 .sort({ createdAt: -1 })
                 .limit(10)
-                .select('name slug price image rating');
+                .select('name slug basePrice pricingType image rating'); // Updated
             return res.status(200).json(fallback);
         }
 

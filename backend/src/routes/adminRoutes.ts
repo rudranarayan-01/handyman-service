@@ -214,9 +214,20 @@ router.delete('/orders/:orderId', fastAuth, isAdmin, async (req, res) => {
     }
 });
 
-// SERVICE ROUTES 
+///////////////////////////////////////////// SERVICE ROUTES ////////////////////////////////////////////////
+const generateSlug = (text: string) => {
+    return text
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w\s-]/g, '') 
+        .replace(/\s+/g, '-')      
+        .replace(/-+/g, '-');      
+};
+
+// 1. GET ALL (Admin view - usually needs more data)
 router.get('/services', fastAuth, async (req, res) => {
     try {
+        // Fetching everything so the admin table can show basePrice and pricingType
         const services = await Service.find({}).sort({ createdAt: -1 });
         res.status(200).json(services);
     } catch (err) {
@@ -225,28 +236,18 @@ router.get('/services', fastAuth, async (req, res) => {
     }
 });
 
-// Helper function to keep logic consistent
-const slugify = (text: string) => {
-    return text
-        .toLowerCase()
-        .trim()
-        .replace(/[^\w\s-]/g, '') // Remove special characters
-        .replace(/\s+/g, '-')      // Replace spaces with dashes
-        .replace(/-+/g, '-');      // Prevent double dashes
-};
-
+// 2. CREATE Service (Updated for Variants)
 router.post('/services', fastAuth, isAdmin, async (req, res) => {
     try {
-        const { name } = req.body;
+        const { name, basePrice, pricingType, variants } = req.body;
 
-        if (!name) {
-            return res.status(400).json({ error: "Service name is required" });
+        if (!name || !basePrice) {
+            return res.status(400).json({ error: "Service name and base price are required" });
         }
 
-        // Generate the slug manually from the name
-        const slug = slugify(name);
+        const slug = generateSlug(name);
 
-        // Create the service object by merging the generated slug with the rest of the body
+        // We spread req.body to catch variants, unitName, and seo fields automatically
         const newService = new Service({
             ...req.body,
             slug: slug
@@ -255,7 +256,6 @@ router.post('/services', fastAuth, isAdmin, async (req, res) => {
         await newService.save();
         res.status(201).json(newService);
     } catch (err: any) {
-        // Handle duplicate slug error specifically
         if (err.code === 11000) {
             return res.status(400).json({ error: "A service with this name/slug already exists" });
         }
@@ -263,23 +263,19 @@ router.post('/services', fastAuth, isAdmin, async (req, res) => {
     }
 });
 
-// UPDATE Service
+// 3. UPDATE Service (Updated for Variants)
 router.patch('/services/:id', fastAuth, isAdmin, async (req, res) => {
     try {
         const updates = { ...req.body };
 
+        // If the admin changes the name, we must update the slug too
         if (updates.name) {
-            updates.slug = updates.name
-                .toLowerCase()
-                .trim()
-                .replace(/[^\w\s-]/g, '')
-                .replace(/\s+/g, '-')
-                .replace(/-+/g, '-');
+            updates.slug = generateSlug(updates.name);
         }
 
         const updatedService = await Service.findByIdAndUpdate(
             req.params.id,
-            updates, // Use the modified updates object
+            updates, 
             { new: true, runValidators: true }
         );
 
@@ -296,37 +292,36 @@ router.patch('/services/:id', fastAuth, isAdmin, async (req, res) => {
     }
 });
 
-// DELETE Service
+// 4. DELETE Service (Includes Cloudinary Cleanup)
 router.delete('/services/:id', fastAuth, isAdmin, async (req, res) => {
     try {
-        // 1. Find the service first to get the image URL
         const service = await Service.findById(req.params.id);
         if (!service) return res.status(404).json({ message: "Service not found" });
 
-        // 2. Extract public_id from the Cloudinary URL
-        // Example URL: https://res.cloudinary.com/demo/image/upload/v1234/sample.jpg
-        // We need "sample"
+        // Cloudinary cleanup logic
         if (service.image && service.image.includes('cloudinary')) {
-            const urlParts = service.image.split('/');
-            const lastPart = urlParts[urlParts.length - 1]; // "sample.jpg"
-            const publicId = lastPart.split('.')[0]; // "sample"
-            
-            // Delete from Cloudinary
-            await cloudinary.uploader.destroy(publicId);
+            try {
+                const urlParts = service.image.split('/');
+                const lastPart = urlParts[urlParts.length - 1]; // "image_name.jpg"
+                const publicId = lastPart.split('.')[0]; 
+                
+                await cloudinary.uploader.destroy(publicId);
+            } catch (cloudErr) {
+                console.error("Cloudinary Delete Error:", cloudErr);
+                // We continue deleting from DB even if Cloudinary fails
+            }
         }
 
-        // 3. Delete from MongoDB
         await Service.findByIdAndDelete(req.params.id);
 
-        res.status(200).json({ message: "Service and associated image deleted" });
+        res.status(200).json({ message: "Service and associated image deleted successfully" });
     } catch (err) {
-        console.error(err);
+        console.error("Delete Error:", err);
         res.status(500).json({ error: "Delete failed" });
     }
 });
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 
 // 1. GET PARTNERS (With Search & Filter)

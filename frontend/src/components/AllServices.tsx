@@ -8,7 +8,6 @@ import api from '@/api/api';
 import BackNavigation from './BackNavigation';
 
 const AllServices = () => {
-    // 1. Grab the slug from the URL path /services/:categorySlug
     const { categorySlug } = useParams<{ categorySlug: string }>(); 
     const navigate = useNavigate();
     // const location = useLocation();
@@ -157,8 +156,8 @@ const AllServices = () => {
                                                 <div className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-blue-600">
                                                     Details <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
                                                 </div>
-                                                <span className="text-lg font-black text-gray-900 tracking-tighter">
-                                                    ₹{service.price}
+                                                <span className="text-lg font-black text-blue-950 tracking-tighter">
+                                                    Starts from ₹{service.basePrice || service.variants?.[0]?.price}
                                                 </span>
                                             </div>
                                         </div>

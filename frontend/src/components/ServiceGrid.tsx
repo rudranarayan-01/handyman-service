@@ -18,7 +18,7 @@ interface Service {
     image: string;
     rating: number;
     reviews: number;
-    price: number;
+    basePrice: number;
     category?: string; // This links back to the main category
 }
 
@@ -84,7 +84,7 @@ const ServiceCard = ({ service }: { service: Service }) => {
                 <div className="absolute top-4 left-4">
                     <div className="bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/20 shadow-sm">
                         <span className="text-[9px] font-black uppercase tracking-widest text-indigo-600">
-                            {service.price < 500 ? 'Best Value' : 'Premium'}
+                            {service.basePrice < 500 ? 'Best Value' : 'Premium'}
                         </span>
                     </div>
                 </div>
@@ -101,7 +101,7 @@ const ServiceCard = ({ service }: { service: Service }) => {
                     </div>
                     <div className="flex items-baseline gap-0.5">
                         <span className="text-[10px] font-bold text-gray-500">₹</span>
-                        <p className="text-[15px] font-black text-gray-900">{service.price}</p>
+                        <p className="text-[15px] font-black text-gray-900">{service.basePrice}</p>
                     </div>
                 </div>
             </div>
