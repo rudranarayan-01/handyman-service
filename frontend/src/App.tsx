@@ -33,6 +33,7 @@ import OfferList from './components/AdminDashboard/OfferList';
 import AdminSettings from './components/AdminDashboard/AdminSettings';
 import ServiceList from './pages/ServiceList';
 import ServiceDetail from './pages/ServiceDetailPage';
+import LogsPage from './components/AdminDashboard/EventLogs';
 
 function App() {
   useUserSync();
@@ -70,6 +71,7 @@ function App() {
                 <Route path="orders" element={<AdminOrders />} />
                 <Route path="partners" element={<PartnerManagement />} />
                 <Route path="offers" element={<OfferList />} />
+                <Route path='logs' element={<LogsPage/>} />
                 <Route path="settings" element={<AdminSettings />} />
               </Route>
               <Route path="/admin/orders/:orderId" element={<AdminProtect><ManageOrderDetails /></AdminProtect>} />

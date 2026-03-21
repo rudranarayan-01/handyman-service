@@ -7,6 +7,7 @@ import { Order } from '../models/Orders';
 import { Service } from '../models/Service';
 import { Partner } from '../models/Partners';
 import { triggerOrderNotifications } from '../lib/Allnotifications';
+import { fetchLogs, logEvent } from '../lib/logger';
 const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
 const cloudinary = require('../config/cloudinary');
 
@@ -28,15 +29,15 @@ router.patch('/users/:clerkId/role', fastAuth, isAdmin, AdminProtected, async (r
     try {
         const { clerkId } = req.params; // The target user
         const { newRole } = req.body;
-        
+
         // Accessing the requester's ID from fastAuth (usually stored in req.auth or req.user)
-        const requesterClerkId = (req as any).auth?.userId; 
+        const requesterClerkId = (req as any).auth?.userId;
 
         // 1. Validation: Prevent self-role modification via this endpoint
         // This ensures an admin doesn't accidentally remove their own admin status.
         if (clerkId === requesterClerkId) {
-            return res.status(403).json({ 
-                error: "You cannot change your own role. Please contact the system owner." 
+            return res.status(403).json({
+                error: "You cannot change your own role. Please contact the system owner."
             });
         }
 
@@ -64,6 +65,12 @@ router.patch('/users/:clerkId/role', fastAuth, isAdmin, AdminProtected, async (r
         if (!updatedUser) {
             return res.status(404).json({ error: "User not found in database" });
         }
+        await logEvent(req, {
+            title: "USER ROLE UPDATED",
+            module: "Admin User Management",
+            desc: `User with Clerk ID "${clerkId}" had their role updated to "${newRole}". Updated by Clerk ID: "${requesterClerkId}".`,
+            status: "success"
+        });
 
         res.status(200).json({
             success: true,
@@ -77,10 +84,16 @@ router.patch('/users/:clerkId/role', fastAuth, isAdmin, AdminProtected, async (r
         });
 
     } catch (err: any) {
+        await logEvent(req, {
+            title: "ROLE UPDATE FAILED",
+            module: "Admin User Management",
+            desc: `Failed to update role for user with Clerk ID "${req.params.clerkId || 'Unknown'}". Error: ${err.message}`,
+            status: "failure"
+        });
         console.error("Critical Role Update Error:", err);
-        res.status(500).json({ 
-            error: "Failed to update role", 
-            details: process.env.NODE_ENV === 'development' ? err.message : undefined 
+        res.status(500).json({
+            error: "Failed to update role",
+            details: process.env.NODE_ENV === 'development' ? err.message : undefined
         });
     }
 });
@@ -99,10 +112,21 @@ router.delete('/users/:clerkId', fastAuth, isAdmin, async (req, res) => {
         if (!deletedUser) {
             return res.status(404).json({ error: "User not found in Database" });
         }
-
+        await logEvent(req, {
+            title: "USER DELETED",
+            module: "Admin User Management",
+            desc: `User with Clerk ID "${clerkId}" has been deleted from both Clerk and the database.`,
+            status: "success"
+        });
         res.status(200).json({ success: true, message: "User deleted successfully from Clerk and DB" });
     } catch (err: any) {
         console.error("Delete Error:", err);
+        await logEvent(req, {
+            title: "USER DELETION FAILED",
+            module: "Admin User Management",
+            desc: `Failed to delete user with Clerk ID "${req.params.clerkId || 'Unknown'}". Error: ${err.message}`,
+            status: "failure"
+        });
         res.status(500).json({ error: "Failed to delete user", details: err.message });
     }
 });
@@ -132,7 +156,7 @@ router.get('/orders', fastAuth, isAdmin, async (req, res) => {
 });
 
 // GET /admin/orders/:orderId
-router.get('/orders/:orderId',  async (req: any, res: any) => {
+router.get('/orders/:orderId', async (req: any, res: any) => {
     try {
         const { orderId } = req.params;
 
@@ -151,7 +175,7 @@ router.get('/orders/:orderId',  async (req: any, res: any) => {
 });
 
 // Get Eligible partner for service
-router.get('/partners/eligible',  async (req, res) => {
+router.get('/partners/eligible', async (req, res) => {
     try {
         const city = req.query.city ? String(req.query.city) : "";
         const serviceName = req.query.service ? String(req.query.service) : "";
@@ -160,11 +184,11 @@ router.get('/partners/eligible',  async (req, res) => {
             return res.status(400).json({ message: "City and Service are required." });
         }
         const eligiblePartners = await Partner.find({
-            specializations: { 
-                $in: [new RegExp(`^${serviceName}$`, 'i')] 
+            specializations: {
+                $in: [new RegExp(`^${serviceName}$`, 'i')]
             },
-            serviceAreas: { 
-                $in: [new RegExp(`^${city}$`, 'i')] 
+            serviceAreas: {
+                $in: [new RegExp(`^${city}$`, 'i')]
             }
         }).select('name phone email serviceAreas');
 
@@ -176,10 +200,10 @@ router.get('/partners/eligible',  async (req, res) => {
 });
 
 // update Order
-router.patch('/orders/:orderId', isAdmin, fastAuth , async (req, res) => {
+router.patch('/orders/:orderId', isAdmin, fastAuth, async (req, res) => {
     try {
         const { orderId } = req.params;
-        const { status, partnerId } = req.body; 
+        const { status, partnerId } = req.body;
 
         const validStatuses = ['pending', 'confirmed', 'completed', 'cancelled'];
         if (!validStatuses.includes(status)) {
@@ -187,24 +211,31 @@ router.patch('/orders/:orderId', isAdmin, fastAuth , async (req, res) => {
         }
 
         let updateData: any = { status: status };
-        
+
         if (status === 'confirmed') {
             if (!partnerId) {
                 return res.status(400).json({ message: "Asign a partner to confirm this" });
             }
-            updateData.assignedPartner = partnerId; 
+            updateData.assignedPartner = partnerId;
         }
 
         const updatedOrder = await Order.findOneAndUpdate(
             { orderId: orderId },
             { $set: updateData },
             { new: true }
-        ).populate('assignedPartner'); 
+        ).populate('assignedPartner');
 
         if (!updatedOrder) {
             return res.status(404).json({ message: "Order database mein nahi mila" });
         }
         triggerOrderNotifications(updatedOrder, updatedOrder.assignedPartner);
+
+        await logEvent(req, {
+            title: "ORDER STATUS UPDATED",
+            module: "Admin Order Management",
+            desc: `Order with ID "${orderId}" has been updated to status "${status}". Assigned Partner ID: ${partnerId || 'N/A'}.`,
+            status: "success"
+        });
 
         return res.status(200).json({
             success: true,
@@ -213,6 +244,13 @@ router.patch('/orders/:orderId', isAdmin, fastAuth , async (req, res) => {
         });
 
     } catch (error) {
+        await logEvent(req, {
+            title: "ORDER STATUS UPDATE FAILED",
+            module: "Admin Order Management",
+            desc: `Failed to update status for order with ID "${req.params.orderId || 'Unknown'}". Error: ${error}`,
+            status: "failure"
+        });
+
         console.error("Status Update Error:", error);
         res.status(500).json({ error: "Internal server error" });
     }
@@ -229,12 +267,24 @@ router.delete('/orders/:orderId', fastAuth, isAdmin, async (req, res) => {
         if (!deletedOrder) {
             return res.status(404).json({ message: "Order not found in DB" });
         }
+        await logEvent(req, {
+            title: "ORDER DELETED",
+            module: "Admin Order Management",
+            desc: `Order with ID "${orderId}" has been deleted from the system.`,
+            status: "success"
+        });
         return res.status(200).json({
             success: true,
             message: "Order deleted successfully"
         });
 
     } catch (error) {
+        await logEvent(req, {
+            title: "ORDER DELETION FAILED",
+            module: "Admin Order Management",
+            desc: `Failed to delete order with ID "${req.params.orderId || 'Unknown'}". Error: ${error}`,
+            status: "failure"
+        });
         console.error("Backend Error:", error);
         res.status(500).json({ error: "Internal server error", details: error });
     }
@@ -245,9 +295,9 @@ const generateSlug = (text: string) => {
     return text
         .toLowerCase()
         .trim()
-        .replace(/[^\w\s-]/g, '') 
-        .replace(/\s+/g, '-')      
-        .replace(/-+/g, '-');      
+        .replace(/[^\w\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-');
 };
 
 // 1. GET ALL (Admin view - usually needs more data)
@@ -280,8 +330,20 @@ router.post('/services', fastAuth, isAdmin, async (req, res) => {
         });
 
         await newService.save();
+        await logEvent(req, {
+            title: "NEW SERVICE CREATED",
+            module: "Admin Service Management",
+            desc: `Service "${name}" created with base price ${basePrice} and pricing type ${pricingType}.`,
+            status: "success"
+        });
         res.status(201).json(newService);
     } catch (err: any) {
+        await logEvent(req, {
+            title: "SERVICE CREATION FAILED",
+            module: "Admin Service Management",
+            desc: `Failed to create service "${req.body.name}". Error: ${err.message}`,
+            status: "failure"
+        });
         if (err.code === 11000) {
             return res.status(400).json({ error: "A service with this name/slug already exists" });
         }
@@ -301,16 +363,27 @@ router.patch('/services/:id', fastAuth, isAdmin, async (req, res) => {
 
         const updatedService = await Service.findByIdAndUpdate(
             req.params.id,
-            updates, 
+            updates,
             { new: true, runValidators: true }
         );
 
         if (!updatedService) {
             return res.status(404).json({ error: "Service not found" });
         }
-
+        await logEvent(req, {
+            title: "SERVICE UPDATED",
+            module: "Admin Service Management",
+            desc: `Service "${updatedService.name}" updated. Changes: ${JSON.stringify(updates)}`,
+            status: "success"
+        });
         res.status(200).json(updatedService);
     } catch (err: any) {
+        await logEvent(req, {
+            title: "SERVICE UPDATE FAILED",
+            module: "Admin Service Management",
+            desc: `Failed to update service "${req.body.name}". Error: ${err.message}`,
+            status: "failure"
+        });
         if (err.code === 11000) {
             return res.status(400).json({ error: "Another service already uses this name/slug" });
         }
@@ -329,8 +402,8 @@ router.delete('/services/:id', fastAuth, isAdmin, async (req, res) => {
             try {
                 const urlParts = service.image.split('/');
                 const lastPart = urlParts[urlParts.length - 1]; // "image_name.jpg"
-                const publicId = lastPart.split('.')[0]; 
-                
+                const publicId = lastPart.split('.')[0];
+
                 await cloudinary.uploader.destroy(publicId);
             } catch (cloudErr) {
                 console.error("Cloudinary Delete Error:", cloudErr);
@@ -340,8 +413,20 @@ router.delete('/services/:id', fastAuth, isAdmin, async (req, res) => {
 
         await Service.findByIdAndDelete(req.params.id);
 
+        await logEvent(req, {
+            title: "SERVICE DELETED",
+            module: "Admin Service Management",
+            desc: `Service "${service.name}" deleted from the system.`,
+            status: "success"
+        });
         res.status(200).json({ message: "Service and associated image deleted successfully" });
     } catch (err) {
+        await logEvent(req, {
+            title: "SERVICE DELETION FAILED",
+            module: "Admin Service Management",
+            desc: `Failed to delete service with ID "${req.params.id}". Error: ${err}`,
+            status: "failure"
+        });
         console.error("Delete Error:", err);
         res.status(500).json({ error: "Delete failed" });
     }
@@ -363,14 +448,14 @@ router.get('/partners', async (req, res) => {
                 $or: [
                     { name: { $regex: searchRegex } },
                     { email: { $regex: searchRegex } },
-                    { serviceAreas: { $regex: searchRegex } }, 
+                    { serviceAreas: { $regex: searchRegex } },
                     { specializations: { $regex: searchRegex } }
                 ]
             };
         }
 
         const partners = await Partner.find(query).sort({ createdAt: -1 });
-        
+
         res.json(partners);
     } catch (error) {
         console.error("Search Error:", error);
@@ -383,8 +468,21 @@ router.post('/partners', isAdmin, fastAuth, async (req, res) => {
     try {
         const newPartner = new Partner(req.body);
         await newPartner.save();
+        await logEvent(req, {
+            title: "NEW PARTNER ADDED",
+            module: "Admin Partner Management",
+            desc: `Partner "${newPartner.name}" added with specializations: ${newPartner.specializations.join(', ')} and service areas: ${newPartner.serviceAreas.join(', ')}.`,
+            status: "success"
+        });
         res.status(201).json({ success: true, partner: newPartner });
     } catch (error) {
+        await logEvent(req, {
+            title: "NEW PARTNER ADDITION FAILED",
+            module: "Admin Partner Management",
+            desc: `Failed to add new partner. Error: ${error}`,
+            status: "failure"
+        });
+
         res.status(400).json({ message: error });
     }
 });
@@ -403,50 +501,74 @@ router.get('/service-list', async (req, res) => {
 router.delete('/partners/:id', isAdmin, fastAuth, async (req, res) => {
     try {
         await Partner.findByIdAndDelete(req.params.id);
+        await logEvent(req, {
+            title: "PARTNER DELETED",
+            module: "Admin Partner Management",
+            desc: `Partner with ID "${req.params.id}" has been deleted from the system.`,
+            status: "success"
+        });
         res.json({ success: true, message: "Partner deleted" });
     } catch (error) {
+        await logEvent(req, {
+            title: "PARTNER DELETION FAILED",
+            module: "Admin Partner Management",
+            desc: `Failed to delete partner with ID "${req.params.id}". Error: ${error}`,
+            status: "failure"
+        });
         res.status(500).json({ error: error });
     }
 });
 
 // UPDATE PARTNER (PATCH)
-router.patch('/partners/:id', isAdmin, fastAuth, async (req, res) => {
+router.patch('/partners/:id', async (req, res) => {
     try {
         const updatedPartner = await Partner.findByIdAndUpdate(
-            req.params.id, 
-            req.body, 
+            req.params.id,
+            req.body,
             { new: true }
         );
+        await logEvent(req, {
+            title: "PARTNER UPDATED",
+            module: "Admin Partner Management",
+            desc: `Partner with ID "${req.params.id}" has been updated. Changes: ${JSON.stringify(req.body)}`,
+            status: "success"
+        });
         res.json(updatedPartner);
     } catch (error) {
+        await logEvent(req, {
+            title: "PARTNER UPDATE FAILED",
+            module: "Admin Partner Management",
+            desc: `Failed to update partner with ID "${req.params.id}". Error: ${error}`,
+            status: "failure"
+        });
         res.status(400).json({ error: error });
     }
 });
 
 
 ///////// DASHBOARD ////////////////
-router.get('/orders-recent',fastAuth, isAdmin, async (req, res) => {
+router.get('/orders-recent', fastAuth, isAdmin, async (req, res) => {
     try {
         // console.log("Recent Orders")
         const recentOrders = await Order.aggregate([
             { $sort: { createdAt: -1 } },
             { $limit: 5 },
-            
+
             // 3. Join with Users collection
             {
                 $lookup: {
-                    from: 'users',           
-                    localField: 'userId',    
-                    foreignField: 'clerkId', 
+                    from: 'users',
+                    localField: 'userId',
+                    foreignField: 'clerkId',
                     as: 'userDetails'
                 }
             },
-            
+
             // 4. Flatten the array and keep orders even if user is missing
-            { 
+            {
                 $unwind: {
                     path: '$userDetails',
-                    preserveNullAndEmptyArrays: true 
+                    preserveNullAndEmptyArrays: true
                 }
             }
         ]);
@@ -459,7 +581,7 @@ router.get('/orders-recent',fastAuth, isAdmin, async (req, res) => {
 });
 
 // GET: Dashboard Stats (Revenue, Customers, etc.)
-router.get('/dashboard-stats',fastAuth, isAdmin,async (req, res) => {
+router.get('/dashboard-stats', fastAuth, isAdmin, async (req, res) => {
     try {
         const allOrders = await Order.find({});
         // console.log("Total Orders in DB:", allOrders.length);
@@ -504,6 +626,17 @@ router.get('/dashboard-stats',fastAuth, isAdmin,async (req, res) => {
     } catch (err: any) {
         console.error("Stats Error:", err);
         res.status(500).json({ error: "Stats failed", details: err.message });
+    }
+});
+
+// LOGS/////////////////////////////////// LOGS //////////////////////////////////////////
+router.get('/logs', async (req, res) => {
+    try {
+        const logs = await fetchLogs();
+        res.status(200).json(logs);
+    } catch (err: any) {
+        console.error("Logs Fetch Error:", err);
+        res.status(500).json({ error: "Failed to fetch logs", details: err.message });
     }
 });
 
