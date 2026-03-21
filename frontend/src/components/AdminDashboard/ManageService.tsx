@@ -302,7 +302,7 @@ const ManageServices = () => {
                                                     <Edit3 size={14} />
                                                 </Button>
                                                 <Button onClick={() => handleDelete(service._id, service.name)} className="p-2 md:p-2.5 bg-white rounded-lg md:rounded-xl text-rose-600 hover:bg-rose-600 hover:text-white transition-all shadow-lg border border-slate-100">
-                                                    <Trash2 size={14} />
+                                                    <Trash2 size={14} className='text-rose-500' />
                                                 </Button>
                                             </div>
                                         </div>

@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import {
-    LayoutDashboard, Settings, Users, Package, Calendar, LogOut,
+    LayoutDashboard, Settings, Users, Package, Calendar,
     Bell, UserRoundCheck, Menu, X, ExternalLink,
-    Ticket, LayoutGrid
+    Ticket, LayoutGrid,
+    Logs
 } from 'lucide-react';
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import SidebarItem, { SidebarItemSkeleton } from './SideBar';
@@ -72,11 +73,11 @@ export const AdminDashboard = () => {
                         <Package className="text-white" size={22} />
                     </div>
                     <span className="font-black text-2xl tracking-tighter text-slate-900 leading-tight">
-                        Housexpertz <br /><span className="text-indigo-600 text-[10px] uppercase tracking-[0.3em] font-bold">Admin Panel</span>
+                        HouseXpertz <br /><span className="text-indigo-600 text-[10px] uppercase tracking-[0.3em] font-bold">Admin Panel</span>
                     </span>
                 </div>
 
-                <nav className="flex flex-col gap-2 flex-1 overflow-y-auto no-scrollbar pr-1">
+                <nav className="flex flex-col gap-1 flex-1 overflow-y-auto no-scrollbar pr-1">
                     <SidebarItem id="dashboard" label="Dashboard" icon={<LayoutDashboard size={18} />} activeTab={activeTab} url="/admin" onItemClick={() => setIsMobileMenuOpen(false)} />
                     <SidebarItem id="categories" label="Categories" icon={<LayoutGrid size={18} />} activeTab={activeTab} url="/admin/categories" onItemClick={() => setIsMobileMenuOpen(false)} />
                     <SidebarItem id="services" label="Services" icon={<Package size={18} />} activeTab={activeTab} url="/admin/services" onItemClick={() => setIsMobileMenuOpen(false)} />
@@ -84,6 +85,7 @@ export const AdminDashboard = () => {
                     <SidebarItem id="users" label="Users" icon={<Users size={18} />} activeTab={activeTab} url="/admin/users" onItemClick={() => setIsMobileMenuOpen(false)} />
                     <SidebarItem id="partners" label="Partners" icon={<UserRoundCheck size={18} />} activeTab={activeTab} url="/admin/partners" onItemClick={() => setIsMobileMenuOpen(false)} />
                     <SidebarItem id="offers" label="Offers" icon={<Ticket size={18} />} activeTab={activeTab} url="/admin/offers" onItemClick={() => setIsMobileMenuOpen(false)} />
+                    <SidebarItem id="logs" label="Logs" icon={<Logs size={18} />} activeTab={activeTab} url="/admin/logs" onItemClick={() => setIsMobileMenuOpen(false)} />
                 </nav>
 
                 <div className="pt-6 mt-6 border-t border-slate-300/60 flex flex-col gap-3 shrink-0">
@@ -93,14 +95,7 @@ export const AdminDashboard = () => {
                         </a>
                     </Button>
 
-                    <Button
-                        onClick={() => signOut()}
-                        variant="ghost"
-                        className="flex items-center justify-start gap-4 p-4 text-rose-500 hover:text-rose-700 transition-all font-bold group rounded-2xl hover:bg-rose-500/10 w-full"
-                    >
-                        <LogOut size={18} />
-                        Sign Out
-                    </Button>
+                    
                 </div>
             </aside>
 

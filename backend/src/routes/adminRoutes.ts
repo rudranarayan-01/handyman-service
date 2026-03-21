@@ -1,6 +1,6 @@
 import express from 'express';
 // IMPORTANT: Use curly braces here!
-import { fastAuth, isAdmin } from '../middleware/auth';
+import { AdminProtected, fastAuth, isAdmin } from '../middleware/auth';
 import { User } from '../models/User';
 import { createClerkClient } from '@clerk/backend';
 import { Order } from '../models/Orders';
@@ -24,38 +24,64 @@ router.get('/users', fastAuth, isAdmin, async (req: any, res: any) => {
 });
 
 // Modify role
-router.patch('/users/:clerkId/role', fastAuth, isAdmin, async (req, res) => {
+router.patch('/users/:clerkId/role', fastAuth, isAdmin, AdminProtected, async (req, res) => {
     try {
-        const { clerkId } = req.params;
+        const { clerkId } = req.params; // The target user
         const { newRole } = req.body;
+        
+        // Accessing the requester's ID from fastAuth (usually stored in req.auth or req.user)
+        const requesterClerkId = (req as any).auth?.userId; 
 
+        // 1. Validation: Prevent self-role modification via this endpoint
+        // This ensures an admin doesn't accidentally remove their own admin status.
+        if (clerkId === requesterClerkId) {
+            return res.status(403).json({ 
+                error: "You cannot change your own role. Please contact the system owner." 
+            });
+        }
+
+        // 2. Validation: Allowed Roles
         const allowedRoles = ['admin', 'manager', 'user'];
         if (!allowedRoles.includes(newRole)) {
             return res.status(400).json({ error: "Invalid role type" });
         }
 
-        // 1. Update Clerk Metadata (Important for JWT/Auth)
+        // 3. Update Clerk Metadata (Single Source of Truth for Auth)
+        // We use Clerk first because if this fails, we shouldn't update the DB.
         await clerkClient.users.updateUserMetadata(clerkId, {
             publicMetadata: {
                 role: newRole
             }
         });
 
-        // 2. Update MongoDB (Important for User Directory/Frontend)
+        // 4. Update MongoDB (Source of Truth for the UI/Directory)
         const updatedUser = await User.findOneAndUpdate(
             { clerkId },
             { role: newRole },
-            { new: true }
+            { new: true, runValidators: true } // runValidators ensures the DB schema is respected
         );
+
+        if (!updatedUser) {
+            return res.status(404).json({ error: "User not found in database" });
+        }
 
         res.status(200).json({
             success: true,
-            message: `Role updated to ${newRole}`,
-            user: updatedUser
+            message: `User role successfully updated to ${newRole}`,
+            user: {
+                id: updatedUser._id,
+                clerkId: updatedUser.clerkId,
+                role: updatedUser.role,
+                email: updatedUser.email
+            }
         });
+
     } catch (err: any) {
-        console.error("Role Update Error:", err);
-        res.status(500).json({ error: "Failed to update role" });
+        console.error("Critical Role Update Error:", err);
+        res.status(500).json({ 
+            error: "Failed to update role", 
+            details: process.env.NODE_ENV === 'development' ? err.message : undefined 
+        });
     }
 });
 
@@ -150,7 +176,7 @@ router.get('/partners/eligible',  async (req, res) => {
 });
 
 // update Order
-router.patch('/orders/:orderId',  async (req, res) => {
+router.patch('/orders/:orderId', isAdmin, fastAuth , async (req, res) => {
     try {
         const { orderId } = req.params;
         const { status, partnerId } = req.body; 
@@ -353,7 +379,7 @@ router.get('/partners', async (req, res) => {
 });
 
 // 2. ADD PARTNER
-router.post('/partners', async (req, res) => {
+router.post('/partners', isAdmin, fastAuth, async (req, res) => {
     try {
         const newPartner = new Partner(req.body);
         await newPartner.save();
@@ -374,7 +400,7 @@ router.get('/service-list', async (req, res) => {
 });
 
 // DELETE PARTNER
-router.delete('/partners/:id', async (req, res) => {
+router.delete('/partners/:id', isAdmin, fastAuth, async (req, res) => {
     try {
         await Partner.findByIdAndDelete(req.params.id);
         res.json({ success: true, message: "Partner deleted" });
@@ -384,7 +410,7 @@ router.delete('/partners/:id', async (req, res) => {
 });
 
 // UPDATE PARTNER (PATCH)
-router.patch('/partners/:id', async (req, res) => {
+router.patch('/partners/:id', isAdmin, fastAuth, async (req, res) => {
     try {
         const updatedPartner = await Partner.findByIdAndUpdate(
             req.params.id, 

@@ -59,6 +59,15 @@ export const isAdmin = (req: any, res: any, next: any) => {
     return res.status(403).json({ error: "Access Denied" });
 };
 
+export const AdminProtected = (req:any, res:any, next:any) => {
+    const role = req.auth?.role;
+    if (role ==='admin') {
+        return next();
+    }
+    return res.status(401).json({ error: "Unauthorized" });
+};
+
+
 // ✅ Call this if a user's role changes so cache updates immediately
 export const clearUserCache = (clerkId: string) => {
     userCache.delete(clerkId);

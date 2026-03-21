@@ -26,14 +26,14 @@ export const generateInvoice = (order: any) => {
 
     doc.setFontSize(12);
     doc.setTextColor(accentColor[0], accentColor[1], accentColor[2]);
-    doc.text("Housexpertz Service", 140, 20);
+    doc.text("HouseXpertz Service", 140, 20);
     
     doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
     doc.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
     doc.text("GSTIN: 21AAAAA0000A1Z5", 140, 26);
     doc.text("Bhubaneswar, Odisha, 751024", 140, 31);
-    doc.text("support@Housexpertz.com", 140, 36);
+    doc.text("support@HouseXpertz.com", 140, 36);
 
     // Divider Line
     doc.setDrawColor(lightGray[0], lightGray[1], lightGray[2]);

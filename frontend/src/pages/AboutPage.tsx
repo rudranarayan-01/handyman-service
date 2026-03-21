@@ -11,7 +11,7 @@ const AboutPage = () => {
               We’re Redefining <span className="text-blue-500">Home Care</span> in India.
             </h1>
             <p className="text-lg text-slate-300 leading-relaxed mb-8">
-              Housexpertz Service Pro started with a simple idea: booking a reliable plumber, 
+              HouseXpertz Service Pro started with a simple idea: booking a reliable plumber, 
               electrician, or carpenter should be as easy as ordering food online. 
               No more endless phone calls or bargaining. Just professional service at your doorstep.
             </p>

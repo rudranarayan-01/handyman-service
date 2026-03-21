@@ -18,7 +18,7 @@ const Footer = () => {
                                 </div>
                                 <div >
                                     <a href="/" className="flex flex-col leading-none sm:flex">
-                                        <span className="font-bold text-[18px] tracking-tighter text-white uppercase">Housexpertz</span>
+                                        <span className="font-bold text-[18px] tracking-tighter text-white uppercase">HouseXpertz</span>
                                         <span className="font-medium text-[14px] tracking-tight text-gray-300">Service</span>
                                     </a>
                                 </div>
@@ -94,7 +94,7 @@ const Footer = () => {
     
     {/* 1. Copyright & Rights */}
     <div className="flex items-center gap-2 order-2 md:order-1">
-        <p className="opacity-100">© 2026 Housexpertz Services Pvt Ltd.</p>
+        <p className="opacity-100">© 2026 HouseXpertz Services Pvt Ltd.</p>
         <span className="hidden md:block w-1 h-1 rounded-full bg-slate-700" />
         <p className="hidden md:block opacity-100">All Rights Reserved</p>
     </div>
