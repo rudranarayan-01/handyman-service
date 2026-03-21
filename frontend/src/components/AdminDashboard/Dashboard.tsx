@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import SidebarItem, { SidebarItemSkeleton } from './SideBar';
-import { useUser, UserButton, useClerk } from '@clerk/clerk-react';
+import { useUser, UserButton} from '@clerk/clerk-react';
 import { Button } from '../ui/button';
 
 const DashboardSkeleton = () => (
