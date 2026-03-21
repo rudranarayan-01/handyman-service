@@ -200,7 +200,7 @@ router.get('/partners/eligible', async (req, res) => {
 });
 
 // update Order
-router.patch('/orders/:orderId', isAdmin, fastAuth, async (req, res) => {
+router.patch('/orders/:orderId', fastAuth, async (req, res) => {
     try {
         const { orderId } = req.params;
         const { status, partnerId } = req.body;

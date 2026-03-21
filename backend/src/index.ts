@@ -80,6 +80,7 @@ app.post("/api/v1/subscribe", async (req, res) => {
     }
 });
 
+app.set('trust proxy', true);
 // await connectToWhatsApp();
 app.listen(PORT, async () => {
     console.log(`✅ Server running on http://localhost:${PORT}`);
