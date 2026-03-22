@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Star, ShieldCheck, Clock, ChevronRight, Sparkles, Filter, AlertCircle, ShoppingBag } from 'lucide-react';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { motion, AnimatePresence, } from 'framer-motion';
 import { useCart } from '@/context/CartContext';
 import api from '@/api/api';
 import BackNavigation from './BackNavigation';
