@@ -5,7 +5,7 @@ export const offers = [
         btnText: "Explore",
         bgColor: "bg-[#d4d2cc]",
         textColor: "text-gray-900",
-        image: "/images/InterriorDesign/interior.jpg",
+        image: "https://res.cloudinary.com/dnz67rxu0/image/upload/f_auto,q_auto/v1774159729/interior_ttkor9.jpg",
         category: "home renovations"
     },
     {
@@ -14,7 +14,7 @@ export const offers = [
         btnText: "Book now",
         bgColor: "bg-[#EA9F9F]",
         textColor: "text-gray-900",
-        image: "/images/MedicalServices/medical-checkup.jpg",
+        image: "https://res.cloudinary.com/dnz67rxu0/image/upload/f_auto,q_auto/v1774159741/medical-checkup_k86gom.jpg",
         category: "Medical Emergencies"
     },
     {
@@ -23,7 +23,7 @@ export const offers = [
         btnText: "Book now",
         bgColor: "bg-[#757575]",
         textColor: "text-gray-900",
-        image: "/images/Cleaning/car-washing.jpg",
+        image: "https://res.cloudinary.com/dnz67rxu0/image/upload/f_auto,q_auto/v1774159773/car-washing_dreklj.jpg",
         category: "Cleaning & Pest Control"
     },
     {
@@ -32,7 +32,7 @@ export const offers = [
         btnText: "Book now",
         bgColor: "bg-[#9EBEEA]",
         textColor: "text-red",
-        image: "/images/Repairing/electrician.jpg",
+        image: "https://res.cloudinary.com/dnz67rxu0/image/upload/f_auto,q_auto/v1774159795/electrician_avjeej.jpg",
         category: "Repairing and Maintenance"
     },
     {
@@ -41,7 +41,7 @@ export const offers = [
         btnText: "Book now",
         bgColor: "bg-[#BFD4B5]",
         textColor: "text-white",
-        image: "/images/Plumbing/aquaguard-service.jpg",
+        image: "https://res.cloudinary.com/dnz67rxu0/image/upload/v1774159814/aquaguard-service_ij7pte.jpg",
         category: "Plumbing Services"
     },
     {
@@ -50,7 +50,7 @@ export const offers = [
         btnText: "Book now",
         bgColor: "bg-[#E7AF74]",
         textColor: "text-white",
-        image: "/images/Parlour/parlour.jpg",
+        image: "https://res.cloudinary.com/dnz67rxu0/image/upload/f_auto,q_auto/v1774159840/makeup_nld59j.jpg",
         category: "Women's Saloon"
     }
 ];

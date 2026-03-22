@@ -44,7 +44,7 @@ const CookingBanner: React.FC<CookingPromoProps> = ({
     title = "Professional Chefs at Your Doorstep",
     subtitle = "Experience restaurant-quality meals cooked right in your kitchen. Healthy, fresh, and customized to your taste.",
     btnText = "Book a Chef",
-    image = "https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&q=80&w=800",
+    image = "https://res.cloudinary.com/dnz67rxu0/image/upload/f_auto,q_auto/v1774159058/photo-1556910103-1c02745aae4d_j3cfk9.jpg",
     bgColor = "bg-[#FFF9F2]"
 }) => {
     return (
@@ -72,7 +72,7 @@ const CookingBanner: React.FC<CookingPromoProps> = ({
 
                     {/* Content */}
                     <div className="flex-1 p-8 sm:p-10 md:p-14 lg:p-16 flex flex-col justify-center items-start z-10">
-                        
+
                         <div className="flex items-center gap-2 bg-orange-100 text-orange-700 px-3 py-1 rounded-full mb-6">
                             <Utensils size={12} />
                             <span className="text-[10px] font-black uppercase tracking-widest">Home Cooking</span>

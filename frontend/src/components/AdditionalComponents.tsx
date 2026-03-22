@@ -43,7 +43,7 @@ const AnimatedBento: React.FC = () => {
                 {/* 1. PRIMARY HERO CARD (Cleaning) */}
                 <div className="md:col-span-2 md:row-span-2 bg-slate-900 rounded-[2.5rem] p-8 relative overflow-hidden group cursor-pointer shadow-2xl border border-slate-800 min-h-[350px]">
                     <img
-                        src="https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?q=80&w=1000&auto=format&fit=crop"
+                        src="https://res.cloudinary.com/dnz67rxu0/image/upload/v1772955694/qqr7axdursts7qoknwwp.jpg"
                         className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-110 group-hover:rotate-1 transition-all duration-1000"
                         alt="Deep Cleaning"
                     />
@@ -71,11 +71,11 @@ const AnimatedBento: React.FC = () => {
                 </div>
 
                 {/* 2. AC SERVICE CARD (Animated interaction) */}
-                <div className="md:col-span-2 bg-indigo-950 rounded-[2.5rem] p-8 md:p-10 relative overflow-hidden group cursor-pointer shadow-[0_20px_50px_rgba(30,27,75,0.4)] border border-indigo-500/30 min-h-[260px]">
+                <div className="md:col-span-2 bg-gray-800/90 rounded-[2.5rem] p-8 md:p-10 relative overflow-hidden group cursor-pointer shadow-[0_20px_50px_rgba(30,27,75,0.4)] border border-indigo-500/30 min-h-[260px]">
 
                     {/* 1. DYNAMIC BACKGROUND IMAGE - High Tech Blend */}
                     <img
-                        src="https://tiimg.tistatic.com/fp/1/008/613/ac-repairing-services-380.jpg"
+                        src="https://res.cloudinary.com/dnz67rxu0/image/upload/v1772956240/oxvdwbx3iufe4yteyrmt.jpg"
                         className="absolute inset-0 w-full h-full object-cover opacity-40 grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-[2s] mix-blend-overlay"
                         alt="AC Service"
                     />
@@ -163,7 +163,7 @@ const AnimatedBento: React.FC = () => {
                 <div className="md:col-span-1 bg-slate-200 rounded-[2.5rem] relative overflow-hidden group cursor-pointer shadow-xl border border-orange-100 min-h-[220px]">
                     {/* Optimized Cloudinary Image Background */}
                     <img
-                        src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=800&auto=format&fit=crop&f_auto&q_auto"
+                        src="https://res.cloudinary.com/dnz67rxu0/image/upload/v1774159058/photo-1556910103-1c02745aae4d_j3cfk9.jpg"
                         className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
                         alt="Private Chef"
                     />
