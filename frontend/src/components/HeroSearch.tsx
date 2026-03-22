@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 interface Service {
     _id?: string;
     name: string;
-    category: string;
+    slug: string;
 }
 
 const HeroSearch = () => {
@@ -28,8 +28,8 @@ const HeroSearch = () => {
             try {
                 const res = await api.get('/services/allService');
                 // DEBUG HERE:
-                console.log("Type Check:", typeof res.data[0].name);
-                console.log("Sample Data:", res.data[0]);
+                // console.log("Type Check:", typeof res.data[0].name);
+                // console.log("Sample Data:", res.data);
 
                 setServices(res.data);
             } catch (err) {
@@ -93,14 +93,10 @@ const HeroSearch = () => {
         inputRef.current?.focus();
     };
 
-    const handleNavigate = useCallback((categoryName: string) => {
-        if (!categoryName) return;
-        const categorySlug = categoryName
-            .toLowerCase()
-            .trim()
-            .replace(/[\s]+/g, '-')
-            .replace(/-+/g, '-');
-        navigate(`/categories/${categorySlug}`);
+    const handleNavigate = useCallback((serviceSlug: string) => {
+        console.log("Navigating to service:", serviceSlug); // DEBUG
+        if (!serviceSlug) return;
+        navigate(`/service/detail/${serviceSlug}`);
         setIsOpen(false);
         setQuery('');
         setActiveIndex(-1);
@@ -128,10 +124,10 @@ const HeroSearch = () => {
             case 'Enter':
                 e.preventDefault();
                 if (activeIndex >= 0 && filteredResults[activeIndex]) {
-                    handleNavigate(filteredResults[activeIndex].category);
+                    handleNavigate(filteredResults[activeIndex].slug);
                 } else if (filteredResults.length > 0) {
                     // If nothing highlighted, select first result
-                    handleNavigate(filteredResults[0].category);
+                    handleNavigate(filteredResults[0].slug);
                 }
                 break;
 
@@ -263,7 +259,7 @@ const HeroSearch = () => {
                                         <button
                                             key={service._id || index}
                                             ref={el => { itemRefs.current[index] = el; }}
-                                            onClick={() => handleNavigate(service.category)}
+                                            onClick={() => handleNavigate(service.slug)}
                                             onMouseEnter={() => setActiveIndex(index)}
                                             onMouseLeave={() => setActiveIndex(-1)}
                                             role="option"
@@ -289,7 +285,7 @@ const HeroSearch = () => {
                                                         {highlightMatch(service.name, query)}
                                                     </span>
                                                     <span className="text-[10px] text-gray-400 uppercase tracking-wider font-bold mt-0.5 truncate">
-                                                        in {service.category}
+                                                        in {service.slug.replace(/-/g, ' ')} {/* Assuming slug is a URL-friendly version of the name */}
                                                     </span>
                                                 </div>
                                             </div>
