@@ -168,7 +168,7 @@ const ServiceDetailPage = () => {
             </Helmet>
 
             {/* --- HERO SECTION --- */}
-            <div className="relative h-[45vh] md:h-[60vh] w-full overflow-hidden">
+            {/* <div className="relative h-[45vh] md:h-[60vh] w-full overflow-hidden">
                 <img
                     src={service.image || '/placeholder.jpg'}
                     className="w-full h-full object-cover"
@@ -181,9 +181,9 @@ const ServiceDetailPage = () => {
                 >
                     <ArrowLeft size={20} />
                 </button>
-            </div>
+            </div> */}
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-24 md:-mt-40 relative z-10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-24 relative z-10">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
                     {/* LEFT COLUMN */}

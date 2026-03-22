@@ -34,7 +34,7 @@ const RelatedServices: React.FC<RelatedServicesProps> = ({ services, currentServ
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {services.map((rel) => (
                     <Link 
-                        to={`/services/${rel.slug}`} 
+                        to={`/service/detail/${rel.slug}`} 
                         key={rel._id} 
                         className="bg-white rounded-[2rem] p-4 border border-slate-100 shadow-sm hover:shadow-xl transition-all group"
                     >

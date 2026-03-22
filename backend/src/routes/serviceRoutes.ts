@@ -60,7 +60,7 @@ router.get('/category/slug/:categorySlug', async (req, res) => {
         }
 
         const services = await Service.find({ category: categoryDoc._id })
-            .select('name slug basePrice pricingType unitName image rating seo');
+            .select('name slug description basePrice pricingType unitName image rating seo');
 
         res.json({
             category: categoryDoc,
