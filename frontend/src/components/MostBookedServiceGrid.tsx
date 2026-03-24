@@ -46,7 +46,7 @@ const ServiceCard = ({ service }: { service: Service; index: number }) => {
                     src={service.image}
                     alt={service.name}
                     onLoad={() => setLoaded(true)}
-                    loading="eager"
+                    loading="lazy"
                     className={`w-full h-full object-cover transition-all duration-1000 ease-out group-hover/card:scale-110 ${loaded ? 'opacity-100' : 'opacity-0'}`}
                 />
 

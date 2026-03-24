@@ -22,7 +22,7 @@ const PromoImage = ({ src, alt }: { src: string; alt: string }) => {
             <img
                 src={src}
                 alt={alt}
-                loading="eager"
+                loading="lazy"
                 onLoad={() => setLoaded(true)}
                 className={`w-full h-full object-cover transition-all duration-1000 ease-out group-hover:scale-105 transform-gpu
                     ${loaded ? 'opacity-100' : 'opacity-0'}

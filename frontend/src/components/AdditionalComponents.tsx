@@ -46,6 +46,7 @@ const AnimatedBento: React.FC = () => {
                         src="https://res.cloudinary.com/dnz67rxu0/image/upload/v1772955694/qqr7axdursts7qoknwwp.jpg"
                         className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-110 group-hover:rotate-1 transition-all duration-1000"
                         alt="Deep Cleaning"
+                        loading='lazy'
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent"></div>
 
@@ -78,6 +79,7 @@ const AnimatedBento: React.FC = () => {
                         src="https://res.cloudinary.com/dnz67rxu0/image/upload/v1772956240/oxvdwbx3iufe4yteyrmt.jpg"
                         className="absolute inset-0 w-full h-full object-cover opacity-40 grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-[2s] mix-blend-overlay"
                         alt="AC Service"
+                        loading='lazy'
                     />
 
                     {/* 2. MULTI-LAYERED GRADIENT OVERLAYS */}
@@ -123,7 +125,7 @@ const AnimatedBento: React.FC = () => {
                             <div className="flex -space-x-3">
                                 {[1, 2, 3].map(i => (
                                     <div key={i} className="w-10 h-10 rounded-full border-2 border-indigo-800 bg-slate-800 overflow-hidden ring-2 ring-indigo-500/20 hover:scale-110 hover:z-30 transition-all">
-                                        <img src={`https://i.pravatar.cc/100?img=${i + 20}`} alt="user" />
+                                        <img src={`https://i.pravatar.cc/100?img=${i + 20}`} alt="user" loading='lazy' />
                                     </div>
                                 ))}
                                 <div className="w-10 h-10 rounded-full border-2 border-indigo-800 bg-indigo-600 flex items-center justify-center text-[10px] font-black text-white shadow-xl">
@@ -166,6 +168,7 @@ const AnimatedBento: React.FC = () => {
                         src="https://res.cloudinary.com/dnz67rxu0/image/upload/v1774159058/photo-1556910103-1c02745aae4d_j3cfk9.jpg"
                         className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
                         alt="Private Chef"
+                        loading='lazy'
                     />
 
                     {/* Dark Overlay Gradient - Makes text "pop" regardless of image brightness */}
@@ -203,6 +206,7 @@ const AnimatedBento: React.FC = () => {
                         src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTUzVc7P6VgDrWcASNGbraUngW_UA83GBvmrQ&s"
                         className="absolute inset-0 w-full h-full object-cover opacity-90  group-hover:scale-110 transition-all duration-1000 ease-out"
                         alt="Plumbing Service"
+                        loading='lazy'
                     />
                     <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent group-hover:from-blue-80/20 transition-colors duration-500"></div>
 

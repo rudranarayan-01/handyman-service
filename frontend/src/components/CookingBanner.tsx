@@ -21,8 +21,7 @@ const ChefImage = ({ src, alt }: { src: string; alt: string }) => {
             <img
                 src={src}
                 alt={alt}
-                loading="eager"
-                decoding="async"
+                loading="lazy"
                 onLoad={() => setLoaded(true)}
                 className={`w-full h-full object-cover transition-opacity duration-500 transform-gpu
                     ${loaded ? 'opacity-100' : 'opacity-0'}
