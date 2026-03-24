@@ -190,6 +190,7 @@ const CategoryCard = memo(({ stat, index, navigate }: { stat: CategoryStat, inde
           <img
             src={displayImage}
             loading="lazy"
+            decoding='async'
             onError={() => setHasError(true)}
             alt={`${stat.name} home services`} // Improved alt text for SEO
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[1.5s] ease-out"
