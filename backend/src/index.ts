@@ -80,6 +80,11 @@ app.post("/api/v1/subscribe", async (req, res) => {
     }
 });
 
+app.use(express.static('public', {
+  maxAge: '1y', // Cache for 1 year
+  etag: false
+}));
+
 app.set('trust proxy', true);
 // await connectToWhatsApp();
 app.listen(PORT, async () => {
