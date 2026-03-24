@@ -35,6 +35,7 @@ const CategoryCard = ({ cat }: { cat: typeof categories[0] }) => {
                     alt={cat.name}
                     loading="eager"
                     decoding="async"
+                    fetchPriority="high"
                     onLoad={() => setLoaded(true)}
                     onError={() => setError(true)}
                     className={`w-full h-full object-cover transition-all duration-700 
