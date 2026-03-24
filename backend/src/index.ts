@@ -19,15 +19,17 @@ import { clerkMiddleware } from '@clerk/express';
 import { connectToWhatsApp, sendWhatsAppMessage } from './lib/whatsapp_setup';
 import { subscribeToNewsletter } from './lib/mail';
 import { generateSitemap } from './controllers/sitemapControllers';
+const compression = require('compression');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 connectDB();
+app.use(compression());
 
 app.use(cors({
     origin: [
-        "https://housexpertz.in", 
+        "https://housexpertz.in",
         "https://handyman-service-uhsx.onrender.com",
         "http://localhost:5173",
     ],
@@ -50,7 +52,9 @@ app.use("/api/v1/admin", adminRoutes)
 app.use("/api/v1/partners", providerRoutes)
 app.use("/api/v1/offers", offersRoutes)
 app.use("/api/v1", contactRoutes)
-app.get('/api/v1/sitemap',generateSitemap);
+app.get('/api/v1/sitemap', generateSitemap);
+
+
 
 
 app.get('/', (req, res) => {
@@ -59,7 +63,7 @@ app.get('/', (req, res) => {
 
 app.get('/test-wa', async (req, res) => {
     try {
-        const myNumber = "918260348599"; 
+        const myNumber = "918260348599";
         await sendWhatsAppMessage(myNumber, "🛠️ *Housexpertz Pro Test*\n\nIf you're reading this, the bot is working perfectly!");
         res.send("Message Sent!");
     } catch (err) {
@@ -81,8 +85,8 @@ app.post("/api/v1/subscribe", async (req, res) => {
 });
 
 app.use(express.static('public', {
-  maxAge: '1y', // Cache for 1 year
-  etag: false
+    maxAge: '1y', // Cache for 1 year
+    etag: false
 }));
 
 app.set('trust proxy', true);

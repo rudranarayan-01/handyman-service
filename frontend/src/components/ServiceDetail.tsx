@@ -170,6 +170,7 @@ const ServiceDetailPage = () => {
             {/* --- HERO SECTION --- */}
             {/* <div className="relative h-[45vh] md:h-[60vh] w-full overflow-hidden">
                 <img
+                    loading="eager"
                     src={service.image || '/placeholder.jpg'}
                     className="w-full h-full object-cover"
                     alt={service.name}

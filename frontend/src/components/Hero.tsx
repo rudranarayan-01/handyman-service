@@ -32,7 +32,7 @@ const CategoryCard = ({ cat }: { cat: typeof categories[0] }) => {
 
                 <img
                     src={getHeroOptimizedUrl(cat.image)}
-                    alt={cat.name}
+                    alt="hero-grid"
                     loading="eager"
                     decoding="async"
                     fetchPriority="high"

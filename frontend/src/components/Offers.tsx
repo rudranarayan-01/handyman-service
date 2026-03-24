@@ -66,6 +66,7 @@ const OfferCard = ({ offer }: { offer: typeof offers[0] }) => {
                 <img
                     src={offer.image}
                     alt={offer.title}
+                    loading='eager'
                     onLoad={() => setLoaded(true)}
                     className={`
                         h-full w-full object-cover transition-all duration-700
