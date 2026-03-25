@@ -6,6 +6,7 @@ import { sendOrderEmail } from '../lib/mail';
 import mongoose from 'mongoose';
 import { triggerBookingSuccess } from '../lib/whatsapp_message';
 import { sendWhatsAppMessage } from '../lib/whatsapp_setup';
+import { Service } from '../models/Service';
 
 const router = express.Router();
 
@@ -122,20 +123,64 @@ router.patch("/:id/feedback", fastAuth, async (req, res) => {
         const { rating, comment } = req.body;
         const { id } = req.params;
 
-        // Agar aap MongoDB ki _id use kar rahe hain:
+        // 1. Find the order to get the service IDs
+        const order = await Order.findById(id);
+
+        if (!order) {
+            return res.status(404).json({ message: "Order not found" });
+        }
+
+        // 2. Prevent duplicate rating submission
+        if (order.feedback && order.feedback.rating) {
+            return res.status(400).json({ message: "Feedback already submitted for this order" });
+        }
+
+        // 3. Update the Order with the feedback
         const updatedOrder = await Order.findByIdAndUpdate(
             id,
             {
-                feedback: { rating, comment, submittedAt: new Date() }
+                feedback: {
+                    rating: Number(rating),
+                    comment,
+                    submittedAt: new Date()
+                }
             },
             { new: true }
         );
 
-        if (!updatedOrder) return res.status(404).json({ message: "Order not found" });
+        // 4. Update the aggregate stats for every service in the order
+        // We use Promise.all to handle multiple items if necessary
+        const serviceUpdates = order.items.map(async (item) => {
+            const updatedService = await Service.findByIdAndUpdate(
+                item.serviceId,
+                {
+                    $inc: {
+                        numReviews: 1,
+                        totalRatingSum: Number(rating)
+                    }
+                },
+                { new: true }
+            );
 
-        res.status(200).json(updatedOrder);
+            if (updatedService) {
+                // Recalculate the average for the service
+                const newAverage = Math.round((updatedService.totalRatingSum / updatedService.numReviews) * 10) / 10;
+                updatedService.rating = newAverage;
+                await updatedService.save();
+            }
+        });
+
+        await Promise.all(serviceUpdates);
+
+        res.status(200).json({
+            success: true,
+            message: "Feedback reflected in service ratings",
+            order: updatedOrder
+        });
+
     } catch (error) {
-        res.status(500).json({ message: error });
+        console.error("Feedback Sync Error:", error);
+        res.status(500).json({ message: "Internal server error" });
     }
 });
 

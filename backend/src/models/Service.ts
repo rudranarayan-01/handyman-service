@@ -2,10 +2,10 @@ import mongoose, { Document, Schema, model } from 'mongoose';
 
 // --- SUB-INTERFACES ---
 export interface IServiceVariant {
-    title: string;          // e.g., "HD Makeup", "2 Bathrooms", "Base Fare (0-5km)"
-    price: number;          // Actual price for this variant
-    originalPrice?: number; // For "Strike-through" discount display
-    description?: string;   // Short detail for this specific choice
+    title: string;           // e.g., "HD Makeup", "2 Bathrooms"
+    price: number;           // Actual price for this variant
+    originalPrice?: number;  // For "Strike-through" discount
+    description?: string;    // Short detail for this specific choice
 }
 
 export interface IService extends Document {
@@ -14,14 +14,19 @@ export interface IService extends Document {
     category: mongoose.Types.ObjectId;
     
     // FLEXIBLE PRICING FIELDS
-    basePrice: number;       // The "Starting From" price for SEO/Listing
+    basePrice: number;       
     pricingType: 'fixed' | 'variant' | 'quantity' | 'distance'; 
-    unitName?: string;       // e.g., "Bathroom", "KM", "Person"
+    unitName?: string;       
     variants: IServiceVariant[]; 
     
     description?: string;
     image?: string;
-    rating: number;
+
+    // --- UPDATED RATING FIELDS ---
+    rating: number;          // Average: calculated as (totalRatingSum / numReviews)
+    numReviews: number;      // Total number of users who rated
+    totalRatingSum: number;  // Cumulative sum of all stars given
+    
     duration?: string;
     seo?: {
         metaTitle?: string;
@@ -38,14 +43,13 @@ const serviceSchema = new Schema<IService>({
     slug: { type: String, unique: true, lowercase: true, trim: true, required: true },
     category: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
     
-    // NEW FLEXIBLE LOGIC
     basePrice: { type: Number, required: true }, 
     pricingType: { 
         type: String, 
         enum: ['fixed', 'variant', 'quantity', 'distance'], 
         default: 'fixed' 
     },
-    unitName: { type: String, trim: true }, // "Bathroom", "KM"
+    unitName: { type: String, trim: true }, 
     variants: [{
         title: { type: String, required: true },
         price: { type: Number, required: true },
@@ -55,7 +59,13 @@ const serviceSchema = new Schema<IService>({
 
     description: { type: String },
     image: { type: String }, 
-    rating: { type: Number, default: 4.8 },
+
+    // --- RATING DEFAULTS ---
+    // We start at 0 so new services don't have "fake" high ratings.
+    rating: { type: Number, default: 0 },
+    numReviews: { type: Number, default: 0 },
+    totalRatingSum: { type: Number, default: 0 },
+
     duration: { type: String },
     seo: {
         metaTitle: { type: String, trim: true, maxLength: 60 },
@@ -66,7 +76,7 @@ const serviceSchema = new Schema<IService>({
 }, { timestamps: true });
 
 // ✅ SLUG GENERATION
-serviceSchema.pre('save', async function () {
+serviceSchema.pre('save', async function (next) {
     if (this.isModified('name')) {
         this.slug = this.name
             .toLowerCase()
@@ -74,6 +84,7 @@ serviceSchema.pre('save', async function () {
             .replace(/[^\w\s-]/g, '') 
             .replace(/\s+/g, '-');
     }
+    // next(); // Added next() call for proper middleware execution
 });
 
 serviceSchema.index({ slug: 1 });
