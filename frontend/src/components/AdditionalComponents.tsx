@@ -31,10 +31,7 @@ const AnimatedBento: React.FC = () => {
                 </div>
 
                 {/* Floating Interaction Hint (Hidden on tiny screens) */}
-                <div className="hidden lg:flex items-center gap-3 bg-slate-50 px-4 py-2 rounded-2xl border border-slate-100">
-                    <MousePointer2 size={16} className="text-slate-400 animate-bounce" />
-                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Hover cards to explore</p>
-                </div>
+                
             </div>
 
             {/* Main Bento Grid */}

@@ -42,7 +42,7 @@ const OrderHistory = () => {
   }, [fetchOrders]);
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] pt-20 pb-12 px-4 md:px-6">
+    <div className="min-h-screen bg-[#F8FAFC] pt-20 pb-12 mt-15 px-4 md:px-6">
       <div className="max-w-3xl mx-auto">
         
         {/* Header Section */}

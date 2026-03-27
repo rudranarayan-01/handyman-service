@@ -9,6 +9,7 @@ import { useUserSync } from './hooks/useUserSync';
 import ScrollToTop from './components/ScrollToTop';
 import AdminProtect from './components/routes/AdminRoute';
 import ProtectedRoutes from './components/routes/protectedRoutes';
+import FloatingSupport from './components/FloatingSupport';
 
 // 2. LAZY LOAD PUBLIC PAGES
 const Home = lazy(() => import('./pages/Home'));
@@ -58,6 +59,7 @@ function App() {
           <Router>
             <ScrollToTop />
             {/* Wrap Routes in Suspense to handle lazy loading */}
+            <FloatingSupport/>
             <Suspense fallback={<PageLoader />}>
               <Routes>
                 {/* PUBLIC ROUTES */}

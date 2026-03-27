@@ -104,3 +104,26 @@ input, textarea {
   animation: glowOpacity 2.5s ease-in-out infinite;
 }
 
+@keyframes master-glow {
+  0%, 100% { box-shadow: 0 0 15px 2px rgba(37, 99, 235, 0.5); }
+  50% { box-shadow: 0 0 30px 8px rgba(37, 99, 235, 0.8); }
+}
+
+.animate-master-glow {
+  animation: master-glow 3s infinite ease-in-out;
+}
+
+@keyframes master-pulse-glow {
+  0%, 100% { 
+    box-shadow: 0 0 10px 2px rgba(37, 99, 235, 0.4);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 0 0 25px 8px rgba(37, 99, 235, 0.6);
+    transform: scale(1.02);
+  }
+}
+
+.animate-glow-pulse {
+  animation: master-pulse-glow 3s infinite ease-in-out;
+}

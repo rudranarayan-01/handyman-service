@@ -15,6 +15,7 @@ import adminRoutes from "./routes/adminRoutes"
 import contactRoutes from "./routes/contactRoutes"
 import providerRoutes from "./routes/providerRoutes"
 import offersRoutes from "./routes/offersRoutes"
+import aiRoutes from "./routes/aiRoutes"
 import { clerkMiddleware } from '@clerk/express';
 import { connectToWhatsApp, sendWhatsAppMessage } from './lib/whatsapp_setup';
 import { subscribeToNewsletter } from './lib/mail';
@@ -52,7 +53,9 @@ app.use("/api/v1/admin", adminRoutes)
 app.use("/api/v1/partners", providerRoutes)
 app.use("/api/v1/offers", offersRoutes)
 app.use("/api/v1", contactRoutes)
+app.use("/api/v1/ai",aiRoutes);
 app.get('/api/v1/sitemap', generateSitemap);
+
 
 
 
