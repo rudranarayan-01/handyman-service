@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { X, MessageSquare, Send, Sparkles, Zap } from 'lucide-react';
-import axios from 'axios';
 import api from '@/api/api';
 
 const FloatingSupport = () => {
