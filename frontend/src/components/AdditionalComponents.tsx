@@ -4,7 +4,6 @@ import {
     Calendar, Sparkles, User,
     Smartphone,
     CheckCircle2,
-    MousePointer2,
     Clock
 } from 'lucide-react';
 import Reviews from './Reviews';
