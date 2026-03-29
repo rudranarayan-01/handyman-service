@@ -25,7 +25,8 @@ router.post("/chat", async (req, res) => {
         // If 'gemini-1.5-flash' gives a 404, your SDK or Key might prefer 'gemini-pro'
         let model;
         try {
-            model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+            // Update this line in aiRoutes.ts
+            model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
         } catch (e) {
             model = genAI.getGenerativeModel({ model: "gemini-pro" });
         }
