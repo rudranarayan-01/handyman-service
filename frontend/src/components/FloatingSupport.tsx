@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom'; 
-import { X, MessageSquare, Send, Sparkles, Zap } from 'lucide-react';
+import { X, MessageSquare, Send, Sparkles } from 'lucide-react';
 import api from '@/api/api';
 
 const FloatingSupport = () => {
@@ -15,7 +15,7 @@ const FloatingSupport = () => {
     const chatRef = useRef<HTMLDivElement>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
 
-    const quickActions = ["Price Estimate", "Booking Status", "Emergency"];
+    // const quickActions = ["Price Estimate", "Booking Status", "Emergency"];
     const whatsappUrl = `https://wa.me/919811797407?text=${encodeURIComponent("Hello HouseXpertz! I need help.")}`;
 
     useEffect(() => {
