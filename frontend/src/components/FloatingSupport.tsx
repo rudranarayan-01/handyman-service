@@ -42,7 +42,7 @@ const FloatingSupport = () => {
         /* FIX: We removed 'flex', 'inset-0', 'items-end', and 'p-4'.
            This container now has 0px height. It starts and ends at the bottom-right.
         */
-        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[9999]">
+        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-9999">
             
             {/* The relative wrapper ensures children (the chat window) grow UPWARDS */}
             <div className="relative flex flex-col items-end" ref={chatRef}>

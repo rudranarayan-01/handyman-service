@@ -10,6 +10,8 @@ import ScrollToTop from './components/ScrollToTop';
 import AdminProtect from './components/routes/AdminRoute';
 import ProtectedRoutes from './components/routes/protectedRoutes';
 import FloatingSupport from './components/FloatingSupport';
+import PrivacyPolicy from './components/Privacy';
+import TermsOfService from './components/TermsOfService';
 
 // 2. LAZY LOAD PUBLIC PAGES
 const Home = lazy(() => import('./pages/Home'));
@@ -70,6 +72,8 @@ function App() {
                 <Route path='/blogs' element={<BlogPage />} />
                 <Route path="/contact" element={<ContactPage />} />
                 <Route path="/providers" element={<ProviderPage />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/terms" element={<TermsOfService />} />
 
                 {/* ADMIN ROUTES - Now totally isolated from main bundle */}
                 <Route path="/admin" element={<AdminProtect><AdminPannel /></AdminProtect>} >
