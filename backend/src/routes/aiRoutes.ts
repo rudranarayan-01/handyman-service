@@ -1,6 +1,8 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { Service } from "../models/Service";
+import AiLogs from "../models/AiLogs";
 import express from "express";
+
 const router = express.Router();
 
 // Initialize with a check for the key
@@ -11,27 +13,34 @@ if (!apiKey) {
 const genAI = new GoogleGenerativeAI(apiKey || "");
 
 router.post("/chat", async (req, res) => {
+    const { message } = req.body;
+    // Inside your route
+    const clerkId = (req as any).auth?.userId;
+    let modelName = "gemini-2.5-flash"; // Standard production model
+    let context = "";
+    let aiTextResponse = "";
+
     try {
-        const { message } = req.body;
         if (!message) return res.status(400).json({ error: "No message provided" });
 
-        // 1. Fetch Service Data
+        // 3. Fetch Service Data for Context
         const services = await Service.find().select('name basePrice description duration');
-        const context = services.length > 0 
-            ? JSON.stringify(services) 
+        context = services.length > 0
+            ? JSON.stringify(services)
             : "No specific service data available. Refer user to general support.";
 
-        // 2. Try the most efficient model first
-        // If 'gemini-1.5-flash' gives a 404, your SDK or Key might prefer 'gemini-pro'
+        // 4. Model Selection with Fallback
         let model;
         try {
-            // Update this line in aiRoutes.ts
+            // Note: gemini-2.0-flash is currently the latest stable/experimental. 
+            // gemini-1.5-flash is the standard high-speed model.
             model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
         } catch (e) {
+            modelName = "gemini-pro";
             model = genAI.getGenerativeModel({ model: "gemini-pro" });
         }
 
-        // 3. Structured Prompt (Cleaner format for AI)
+        // 5. System Instructions
         const systemInstruction = `
             You are the HouseXpertz AI Assistant.
             BUSINESS CONTEXT:
@@ -46,24 +55,34 @@ router.post("/chat", async (req, res) => {
 
         const prompt = `${systemInstruction}\n\nUser Question: ${message}`;
 
-        // 4. Generate Content
+        // 6. Generate Content
         const result = await model.generateContent(prompt);
-        const response = result.response;
-        const text = response.text();
-        
-        res.json({ reply: text });
+        aiTextResponse = result.response.text();
+
+        // 7. Store Log in Database
+        await AiLogs.create({
+            clerkId: clerkId || "GUEST",
+            userMessage: message,
+            aiResponse: aiTextResponse,
+            modelUsed: modelName,
+            contextUsed: context.substring(0, 1000),
+            status: 'success'
+        });
+
+
+        return res.json({ reply: aiTextResponse });
 
     } catch (error: any) {
         console.error("AI Chat Detailed Error:", error);
-        
+
         // Specific handling for 404/Model errors
-        if (error.status === 404) {
-             return res.status(500).json({ 
-                reply: "I'm currently updating my systems. Please reach out via WhatsApp for immediate help!" 
+        if (error.status === 404 || error.message?.includes('not found')) {
+            return res.status(500).json({
+                reply: "I'm currently updating my systems. Please reach out via WhatsApp at +91 98117 97407 for immediate help!"
             });
         }
 
-        res.status(500).json({ error: "Internal AI Error" });
+        return res.status(500).json({ error: "Internal AI Error" });
     }
 });
 
