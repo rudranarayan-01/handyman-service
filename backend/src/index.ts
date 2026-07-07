@@ -20,6 +20,7 @@ import { clerkMiddleware } from '@clerk/express';
 import { connectToWhatsApp, sendWhatsAppMessage } from './lib/whatsapp_setup';
 import { subscribeToNewsletter } from './lib/mail';
 import { generateSitemap } from './controllers/sitemapControllers';
+import notificationRoutes from './routes/notificationRoutes'
 const compression = require('compression');
 
 const app = express();
@@ -64,6 +65,7 @@ app.use("/api/v1/offers", offersRoutes)
 app.use("/api/v1", contactRoutes)
 app.use("/api/v1/ai", aiRoutes);
 app.get('/api/v1/sitemap', generateSitemap);
+app.use("/api/v1/notifications", notificationRoutes);
 
 
 
